@@ -31,9 +31,16 @@ export class UniverseApp {
     this.qualityMode = 'auto';
     this.fps = 60;
     this.lowFpsDuration = 0;
+    this.goodFpsDuration = 0;
+    this.qualityCooldown = 0;
+    this.adaptiveRatio = 1;
     this.frameSampleSeconds = 0;
     this.frameSamples = 0;
+    this.performanceSamples = [];
     this.isCompact = this.usesCompactLayout();
+    this.autoQualityTier = this.isCompact ? 1 : 2;
+    this.visualQualityTier = this.autoQualityTier;
+    this.pageVisible = !document.hidden;
     this.showOrbits = true;
     this.showLabels = true;
     this.transitioning = false;
@@ -42,6 +49,8 @@ export class UniverseApp {
     this.lastTrackedPosition = null;
     this.keys = new Set();
     this.pointerStart = null;
+    this.activePointerIds = new Set();
+    this.multiTouchGesture = false;
     this.frame = 0;
     this.elapsed = 0;
     this.clock = new THREE.Clock();
@@ -93,8 +102,9 @@ export class UniverseApp {
     this.scene.add(this.starfield);
     this.galaxy = createGalaxy(glowTexture, this.pixelRatio, this.isCompact ? .68 : 1);
     this.scene.add(this.galaxy.group);
-    this.solar = createSolarSystem(glowTexture);
+    this.solar = createSolarSystem(glowTexture, this.renderer);
     this.scene.add(this.solar.group);
+    this.applyVisualQuality();
 
     this.raycaster = new THREE.Raycaster();
     this.pointerNdc = new THREE.Vector2();
@@ -104,8 +114,8 @@ export class UniverseApp {
       for (const entry of entries) this.labelSizes.delete(entry.target);
     });
     this.createLabels();
-    // Assets are loaded asynchronously; initial materials render immediately.
-    window.setTimeout(() => this.solar.loadTextures(), 0);
+    // Keep local JPG requests deferred while the initial galaxy is shown.
+    // Procedural solar materials are already available if a user enters early.
     this.bindEvents();
     this.emitState();
     this.animate();
@@ -142,6 +152,29 @@ export class UniverseApp {
     const cap = this.qualityMode === 'high' ? 2 :
       this.qualityMode === 'low' ? 1 : this.isCompact ? 1.2 : 1.75;
     return Math.min(native, cap);
+  }
+
+  applyRenderResolution() {
+    const ratio = Math.max(.75, this.getTargetPixelRatio() *
+      (this.qualityMode === 'auto' ? this.adaptiveRatio : 1));
+    if (Math.abs(ratio - this.pixelRatio) < .005) return;
+    this.pixelRatio = ratio;
+    this.renderer.setPixelRatio(ratio);
+    this.composer.setPixelRatio(ratio);
+    this.composer.setSize(window.innerWidth, window.innerHeight);
+    this.galaxy.resize(ratio);
+    this.starfield.material.uniforms.uPixelRatio.value = ratio;
+  }
+
+  applyVisualQuality() {
+    const tier = this.qualityMode === 'low' ? 0 :
+      this.qualityMode === 'high' ? 2 : this.autoQualityTier;
+    this.visualQualityTier = tier;
+    this.galaxy.setQualityTier(tier);
+    this.starfield.geometry.setDrawRange(0, [2300, 3800, 5200][tier]);
+    this.solar.setQualityTier(tier);
+    this.useBloom = this.qualityMode === 'high' ||
+      (this.qualityMode === 'auto' && tier === 2 && !this.isCompact);
   }
 
   usesCompactLayout() {
@@ -215,44 +248,60 @@ export class UniverseApp {
 
   setQuality(mode) {
     this.qualityMode = ['auto', 'low', 'high'].includes(mode) ? mode : 'auto';
-    this.useBloom = this.qualityMode === 'high' ||
-      (this.qualityMode === 'auto' && !this.isCompact);
-    this.pixelRatio = this.getTargetPixelRatio();
-    this.renderer.setPixelRatio(this.pixelRatio);
-    this.composer.setPixelRatio(this.pixelRatio);
-    this.composer.setSize(window.innerWidth, window.innerHeight);
-    this.galaxy.resize(this.pixelRatio);
-    this.starfield.material.uniforms.uPixelRatio.value = this.pixelRatio;
+    this.autoQualityTier = this.isCompact ? 1 : 2;
+    this.adaptiveRatio = 1;
+    this.lowFpsDuration = 0;
+    this.goodFpsDuration = 0;
+    this.qualityCooldown = 12;
+    this.applyVisualQuality();
+    this.applyRenderResolution();
     this.emitState();
   }
 
   bindEvents() {
     this.handleResize = () => {
       this.labelSizes = new WeakMap();
+      const wasCompact = this.isCompact;
       this.isCompact = this.usesCompactLayout();
       this.camera.aspect = window.innerWidth / window.innerHeight;
       this.camera.updateProjectionMatrix();
-      this.pixelRatio = this.getTargetPixelRatio();
-      this.renderer.setPixelRatio(this.pixelRatio);
+      if (wasCompact !== this.isCompact) {
+        this.autoQualityTier = this.isCompact ? 1 : 2;
+        this.adaptiveRatio = 1;
+        this.applyVisualQuality();
+      }
+      this.applyRenderResolution();
       this.renderer.setSize(window.innerWidth, window.innerHeight, false);
-      this.composer.setPixelRatio(this.pixelRatio);
       this.composer.setSize(window.innerWidth, window.innerHeight);
-      if (this.qualityMode === 'auto') this.useBloom = !this.isCompact;
       this.galaxy.resize(this.pixelRatio);
       this.starfield.material.uniforms.uPixelRatio.value = this.pixelRatio;
     };
     window.addEventListener('resize', this.handleResize);
     this.canvas.addEventListener('pointerdown', event => {
       this.reframeTween?.kill();
-      this.pointerStart = { x: event.clientX, y: event.clientY };
+      this.activePointerIds.add(event.pointerId);
+      if (this.activePointerIds.size > 1) this.multiTouchGesture = true;
+      if (this.activePointerIds.size === 1) {
+        this.pointerStart = { id: event.pointerId, x: event.clientX, y: event.clientY };
+      }
     });
     this.canvas.addEventListener('pointerup', event => {
-      if (!this.pointerStart || this.transitioning || this.flying) return;
-      const travel = Math.hypot(event.clientX - this.pointerStart.x, event.clientY - this.pointerStart.y);
+      this.activePointerIds.delete(event.pointerId);
+      const canSelect = this.pointerStart?.id === event.pointerId &&
+        !this.multiTouchGesture && !this.transitioning && !this.flying;
+      const travel = canSelect ?
+        Math.hypot(event.clientX - this.pointerStart.x, event.clientY - this.pointerStart.y) : Infinity;
       this.pointerStart = null;
       if (travel < 6 && event.button === 0) this.selectFromPointer(event);
+      if (this.activePointerIds.size === 0) this.multiTouchGesture = false;
+    });
+    this.canvas.addEventListener('pointercancel', event => {
+      this.activePointerIds.delete(event.pointerId);
+      this.pointerStart = null;
+      if (this.activePointerIds.size === 0) this.multiTouchGesture = false;
     });
     this.canvas.addEventListener('pointermove', event => {
+      if (event.pointerType === 'touch') return;
       if (!this.solar.group.visible || this.transitioning) {
         this.canvas.style.cursor = 'grab';
         return;
@@ -273,6 +322,22 @@ export class UniverseApp {
     window.addEventListener('keydown', this.handleKeyDown);
     window.addEventListener('keyup', this.handleKeyUp);
     window.addEventListener('blur', () => this.keys.clear());
+    this.handleVisibilityChange = () => {
+      this.pageVisible = !document.hidden;
+      this.frameSampleSeconds = 0;
+      this.frameSamples = 0;
+      this.lowFpsDuration = 0;
+      this.goodFpsDuration = 0;
+      if (!this.pageVisible) {
+        cancelAnimationFrame(this.animationId);
+        this.animationId = null;
+        this.keys.clear();
+      } else if (this.animationId === null) {
+        this.clock.getDelta(); // Discard the time spent in the background.
+        this.animate();
+      }
+    };
+    document.addEventListener('visibilitychange', this.handleVisibilityChange);
   }
 
   pickBody(event) {
@@ -329,6 +394,9 @@ export class UniverseApp {
 
   changeScene(destination) {
     if (this.transitioning) return Promise.resolve(false);
+    const toSolar = destination !== 'galaxy';
+    this.solar.setTextureLoadingEnabled(toSolar);
+    if (toSolar) this.solar.loadOverviewTextures();
     this.transitioning = true;
     this.flying = true;
     if (this.flightTween) this.flightTween.kill();
@@ -340,7 +408,6 @@ export class UniverseApp {
     this.clearCameraMomentum();
 
     return new Promise(resolve => {
-      const toSolar = destination !== 'galaxy';
       const fromGalaxy = this.mode === 'galaxy';
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const startPos = this.camera.position.clone();
@@ -445,6 +512,8 @@ export class UniverseApp {
     if (this.mode === 'galaxy') {
       await this.changeScene('solar');
     } else {
+      this.solar.setTextureLoadingEnabled(true);
+      this.solar.loadOverviewTextures();
       this.mode = 'solar';
       this.focusId = null;
       this.lastTrackedPosition = null;
@@ -460,6 +529,7 @@ export class UniverseApp {
   async activateFree() {
     if (this.transitioning) return;
     if (this.mode === 'galaxy') await this.changeScene('free');
+    else this.solar.setTextureLoadingEnabled(true);
     this.mode = 'free';
     this.focusId = null;
     this.lastTrackedPosition = null;
@@ -478,6 +548,9 @@ export class UniverseApp {
   async focusBody(id) {
     const body = this.solar.bodies[id];
     if (!body || this.transitioning) return;
+    // Selecting a target promotes its pending texture above overview/idle work.
+    this.solar.requestTexture(id, 'focus');
+    this.solar.requestNearbyTextures(id);
     if (this.mode === 'galaxy') {
       const switched = await this.changeScene('solar');
       if (!switched) return;
@@ -691,6 +764,7 @@ export class UniverseApp {
   }
 
   updatePerformance(delta) {
+    if (delta <= 0 || delta > .5) return;
     this.frameSampleSeconds += delta;
     this.frameSamples += 1;
     if (this.frameSampleSeconds < 1.3) return;
@@ -698,28 +772,71 @@ export class UniverseApp {
     const interval = this.frameSampleSeconds;
     this.frameSampleSeconds = 0;
     this.frameSamples = 0;
-    // Adaptive DPR is conservative and only engages in AUTO mode.
-    if (this.qualityMode === 'auto' && this.fps < 29) {
-      this.lowFpsDuration += interval;
-      if (this.lowFpsDuration > 5 && this.pixelRatio > .85) {
-        this.pixelRatio = Math.max(.85, this.pixelRatio - .15);
-        this.renderer.setPixelRatio(this.pixelRatio);
-        this.composer.setPixelRatio(this.pixelRatio);
-        this.composer.setSize(window.innerWidth, window.innerHeight);
+    this.performanceSamples.push(this.fps);
+    if (this.performanceSamples.length > 180) this.performanceSamples.shift();
+
+    if (this.qualityMode === 'auto') {
+      const minFps = this.isCompact ? 26 : 44;
+      const recoveredFps = this.isCompact ? 30 : 53;
+      this.qualityCooldown = Math.max(0, this.qualityCooldown - interval);
+      this.lowFpsDuration = this.fps < minFps ? this.lowFpsDuration + interval : 0;
+      this.goodFpsDuration = this.fps >= recoveredFps ? this.goodFpsDuration + interval : 0;
+      if (this.qualityCooldown === 0 && this.lowFpsDuration >= 5) {
+        if (this.autoQualityTier > 0) {
+          this.autoQualityTier--;
+          this.applyVisualQuality();
+        } else this.adaptiveRatio = Math.max(.62, this.adaptiveRatio - .12);
+        this.applyRenderResolution();
         this.lowFpsDuration = 0;
+        this.goodFpsDuration = 0;
+        this.qualityCooldown = 10;
+      } else if (this.qualityCooldown === 0 && this.goodFpsDuration >= 18) {
+        if (this.adaptiveRatio < .999) {
+          this.adaptiveRatio = Math.min(1, this.adaptiveRatio + .12);
+        } else if (this.autoQualityTier < (this.isCompact ? 1 : 2)) {
+          this.autoQualityTier++;
+          this.applyVisualQuality();
+        }
+        this.applyRenderResolution();
+        this.lowFpsDuration = 0;
+        this.goodFpsDuration = 0;
+        this.qualityCooldown = 12;
       }
-    } else this.lowFpsDuration = 0;
-    this.onTelemetry({ fps: this.fps, simulatedDays: this.solar.getSimulationDays() });
+    }
+    const snapshot = this.getPerformanceSnapshot();
+    this.onTelemetry({ ...snapshot, simulatedDays: this.solar.getSimulationDays() });
+  }
+
+  getPerformanceSnapshot() {
+    const samples = this.performanceSamples;
+    return {
+      fps: this.fps,
+      averageFps: samples.length ? Math.round(samples.reduce((a, b) => a + b, 0) / samples.length) : this.fps,
+      minFps: samples.length ? Math.min(...samples) : this.fps,
+      samples: samples.length,
+      mode: this.mode,
+      qualityMode: this.qualityMode,
+      qualityTier: ['省电', '均衡', '精细'][this.visualQualityTier],
+      dpr: Number(this.pixelRatio.toFixed(2)),
+      drawCalls: this.renderer.info.render.calls,
+      triangles: this.renderer.info.render.triangles,
+      geometries: this.renderer.info.memory.geometries,
+      textures: this.renderer.info.memory.textures,
+      // WebGL renderer.info contains object counts, not GPU memory in bytes.
+      gpuMemoryBytes: null
+    };
   }
 
   animate = () => {
+    if (!this.pageVisible) return;
     this.animationId = requestAnimationFrame(this.animate);
-    const delta = Math.min(this.clock.getDelta(), .05);
+    const elapsedFrame = this.clock.getDelta();
+    const delta = Math.min(elapsedFrame, .05);
     this.elapsed += delta;
     this.galaxy.update(delta, this.elapsed);
     this.starfield.material.uniforms.uTime.value = this.elapsed;
     this.solar.update(delta, this.paused ? 0 : this.timeScale);
-    this.updatePerformance(delta);
+    this.updatePerformance(elapsedFrame);
     this.updateFreeMovement(delta);
 
     if (this.focusFlight) this.updateFocusFlight();
@@ -758,6 +875,7 @@ export class UniverseApp {
     window.removeEventListener('resize', this.handleResize);
     window.removeEventListener('keydown', this.handleKeyDown);
     window.removeEventListener('keyup', this.handleKeyUp);
+    document.removeEventListener('visibilitychange', this.handleVisibilityChange);
     this.controls.dispose();
     this.composer.dispose();
     this.renderer.dispose();

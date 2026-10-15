@@ -319,6 +319,10 @@
     touch-action: none; cursor: ns-resize;
   }
   .detail-sheet-handle span { width: 45px; height: 4px; border-radius: 10px; background: #799bb2; }
+  #app[data-sheet-dragging="true"] .detail-panel.is-visible {
+    transform: translateY(var(--sheet-drag-y, 0px));
+    transition: none;
+  }
   #app[data-sheet="collapsed"] .detail-panel {
     height: 63px; min-height: 63px; max-height: 63px; padding-top: 3px; padding-bottom: 2px; overflow: hidden;
   }

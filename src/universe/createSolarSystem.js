@@ -12,6 +12,7 @@ import {
   seededRandom
 } from './proceduralTextures.js';
 import { createOrbitLine, pointOnOrbit } from './orbitalMechanics.js';
+import { createSurfaceDetailMaps } from './surfaceDetail.js';
 import { createTextureManager } from './textureManager.js';
 
 const TAU = Math.PI * 2;
@@ -189,7 +190,7 @@ function createSolarFlares(glowTexture) {
   return new THREE.Points(geometry, material);
 }
 
-export function createSolarSystem(glowTexture) {
+export function createSolarSystem(glowTexture, renderer) {
   const group = new THREE.Group();
   group.name = 'Solar System';
   group.visible = false;
@@ -198,7 +199,182 @@ export function createSolarSystem(glowTexture) {
   const bodies = {};
   const raycastMeshes = [];
   const moonOrbitGroups = [];
-  const textures = createTextureManager();
+  const textures = createTextureManager(renderer);
+
+  const textureJobs = new Map();
+  const texturePriorities = { focus: 0, overview: 1, nearby: 2, background: 3 };
+  const maxConcurrentTextures = 2;
+  let texturesEnabled = false;
+  let activeTextureLoads = 0;
+  let pumpScheduled = false;
+  let idleHandle = null;
+  let jobSequence = 0;
+
+  async function applyTexturedRelief(id, mesh, satellite = false) {
+    // The albedo loader retains its existing fallback CanvasTexture on failure.
+    const loaded = await textures.applyMap(mesh, id, satellite);
+    // Avoid doing three height-gradient conversions in the first render frame.
+    // The colour texture is usable immediately; the queued JPG slot is freed
+    // before generating the derived normal/roughness maps.
+    const addDetail = () => {
+      try {
+        const material = mesh.material;
+        const details = createSurfaceDetailMaps(id, material.map);
+        if (!details) return;
+        material.normalMap?.dispose();
+        material.normalMap = details.normalMap;
+        material.normalScale.set(details.normalScale, details.normalScale);
+        if (details.roughnessMap) {
+          material.roughnessMap?.dispose();
+          material.roughnessMap = details.roughnessMap;
+        }
+        material.needsUpdate = true;
+      } catch (error) {
+        // A failed relief conversion must not remove the colour texture.
+        console.warn(`Surface relief fallback for ${id}`, error);
+      }
+    };
+    if (typeof window.requestIdleCallback === 'function') {
+      window.requestIdleCallback(addDetail, { timeout: 1600 });
+    } else {
+      window.setTimeout(addDetail, 0);
+    }
+    return loaded;
+  }
+
+  async function loadTextureForBody(id) {
+    if (id === 'sun') {
+      const texture = await textures.get('sun');
+      if (!texture) return false;
+      sunMaterial.uniforms.uSurface.value = texture;
+      sunMaterial.uniforms.uUseSurface.value = 1;
+      return true;
+    }
+    const body = bodies[id];
+    if (!body) return false;
+    const satellite = Boolean(body.data.parentId);
+    if (['earth', 'moon', 'mars'].includes(id)) {
+      return applyTexturedRelief(id, body.mesh, satellite);
+    }
+    return textures.applyMap(body.mesh, id, satellite);
+  }
+
+  function nextQueuedTexture() {
+    let next = null;
+    for (const job of textureJobs.values()) {
+      if (job.state !== 'queued') continue;
+      if (!next || job.priority < next.priority ||
+        (job.priority === next.priority && job.sequence < next.sequence)) next = job;
+    }
+    return next;
+  }
+
+  function cancelIdleLoad() {
+    if (!idleHandle) return;
+    if (idleHandle.type === 'idle') window.cancelIdleCallback(idleHandle.id);
+    else window.clearTimeout(idleHandle.id);
+    idleHandle = null;
+  }
+
+  function queueTexturePump() {
+    if (!texturesEnabled || pumpScheduled) return;
+    pumpScheduled = true;
+    Promise.resolve().then(() => {
+      pumpScheduled = false;
+      pumpTextures();
+    });
+  }
+
+  function startTextureJob(job) {
+    job.state = 'loading';
+    activeTextureLoads++;
+    Promise.resolve()
+      .then(() => loadTextureForBody(job.id))
+      .catch(error => {
+        console.warn(`Texture job fallback for ${job.id}`, error);
+        return false;
+      })
+      .then(success => {
+        job.state = 'complete';
+        job.resolve(Boolean(success));
+      })
+      .finally(() => {
+        activeTextureLoads--;
+        queueTexturePump();
+      });
+  }
+
+  function scheduleIdleTexture() {
+    if (idleHandle) return;
+    const startWhenIdle = () => {
+      idleHandle = null;
+      if (!texturesEnabled || activeTextureLoads >= maxConcurrentTextures) return;
+      const job = nextQueuedTexture();
+      if (job) startTextureJob(job);
+      queueTexturePump();
+    };
+    if (typeof window.requestIdleCallback === 'function') {
+      idleHandle = { type: 'idle', id: window.requestIdleCallback(startWhenIdle, { timeout: 1200 }) };
+    } else {
+      idleHandle = { type: 'timeout', id: window.setTimeout(startWhenIdle, 180) };
+    }
+  }
+
+  function pumpTextures() {
+    if (!texturesEnabled) return;
+    while (activeTextureLoads < maxConcurrentTextures) {
+      const next = nextQueuedTexture();
+      if (!next) {
+        cancelIdleLoad();
+        return;
+      }
+      // The selected body and key overview planets are requested immediately.
+      // Other planets and nearby moons wait for an idle slice before each start.
+      if (next.priority > texturePriorities.overview) {
+        scheduleIdleTexture();
+        return;
+      }
+      startTextureJob(next);
+    }
+  }
+
+  function requestTexture(id, priority = 'focus') {
+    if (!bodies[id]) return Promise.resolve(false);
+    const level = texturePriorities[priority] ?? texturePriorities.focus;
+    let job = textureJobs.get(id);
+    if (job) {
+      if (job.state === 'queued') job.priority = Math.min(level, job.priority);
+    } else {
+      job = { id, priority: level, sequence: jobSequence++, state: 'queued' };
+      job.promise = new Promise(resolve => { job.resolve = resolve; });
+      textureJobs.set(id, job);
+    }
+    queueTexturePump();
+    return job.promise;
+  }
+
+  function loadOverviewTextures() {
+    for (const id of ['sun', 'earth', 'jupiter', 'saturn']) requestTexture(id, 'overview');
+    for (const id of ['mercury', 'venus', 'mars', 'uranus', 'neptune']) requestTexture(id, 'background');
+  }
+
+  function requestNearbyTextures(id) {
+    const body = bodies[id]?.data;
+    if (!body) return;
+    if (body.parentId) {
+      requestTexture(body.parentId, 'overview');
+      return;
+    }
+    for (const moon of SATELLITES) {
+      if (moon.parentId === id) requestTexture(moon.id, 'nearby');
+    }
+  }
+
+  function setTextureLoadingEnabled(enabled) {
+    texturesEnabled = enabled;
+    if (texturesEnabled) queueTexturePump();
+    else cancelIdleLoad();
+  }
 
   const solarLight = new THREE.PointLight(0xffe4be, 1350, 0, 2);
   solarLight.position.set(0, 0, 0);
@@ -273,6 +449,15 @@ export function createSolarSystem(glowTexture) {
     raycastMeshes,
     orbitsGroup,
     update,
+    setTextureLoadingEnabled,
+    loadOverviewTextures,
+    requestTexture,
+    requestNearbyTextures,
+    setQualityTier(tier) {
+      // InstancedMesh.count and drawRange avoid reallocating GPU buffers.
+      belt.count = [500, 1050, 1750][tier];
+      flares.geometry.setDrawRange(0, [280, 620, 950][tier]);
+    },
     setOrbitsVisible(visible) {
       orbitsGroup.visible = visible;
       for (const orbit of moonOrbitGroups) orbit.visible = visible;
@@ -286,18 +471,6 @@ export function createSolarSystem(glowTexture) {
         planet.mesh.geometry = projectedRadius > .045 ? sphereGeometry :
           projectedRadius > .009 ? mediumSphereGeometry : lowSphereGeometry;
       }
-    },
-    async loadTextures() {
-      const highPriority = ['earth', 'jupiter', 'saturn', 'mars', 'venus', 'mercury', 'uranus', 'neptune'];
-      const requests = highPriority.map(id => textures.applyMap(bodies[id].mesh, id));
-      requests.push(textures.get('sun').then(texture => {
-        if (texture) {
-          sunMaterial.uniforms.uSurface.value = texture;
-          sunMaterial.uniforms.uUseSurface.value = 1;
-        }
-      }));
-      for (const moon of SATELLITES) requests.push(textures.applyMap(bodies[moon.id].mesh, moon.id, true));
-      await Promise.allSettled(requests);
     },
     getSimulationDays() { return elapsedSimulation * 5; }
   };

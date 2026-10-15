@@ -111,6 +111,9 @@ button:disabled { cursor: default; opacity: .5; }
 .detail-stats > div { display: flex; flex-direction: column; gap: 8px; }
 .detail-stats span { font-size: 11px; color: #7388a0; }
 .detail-stats strong { font: 500 15px 'Space Grotesk', 'Microsoft YaHei', sans-serif; color: #ebf2fb; }
+.detail-stats > .detail-mass { grid-column: 1 / -1; flex-direction: row; align-items: center;
+  justify-content: space-between; gap: 12px; padding-top: 13px; border-top: 1px solid var(--line); }
+.detail-mass strong { white-space: nowrap; font-variant-numeric: tabular-nums; }
 .detail-back { width: 100%; padding: 16px 0 0; margin-top: 22px; border: 0; border-top: 1px solid var(--line); text-align: left; color: #bee0f2; background: none; font-size: 12px; letter-spacing: .05em; }
 .detail-back span { font-size: 18px; margin-right: 9px; vertical-align: -2px; }
 .detail-back:hover { color: white; }

@@ -1,5 +1,5 @@
 import { UniverseApp } from './core/UniverseApp.js';
-import { CELESTIALS, ALL_BODIES, ALL_BY_ID, SATELLITES_BY_PARENT } from './data/celestials.js';
+import { CELESTIALS, ALL_BODIES, ALL_BY_ID, SATELLITES_BY_PARENT, formatMassKg } from './data/celestials.js';
 
 const get = id => document.getElementById(id);
 const elements = {
@@ -79,6 +79,7 @@ let currentState = { mode: 'galaxy' };
 let toastTimer;
 const SPEED_STEPS = [0, .25, 1, 3, 10, 25, 50];
 let sheetState = 'half';
+let savedDetailScroll = 0;
 let dockOpen = false;
 let layoutFrame = 0;
 let dialogReturnFocus = null;
@@ -103,10 +104,13 @@ function scheduleLayoutMeasure() {
 }
 
 function setDockOpen(open) {
-  dockOpen = open;
-  get('app').dataset.dock = open ? 'open' : 'closed';
-  elements.dockToggle.setAttribute('aria-expanded', String(open));
-  elements.dockToggle.setAttribute('aria-label', open ? '收起天体导航' : '展开天体导航');
+  dockOpen = Boolean(open && isCompact());
+  get('app').dataset.dock = dockOpen ? 'open' : 'closed';
+  elements.dockToggle.setAttribute('aria-expanded', String(dockOpen));
+  elements.dockToggle.setAttribute('aria-label', dockOpen ? '收起天体导航' : '展开天体导航');
+  const detailVisible = currentState.mode === 'planet' && Boolean(currentState.focusId);
+  elements.detail.inert = !detailVisible || dockOpen;
+  elements.detail.setAttribute('aria-hidden', String(!detailVisible || dockOpen));
   scheduleLayoutMeasure();
 }
 
@@ -118,6 +122,9 @@ function setMobileMenuOpen(open) {
 
 function setSheetState(next) {
   if (sheetState === next && get('app').dataset.sheet === next) return;
+  // Capture the current scroll before any visible state change, but preserve
+  // the saved value while the collapsed sheet hides its scrollable content.
+  if (sheetState !== 'collapsed') savedDetailScroll = elements.detail.scrollTop;
   sheetState = next;
   get('app').dataset.sheet = next;
   elements.sheetHandle.setAttribute('aria-expanded', String(next !== 'collapsed'));
@@ -125,6 +132,9 @@ function setSheetState(next) {
   elements.sheetHandle.setAttribute('aria-label',
     next === 'collapsed' ? '展开天体资料' : next === 'expanded' ? '收起天体资料' : '展开更多天体资料');
   scheduleLayoutMeasure();
+  if (next !== 'collapsed') {
+    requestAnimationFrame(() => { elements.detail.scrollTop = savedDetailScroll; });
+  }
   requestAnimationFrame(() => universe?.reframeFocusedBody());
 }
 
@@ -174,6 +184,7 @@ function updateDetail(id) {
     id === 'sun' ? '日心距离' : '距太阳';
   get('detail-distance').textContent = body.distance;
   get('detail-diameter').textContent = body.diameter;
+  get('detail-mass').textContent = formatMassKg(body.massKg);
   get('detail-day').textContent = body.day;
   get('detail-year').textContent = body.year;
   elements.detailOrb.style.setProperty('--orb-light', body.accent);
@@ -211,12 +222,15 @@ function updateInterface(state) {
   if (showingDetail && dockOpen) setDockOpen(false);
   elements.hero.classList.toggle('is-hidden', showingDetail);
   elements.detail.classList.toggle('is-visible', showingDetail);
-  elements.detail.setAttribute('aria-hidden', String(!showingDetail));
+  elements.detail.setAttribute('aria-hidden', String(!showingDetail || dockOpen));
   elements.hero.inert = showingDetail;
-  elements.detail.inert = !showingDetail;
+  elements.detail.inert = !showingDetail || dockOpen;
   if (showingDetail) {
     updateDetail(state.focusId);
-    if (previousFocusId !== state.focusId) elements.detail.scrollTop = 0;
+    if (previousFocusId !== state.focusId) {
+      savedDetailScroll = 0;
+      elements.detail.scrollTop = 0;
+    }
   }
 
   const displayMode = state.mode === 'planet' ? 'solar' : state.mode;
@@ -319,6 +333,7 @@ function renderComparison() {
   const rows = [
     ['类型', left.type, right.type],
     ['直径', left.diameter, right.diameter],
+    ['质量', formatMassKg(left.massKg), formatMassKg(right.massKg)],
     ['距离', left.distance, right.distance],
     ['自转周期', left.day, right.day],
     ['公转周期', left.year, right.year],
@@ -494,18 +509,36 @@ function bindInterface() {
 
   let sheetPointer = null;
   elements.sheetHandle.addEventListener('pointerdown', event => {
-    sheetPointer = event.clientY;
+    if (!event.isPrimary || sheetPointer) return;
+    sheetPointer = { id: event.pointerId, startY: event.clientY, lastY: event.clientY };
     elements.sheetHandle.setPointerCapture(event.pointerId);
   });
+  elements.sheetHandle.addEventListener('pointermove', event => {
+    if (!sheetPointer || sheetPointer.id !== event.pointerId) return;
+    sheetPointer.lastY = event.clientY;
+    const delta = event.clientY - sheetPointer.startY;
+    if (Math.abs(delta) < 5) return;
+    const app = get('app');
+    app.dataset.sheetDragging = 'true';
+    app.style.setProperty('--sheet-drag-y', Math.max(-76, Math.min(76, delta)) + 'px');
+  });
   elements.sheetHandle.addEventListener('pointerup', event => {
-    if (sheetPointer === null) return;
-    const delta = event.clientY - sheetPointer;
+    if (!sheetPointer || sheetPointer.id !== event.pointerId) return;
+    const delta = event.clientY - sheetPointer.startY;
     sheetPointer = null;
+    delete get('app').dataset.sheetDragging;
+    get('app').style.removeProperty('--sheet-drag-y');
     if (delta < -24) setSheetState(sheetState === 'collapsed' ? 'half' : 'expanded');
     else if (delta > 24) setSheetState(sheetState === 'expanded' ? 'half' : 'collapsed');
     else setSheetState(sheetState === 'collapsed' ? 'half' : sheetState === 'half' ? 'expanded' : 'half');
   });
-  elements.sheetHandle.addEventListener('pointercancel', () => { sheetPointer = null; });
+  const cancelSheetDrag = () => {
+    sheetPointer = null;
+    delete get('app').dataset.sheetDragging;
+    get('app').style.removeProperty('--sheet-drag-y');
+  };
+  elements.sheetHandle.addEventListener('pointercancel', cancelSheetDrag);
+  elements.sheetHandle.addEventListener('lostpointercapture', cancelSheetDrag);
   elements.sheetHandle.addEventListener('click', event => {
     if (event.detail === 0) setSheetState(sheetState === 'collapsed' ? 'half' : sheetState === 'half' ? 'expanded' : 'collapsed');
   });
@@ -539,8 +572,9 @@ try {
     transitionElement: get('scene-transition'),
     onStateChange: updateInterface,
     onToast: showToast,
-    onTelemetry: ({ fps, simulatedDays }) => {
+    onTelemetry: ({ fps, dpr, qualityTier, drawCalls, simulatedDays }) => {
       get('fps-value').textContent = fps + ' FPS';
+      get('fps-value').title = '渲染倍率 ' + dpr + ' · ' + qualityTier + ' · ' + drawCalls + ' 次绘制';
       const date = new Date(Date.UTC(2026, 0, 1) + simulatedDays * 86400000);
       elements.simDate.textContent = '演示时间 · ' + date.toISOString().slice(0, 10).replace(/-/g, '.');
     },
@@ -548,6 +582,8 @@ try {
       get('camera-distance').textContent = 'CAM / ' + distance.toFixed(1);
     }
   });
+  // Read-only diagnostics for repeatable local browser/device benchmarks.
+  window.getCosmosPerformance = () => universe.getPerformanceSnapshot();
 
   // Allow the first 3D frame to render before dismissing the cover.
   requestAnimationFrame(() => {

@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
-    "preview": "vite preview --host 0.0.0.0"
+    "preview": "vite preview --host 0.0.0.0",
+    "textures:encode": "node scripts/encode-etc2-ktx2.mjs"
   },
   "dependencies": {
     "gsap": "^3.14.0",

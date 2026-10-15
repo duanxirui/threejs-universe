@@ -31,6 +31,32 @@ const fragmentShader = [
   '}'
 ].join('\n');
 
+// Deform diffuse dust on the GPU: only a time uniform changes each frame.
+const dustVertexShader = [
+  'uniform float uTime;',
+  'uniform float uMotion;',
+  'uniform float uPixelRatio;',
+  'varying vec3 vColor;',
+  'void main() {',
+  '  float waveA = sin(position.x * .19 + position.y * .07 + uTime * .27);',
+  '  float waveB = cos(position.y * .16 - position.x * .06 - uTime * .21);',
+  '  vec3 drifting = position + uMotion * vec3(waveA * .75, waveB * .75, waveA * waveB * .38);',
+  '  vec4 viewPosition = modelViewMatrix * vec4(drifting, 1.0);',
+  '  gl_Position = projectionMatrix * viewPosition;',
+  '  gl_PointSize = min(16.0, max(1.0, 340.0 * uPixelRatio / max(3.0, -viewPosition.z)));',
+  '  vColor = color;',
+  '}'
+].join('\n');
+
+const dustFragmentShader = [
+  'varying vec3 vColor;',
+  'void main() {',
+  '  float distanceToCenter = length(gl_PointCoord - .5);',
+  '  float cloud = 1.0 - smoothstep(.03, .5, distanceToCenter);',
+  '  gl_FragColor = vec4(vColor, cloud * .13);',
+  '}'
+].join('\n');
+
 function createPointCloud(positions, colors, sizes, phases, pixelRatio) {
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
@@ -128,6 +154,7 @@ export function createGalaxy(glowTexture, pixelRatio = 1, density = 1) {
   haze.add(createGlowSprite(glowTexture, '#fdf2d9', 10, .38));
 
   const nebulaColors = ['#458ed4', '#4772da', '#9254c4', '#60bdc6', '#af749e'];
+  const clouds = [];
   for (let i = 0; i < 66; i++) {
     const arm = i % 4;
     const radius = 9 + random() * 46;
@@ -139,6 +166,10 @@ export function createGalaxy(glowTexture, pixelRatio = 1, density = 1) {
       .025 + random() * .06
     );
     cloud.position.set(Math.cos(angle) * radius, Math.sin(angle) * radius, -.6 + random() * 1.2);
+    clouds.push({
+      sprite: cloud, origin: cloud.position.clone(), scale: cloud.scale.x,
+      opacity: cloud.material.opacity, phase: random() * TAU
+    });
     haze.add(cloud);
   }
   group.add(haze);
@@ -162,12 +193,16 @@ export function createGalaxy(glowTexture, pixelRatio = 1, density = 1) {
   const dustGeometry = new THREE.BufferGeometry();
   dustGeometry.setAttribute('position', new THREE.Float32BufferAttribute(dustPositions, 3));
   dustGeometry.setAttribute('color', new THREE.Float32BufferAttribute(dustColors, 3));
-  const dust = new THREE.Points(dustGeometry, new THREE.PointsMaterial({
-    map: glowTexture, size: 4.1, sizeAttenuation: true, vertexColors: true,
-    transparent: true, opacity: .13, blending: THREE.AdditiveBlending,
+  const dust = new THREE.Points(dustGeometry, new THREE.ShaderMaterial({
+    uniforms: {
+      uTime: { value: 0 }, uMotion: { value: 1 }, uPixelRatio: { value: pixelRatio }
+    },
+    vertexShader: dustVertexShader, fragmentShader: dustFragmentShader,
+    vertexColors: true, transparent: true, blending: THREE.AdditiveBlending,
     depthWrite: false
   }));
   group.add(dust);
+  let qualityTier = 2;
 
   // A distinct beacon marks our location in the disk for direct navigation.
   const beacon = new THREE.Group();
@@ -195,11 +230,43 @@ export function createGalaxy(glowTexture, pixelRatio = 1, density = 1) {
     update(delta, elapsed) {
       group.rotation.z += delta * .003;
       stars.material.uniforms.uTime.value = elapsed;
+      if (group.visible && qualityTier > 0) {
+        dust.material.uniforms.uTime.value = elapsed;
+        // Independent, slow phase offsets reshape the cloud silhouette.
+        for (const cloud of clouds) {
+          if (!cloud.sprite.visible) continue;
+          const phase = elapsed * .19 + cloud.phase;
+          cloud.sprite.position.set(
+            cloud.origin.x + Math.sin(phase) * .95,
+            cloud.origin.y + Math.cos(phase * .83) * .8,
+            cloud.origin.z + Math.sin(phase * .56) * .3
+          );
+          const stretch = 1 + .13 * Math.sin(phase * 1.12);
+          cloud.sprite.scale.set(cloud.scale * stretch, cloud.scale * (2 - stretch), 1);
+          cloud.sprite.material.opacity = cloud.opacity * (1 + .20 * Math.cos(phase));
+        }
+      }
       beaconRing.rotation.y += delta * .35;
       beaconGlow.scale.setScalar(4.5 * (1 + Math.sin(elapsed * 2.4) * .1));
     },
     resize(pixelRatioValue) {
       stars.material.uniforms.uPixelRatio.value = pixelRatioValue;
+      dust.material.uniforms.uPixelRatio.value = pixelRatioValue;
+    },
+    setQualityTier(tier) {
+      qualityTier = THREE.MathUtils.clamp(tier, 0, 2);
+      const ratio = [.38, .7, 1][qualityTier];
+      stars.geometry.setDrawRange(0, Math.round(positions.length / 3 * ratio));
+      dust.geometry.setDrawRange(0, Math.round(dustPositions.length / 3 * ratio));
+      dust.material.uniforms.uMotion.value = qualityTier === 0 ? 0 : 1;
+      clouds.forEach((cloud, index) => {
+        cloud.sprite.visible = index < [22, 44, 66][qualityTier];
+        if (qualityTier === 0) {
+          cloud.sprite.position.copy(cloud.origin);
+          cloud.sprite.scale.setScalar(cloud.scale);
+          cloud.sprite.material.opacity = cloud.opacity;
+        }
+      });
     }
   };
 }

@@ -1,0 +1,154 @@
+{
+  "description": "Native ETC2 / KTX2 atlases pre-encoded offline; fallback JPG for unsupported hardware.",
+  "format": "ETC2_RGB8_SRGB_ZSTD",
+  "enabled": [
+    "uranus",
+    "neptune",
+    "satellites/callisto"
+  ],
+  "report": [
+    {
+      "id": "sun",
+      "width": 2048,
+      "height": 1024,
+      "jpgBytes": 822427,
+      "ktx2Bytes": 958919,
+      "gpuEtc2Bytes": 1398120,
+      "psnrDb": 35.04,
+      "mipLevels": 12,
+      "enabled": false
+    },
+    {
+      "id": "mercury",
+      "width": 2048,
+      "height": 1024,
+      "jpgBytes": 872555,
+      "ktx2Bytes": 1059769,
+      "gpuEtc2Bytes": 1398120,
+      "psnrDb": 38.15,
+      "mipLevels": 12,
+      "enabled": false
+    },
+    {
+      "id": "venus",
+      "width": 2048,
+      "height": 1024,
+      "jpgBytes": 885075,
+      "ktx2Bytes": 1039423,
+      "gpuEtc2Bytes": 1398120,
+      "psnrDb": 34.75,
+      "mipLevels": 12,
+      "enabled": false
+    },
+    {
+      "id": "jupiter",
+      "width": 2048,
+      "height": 1024,
+      "jpgBytes": 498976,
+      "ktx2Bytes": 739119,
+      "gpuEtc2Bytes": 1398120,
+      "psnrDb": 35.92,
+      "mipLevels": 12,
+      "enabled": false
+    },
+    {
+      "id": "saturn",
+      "width": 2048,
+      "height": 1024,
+      "jpgBytes": 199916,
+      "ktx2Bytes": 295920,
+      "gpuEtc2Bytes": 1398120,
+      "psnrDb": 36.12,
+      "mipLevels": 12,
+      "enabled": false
+    },
+    {
+      "id": "uranus",
+      "width": 2048,
+      "height": 1024,
+      "jpgBytes": 77751,
+      "ktx2Bytes": 18940,
+      "gpuEtc2Bytes": 1398120,
+      "psnrDb": 35.59,
+      "mipLevels": 12,
+      "enabled": true
+    },
+    {
+      "id": "neptune",
+      "width": 2048,
+      "height": 1024,
+      "jpgBytes": 241580,
+      "ktx2Bytes": 193994,
+      "gpuEtc2Bytes": 1398120,
+      "psnrDb": 35.9,
+      "mipLevels": 12,
+      "enabled": true
+    },
+    {
+      "id": "satellites/io",
+      "width": 1024,
+      "height": 512,
+      "jpgBytes": 201833,
+      "ktx2Bytes": 252874,
+      "gpuEtc2Bytes": 349544,
+      "psnrDb": 35.23,
+      "mipLevels": 11,
+      "enabled": false
+    },
+    {
+      "id": "satellites/europa",
+      "width": 1024,
+      "height": 512,
+      "jpgBytes": 71532,
+      "ktx2Bytes": 226750,
+      "gpuEtc2Bytes": 349544,
+      "psnrDb": 40.77,
+      "mipLevels": 11,
+      "enabled": false
+    },
+    {
+      "id": "satellites/ganymede",
+      "width": 1024,
+      "height": 512,
+      "jpgBytes": 78790,
+      "ktx2Bytes": 246759,
+      "gpuEtc2Bytes": 349544,
+      "psnrDb": 35.77,
+      "mipLevels": 11,
+      "enabled": false
+    },
+    {
+      "id": "satellites/callisto",
+      "width": 1024,
+      "height": 498,
+      "jpgBytes": 264772,
+      "ktx2Bytes": 205908,
+      "gpuEtc2Bytes": 341864,
+      "psnrDb": 42.36,
+      "mipLevels": 11,
+      "enabled": true
+    },
+    {
+      "id": "satellites/titan",
+      "width": 1024,
+      "height": 512,
+      "jpgBytes": 75927,
+      "ktx2Bytes": 243568,
+      "gpuEtc2Bytes": 349544,
+      "psnrDb": 40.56,
+      "mipLevels": 11,
+      "enabled": false
+    },
+    {
+      "id": "satellites/triton",
+      "width": 1024,
+      "height": 512,
+      "jpgBytes": 129677,
+      "ktx2Bytes": 173028,
+      "gpuEtc2Bytes": 349544,
+      "psnrDb": 36.77,
+      "mipLevels": 11,
+      "enabled": false
+    }
+  ]
+}
