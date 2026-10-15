@@ -214,7 +214,7 @@ export function addNightSideLighting(material) {
     shader.fragmentShader = shader.fragmentShader.replace('#include <emissivemap_fragment>',
       '#include <emissivemap_fragment>\nfloat sunlight = dot(normalize(vNightWorldNormal), normalize(-vNightWorldPosition));\ntotalEmissiveRadiance *= 1.0 - smoothstep(-0.18, 0.12, sunlight);');
   };
-  material.customProgramCacheKey = () => 'night-side-lighting-v2';
+  material.customProgramCacheKey = () => 'night-side-lighting';
   return material;
 }
 

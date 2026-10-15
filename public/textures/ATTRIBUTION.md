@@ -1,4 +1,4 @@
-# COSMOS ATLAS V2.0 — 纹理素材来源
+# COSMOS ATLAS — 纹理素材来源
 
 本项目使用公开的天体表面纹理，随应用一起分发。感谢素材创作者及 NASA / USGS 的观测数据。
 

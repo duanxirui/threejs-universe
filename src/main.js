@@ -1,5 +1,5 @@
 import './styles.css';
-import './v2.css';
+import './exploration.css';
 import { UniverseApp } from './core/UniverseApp.js';
 import { CELESTIALS, ALL_BODIES, ALL_BY_ID, SATELLITES_BY_PARENT } from './data/celestials.js';
 
