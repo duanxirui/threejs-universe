@@ -1,0 +1,618 @@
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { gsap } from 'gsap';
+import { CELESTIALS, SATELLITES, ALL_BODIES } from '../data/celestials.js';
+import { createGlowTexture } from '../universe/proceduralTextures.js';
+import { createGalaxy, createStarfield } from '../universe/createGalaxy.js';
+import { createSolarSystem } from '../universe/createSolarSystem.js';
+
+const GALAXY_CAMERA = new THREE.Vector3(0, 15, 116);
+const SOLAR_CAMERA = new THREE.Vector3(0, 42, 100);
+const ORIGIN = new THREE.Vector3(0, 0, 0);
+
+export class UniverseApp {
+  constructor(canvas, options = {}) {
+    this.canvas = canvas;
+    this.labelsLayer = options.labelsLayer;
+    this.transitionElement = options.transitionElement;
+    this.onStateChange = options.onStateChange || (() => {});
+    this.onCameraUpdate = options.onCameraUpdate || (() => {});
+    this.onToast = options.onToast || (() => {});
+    this.onTelemetry = options.onTelemetry || (() => {});
+    this.mode = 'galaxy';
+    this.focusId = null;
+    this.timeScale = 1;
+    this.flightSpeed = 1;
+    this.paused = false;
+    this.qualityMode = 'auto';
+    this.fps = 60;
+    this.lowFpsDuration = 0;
+    this.frameSampleSeconds = 0;
+    this.frameSamples = 0;
+    this.isCompact = window.innerWidth <= 640;
+    this.showOrbits = true;
+    this.showLabels = true;
+    this.transitioning = false;
+    this.flying = false;
+    this.lastTrackedPosition = null;
+    this.keys = new Set();
+    this.pointerStart = null;
+    this.frame = 0;
+    this.elapsed = 0;
+    this.clock = new THREE.Clock();
+
+    this.scene = new THREE.Scene();
+    this.scene.background = new THREE.Color('#030711');
+    this.camera = new THREE.PerspectiveCamera(49, window.innerWidth / window.innerHeight, .06, 1600);
+    this.camera.position.copy(GALAXY_CAMERA);
+    this.renderer = new THREE.WebGLRenderer({
+      canvas: this.canvas,
+      antialias: true,
+      powerPreference: 'high-performance'
+    });
+    this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 1.4;
+    this.pixelRatio = this.getTargetPixelRatio();
+    this.renderer.setPixelRatio(this.pixelRatio);
+    this.renderer.setSize(window.innerWidth, window.innerHeight, false);
+    this.composer = new EffectComposer(this.renderer);
+    this.composer.addPass(new RenderPass(this.scene, this.camera));
+    this.bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(window.innerWidth, window.innerHeight), .5, .4, .84
+    );
+    this.composer.addPass(this.bloomPass);
+    this.composer.addPass(new OutputPass());
+    this.composer.setPixelRatio(this.pixelRatio);
+    this.composer.setSize(window.innerWidth, window.innerHeight);
+    this.useBloom = !this.isCompact;
+
+    this.controls = new OrbitControls(this.camera, this.canvas);
+    this.controls.enableDamping = true;
+    this.controls.dampingFactor = .06;
+    this.controls.rotateSpeed = .52;
+    this.controls.zoomSpeed = .83;
+    this.controls.panSpeed = .7;
+    this.controls.minDistance = 6;
+    this.controls.maxDistance = 290;
+    this.controls.autoRotate = true;
+    this.controls.autoRotateSpeed = .14;
+    this.controls.touches.ONE = THREE.TOUCH.ROTATE;
+    this.controls.touches.TWO = THREE.TOUCH.DOLLY_PAN;
+    this.controls.target.copy(ORIGIN);
+
+    this.scene.add(new THREE.HemisphereLight(0x8ca9d5, 0x14111c, .75));
+    this.scene.add(new THREE.AmbientLight(0x8ea6cb, .19));
+    const glowTexture = createGlowTexture();
+    this.starfield = createStarfield(this.pixelRatio);
+    this.scene.add(this.starfield);
+    this.galaxy = createGalaxy(glowTexture, this.pixelRatio, this.isCompact ? .68 : 1);
+    this.scene.add(this.galaxy.group);
+    this.solar = createSolarSystem(glowTexture);
+    this.scene.add(this.solar.group);
+
+    this.raycaster = new THREE.Raycaster();
+    this.pointerNdc = new THREE.Vector2();
+    this.labels = new Map();
+    this.createLabels();
+    // Assets are loaded asynchronously; initial materials render immediately.
+    window.setTimeout(() => this.solar.loadTextures(), 0);
+    this.bindEvents();
+    this.emitState();
+    this.animate();
+  }
+
+  createLabels() {
+    if (!this.labelsLayer) return;
+    for (const body of ALL_BODIES) {
+      const label = document.createElement('div');
+      label.className = 'planet-label';
+      label.textContent = body.name;
+      this.labelsLayer.appendChild(label);
+      this.labels.set(body.id, label);
+    }
+    this.galaxyLabel = document.createElement('div');
+    this.galaxyLabel.className = 'galaxy-marker-label';
+    this.galaxyLabel.textContent = '✦ 太阳系 · SOLAR SYSTEM';
+    this.labelsLayer.appendChild(this.galaxyLabel);
+  }
+
+  getTargetPixelRatio() {
+    const native = window.devicePixelRatio || 1;
+    const cap = this.qualityMode === 'high' ? 2 :
+      this.qualityMode === 'low' ? 1 : this.isCompact ? 1.2 : 1.75;
+    return Math.min(native, cap);
+  }
+
+  setQuality(mode) {
+    this.qualityMode = ['auto', 'low', 'high'].includes(mode) ? mode : 'auto';
+    this.useBloom = this.qualityMode === 'high' ||
+      (this.qualityMode === 'auto' && !this.isCompact);
+    this.pixelRatio = this.getTargetPixelRatio();
+    this.renderer.setPixelRatio(this.pixelRatio);
+    this.composer.setPixelRatio(this.pixelRatio);
+    this.composer.setSize(window.innerWidth, window.innerHeight);
+    this.galaxy.resize(this.pixelRatio);
+    this.starfield.material.uniforms.uPixelRatio.value = this.pixelRatio;
+    this.emitState();
+  }
+
+  bindEvents() {
+    this.handleResize = () => {
+      this.isCompact = window.innerWidth <= 640;
+      this.camera.aspect = window.innerWidth / window.innerHeight;
+      this.camera.updateProjectionMatrix();
+      this.pixelRatio = this.getTargetPixelRatio();
+      this.renderer.setPixelRatio(this.pixelRatio);
+      this.renderer.setSize(window.innerWidth, window.innerHeight, false);
+      this.composer.setPixelRatio(this.pixelRatio);
+      this.composer.setSize(window.innerWidth, window.innerHeight);
+      if (this.qualityMode === 'auto') this.useBloom = !this.isCompact;
+      this.galaxy.resize(this.pixelRatio);
+      this.starfield.material.uniforms.uPixelRatio.value = this.pixelRatio;
+    };
+    window.addEventListener('resize', this.handleResize);
+    this.canvas.addEventListener('pointerdown', event => {
+      this.pointerStart = { x: event.clientX, y: event.clientY };
+    });
+    this.canvas.addEventListener('pointerup', event => {
+      if (!this.pointerStart || this.transitioning || this.flying) return;
+      const travel = Math.hypot(event.clientX - this.pointerStart.x, event.clientY - this.pointerStart.y);
+      this.pointerStart = null;
+      if (travel < 6 && event.button === 0) this.selectFromPointer(event);
+    });
+    this.canvas.addEventListener('pointermove', event => {
+      if (!this.solar.group.visible || this.transitioning) {
+        this.canvas.style.cursor = 'grab';
+        return;
+      }
+      this.canvas.style.cursor = this.pickBody(event) ? 'pointer' : 'grab';
+    });
+    this.canvas.addEventListener('pointerleave', () => {
+      this.pointerStart = null;
+      this.canvas.style.cursor = 'grab';
+    });
+    this.handleKeyDown = event => {
+      if (event.target instanceof HTMLElement && ['INPUT', 'TEXTAREA'].includes(event.target.tagName)) return;
+      if (document.querySelector('.modal-overlay.is-open')) return;
+      if (['Space', 'ArrowUp', 'ArrowDown'].includes(event.code) && this.mode === 'free') event.preventDefault();
+      this.keys.add(event.code);
+    };
+    this.handleKeyUp = event => this.keys.delete(event.code);
+    window.addEventListener('keydown', this.handleKeyDown);
+    window.addEventListener('keyup', this.handleKeyUp);
+    window.addEventListener('blur', () => this.keys.clear());
+  }
+
+  pickBody(event) {
+    const rect = this.canvas.getBoundingClientRect();
+    this.pointerNdc.set(
+      ((event.clientX - rect.left) / rect.width) * 2 - 1,
+      -((event.clientY - rect.top) / rect.height) * 2 + 1
+    );
+    this.raycaster.setFromCamera(this.pointerNdc, this.camera);
+    const hits = this.raycaster.intersectObjects(this.solar.raycastMeshes, false);
+    return hits.length ? hits[0].object.userData.bodyId : null;
+  }
+
+  selectFromPointer(event) {
+    if (this.mode === 'galaxy') {
+      const rect = this.canvas.getBoundingClientRect();
+      this.pointerNdc.set(
+        ((event.clientX - rect.left) / rect.width) * 2 - 1,
+        -((event.clientY - rect.top) / rect.height) * 2 + 1
+      );
+      this.raycaster.setFromCamera(this.pointerNdc, this.camera);
+      if (this.raycaster.intersectObject(this.galaxy.beaconCore).length) this.viewSolar();
+      return;
+    }
+    if (!this.solar.group.visible) return;
+    const id = this.pickBody(event);
+    if (id) this.focusBody(id);
+  }
+
+  emitState() {
+    this.onStateChange({
+      mode: this.mode,
+      focusId: this.focusId,
+      paused: this.paused,
+      timeScale: this.timeScale,
+      flightSpeed: this.flightSpeed,
+      qualityMode: this.qualityMode,
+      showOrbits: this.showOrbits,
+      showLabels: this.showLabels
+    });
+  }
+
+  getSolarOverview() {
+    // Give the solar system the right side of a portrait screen, where the
+    // introductory copy does not cover it.
+    if (window.innerWidth <= 640) {
+      return {
+        camera: new THREE.Vector3(-10, 42, 100),
+        target: new THREE.Vector3(-10, 0, 0)
+      };
+    }
+    return { camera: SOLAR_CAMERA, target: ORIGIN };
+  }
+
+  changeScene(destination) {
+    if (this.transitioning) return Promise.resolve(false);
+    this.transitioning = true;
+    this.flying = true;
+    if (this.flightTween) this.flightTween.kill();
+    if (this.sceneTimeline) this.sceneTimeline.kill();
+    this.controls.enabled = false;
+
+    return new Promise(resolve => {
+      const toSolar = destination !== 'galaxy';
+      const fromGalaxy = this.mode === 'galaxy';
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const startPos = this.camera.position.clone();
+      const startTarget = this.controls.target.clone();
+      const marker = this.galaxy.beacon.getWorldPosition(new THREE.Vector3());
+      const flyDestination = fromGalaxy ? marker.clone().add(new THREE.Vector3(0, 5, 9)) :
+        startPos.clone().add(startPos.clone().sub(startTarget).normalize().multiplyScalar(38));
+      const flyTarget = fromGalaxy ? marker : ORIGIN;
+      const flight = { t: 0 };
+      this.sceneTimeline = gsap.timeline({ onComplete: () => {
+        this.transitioning = false;
+        this.flying = false;
+        this.controls.enabled = true;
+        resolve(true);
+      }});
+      if (!reduceMotion) {
+        this.sceneTimeline.to(flight, {
+          t: 1, duration: fromGalaxy ? 1.2 : .9, ease: 'power3.inOut',
+          onUpdate: () => {
+            this.camera.position.copy(startPos).lerp(flyDestination, flight.t);
+            this.controls.target.copy(startTarget).lerp(flyTarget, flight.t);
+          }
+        });
+      }
+      this.sceneTimeline.to(this.transitionElement, {
+        opacity: 1, duration: reduceMotion ? .18 : .35, ease: 'power2.in',
+        onComplete: () => {
+          this.focusId = null;
+          this.lastTrackedPosition = null;
+          this.mode = destination;
+          this.solar.group.visible = toSolar;
+          this.galaxy.group.visible = !toSolar;
+          const overview = this.getSolarOverview();
+          const endPos = toSolar ? overview.camera : GALAXY_CAMERA;
+          const endTarget = toSolar ? overview.target : ORIGIN;
+          this.camera.position.copy(endPos).multiplyScalar(toSolar ? 1.14 : .76);
+          this.controls.target.copy(endTarget);
+          this.controls.minDistance = toSolar ? 1.1 : 6;
+          this.controls.maxDistance = toSolar ? 220 : 290;
+          this.controls.autoRotate = !toSolar;
+          this.controls.update();
+          this.emitState();
+          gsap.to(this.camera.position, {
+            x: endPos.x, y: endPos.y, z: endPos.z,
+            duration: reduceMotion ? .01 : .85, ease: 'power2.out'
+          });
+        }
+      });
+      this.sceneTimeline.to(this.transitionElement, {
+        opacity: 0, duration: reduceMotion ? .2 : .9, ease: 'power2.out'
+      });
+    });
+  }
+
+  animateCamera(destination, target, duration = 1.8) {
+    if (this.flightTween) this.flightTween.kill();
+    gsap.killTweensOf(this.camera.position);
+    gsap.killTweensOf(this.controls.target);
+    this.flying = true;
+    this.controls.enabled = false;
+    const startPos = this.camera.position.clone();
+    const startTarget = this.controls.target.clone();
+    const midpoint = startPos.clone().lerp(destination, .5)
+      .add(new THREE.Vector3(0, startPos.distanceTo(destination) * .1, 0));
+    const motion = { t: 0 };
+    this.flightTween = gsap.to(motion, {
+      t: 1,
+      duration,
+      ease: 'power3.inOut',
+      onUpdate: () => {
+        const t = motion.t, s = 1 - t;
+        this.camera.position.set(
+          s * s * startPos.x + 2 * s * t * midpoint.x + t * t * destination.x,
+          s * s * startPos.y + 2 * s * t * midpoint.y + t * t * destination.y,
+          s * s * startPos.z + 2 * s * t * midpoint.z + t * t * destination.z
+        );
+        this.controls.target.copy(startTarget).lerp(target, motion.t);
+      },
+      onComplete: () => {
+        this.flying = false;
+        this.controls.enabled = true;
+      }
+    });
+  }
+
+  async viewGalaxy() {
+    if (this.transitioning) return;
+    if (this.mode !== 'galaxy') {
+      await this.changeScene('galaxy');
+    } else {
+      this.focusId = null;
+      this.controls.autoRotate = true;
+      this.animateCamera(GALAXY_CAMERA, ORIGIN);
+      this.emitState();
+    }
+  }
+
+  async viewSolar() {
+    if (this.transitioning) return;
+    if (this.mode === 'galaxy') {
+      await this.changeScene('solar');
+    } else {
+      this.mode = 'solar';
+      this.focusId = null;
+      this.lastTrackedPosition = null;
+      this.controls.autoRotate = false;
+      this.controls.minDistance = 2;
+      this.controls.maxDistance = 220;
+      const overview = this.getSolarOverview();
+      this.animateCamera(overview.camera, overview.target);
+      this.emitState();
+    }
+  }
+
+  async activateFree() {
+    if (this.transitioning) return;
+    if (this.mode === 'galaxy') await this.changeScene('free');
+    this.mode = 'free';
+    this.focusId = null;
+    this.lastTrackedPosition = null;
+    if (this.flightTween) this.flightTween.kill();
+    this.flying = false;
+    this.controls.enabled = true;
+    this.controls.autoRotate = false;
+    this.controls.minDistance = .6;
+    this.emitState();
+    this.onToast('自由漫游已开启 · 使用 W A S D 与空格 / Shift 移动');
+  }
+
+  async focusBody(id) {
+    const body = this.solar.bodies[id];
+    if (!body || this.transitioning) return;
+    if (this.mode === 'galaxy') {
+      const switched = await this.changeScene('solar');
+      if (!switched) return;
+    }
+    if (this.flightTween) this.flightTween.kill();
+    this.flying = true;
+    this.controls.enabled = false;
+    this.controls.autoRotate = false;
+    this.mode = 'planet';
+    this.focusId = id;
+    this.lastTrackedPosition = null;
+    this.controls.minDistance = Math.max(.65, body.data.radius * 1.5);
+    this.controls.maxDistance = 160;
+    this.emitState();
+
+    const compact = window.innerWidth <= 640;
+    const scale = compact ? (id === 'saturn' ? 12.5 : 9.3) : (id === 'sun' ? 5.5 : 6.3);
+    const distance = Math.max(body.data.parentId ? (compact ? 2.7 : 1.35) : (compact ? 5 : 3.3), body.data.radius * scale);
+    const offset = new THREE.Vector3(distance * .55, distance * .31, distance);
+    // In portrait layout the information sheet sits below the 3D viewport.
+    // Aim slightly below the body so it appears above the sheet.
+    const focusShift = compact
+      ? new THREE.Vector3(0, -distance * (window.innerHeight < 700 ? .29 : .25), 0)
+      : new THREE.Vector3();
+    const startPos = this.camera.position.clone();
+    const startTarget = this.controls.target.clone();
+    const midpoint = startPos.clone().lerp(body.root.getWorldPosition(new THREE.Vector3()).add(offset), .46);
+    midpoint.y += Math.min(24, startPos.distanceTo(midpoint) * .13);
+    const motion = { t: 0 };
+    const now = new THREE.Vector3();
+    this.flightTween = gsap.to(motion, {
+      t: 1,
+      duration: 1.9,
+      ease: 'power3.inOut',
+      onUpdate: () => {
+        body.root.getWorldPosition(now);
+        const destination = now.clone().add(offset);
+        const t = motion.t, s = 1 - t;
+        this.camera.position.set(
+          s * s * startPos.x + 2 * s * t * midpoint.x + t * t * destination.x,
+          s * s * startPos.y + 2 * s * t * midpoint.y + t * t * destination.y,
+          s * s * startPos.z + 2 * s * t * midpoint.z + t * t * destination.z
+        );
+        this.controls.target.copy(startTarget).lerp(now.clone().add(focusShift), motion.t);
+      },
+      onComplete: () => {
+        this.flying = false;
+        this.controls.enabled = true;
+        this.lastTrackedPosition = body.root.getWorldPosition(new THREE.Vector3());
+      }
+    });
+  }
+
+  setTimeScale(value) {
+    this.timeScale = Math.max(0, Math.min(50, Number(value)));
+    if (this.timeScale > 0 && this.paused) this.paused = false;
+    this.emitState();
+  }
+
+  togglePaused() {
+    this.paused = !this.paused;
+    this.emitState();
+  }
+
+  toggleOrbits() {
+    this.showOrbits = !this.showOrbits;
+    this.solar.setOrbitsVisible(this.showOrbits);
+    this.emitState();
+  }
+
+  toggleLabels() {
+    this.showLabels = !this.showLabels;
+    this.emitState();
+  }
+
+  setFlightSpeed(value) {
+    this.flightSpeed = Math.max(.5, Math.min(4, Number(value)));
+    this.emitState();
+  }
+
+  zoom(factor) {
+    const offset = this.camera.position.clone().sub(this.controls.target);
+    const distance = offset.length();
+    const desired = THREE.MathUtils.clamp(distance * factor, this.controls.minDistance, this.controls.maxDistance);
+    this.camera.position.copy(this.controls.target).add(offset.multiplyScalar(desired / distance));
+  }
+
+  updateFreeMovement(delta) {
+    if (this.mode !== 'free' || this.flying || this.transitioning) return;
+    const forward = this.camera.getWorldDirection(new THREE.Vector3());
+    const right = new THREE.Vector3().crossVectors(forward, this.camera.up).normalize();
+    const movement = new THREE.Vector3();
+    if (this.keys.has('KeyW')) movement.add(forward);
+    if (this.keys.has('KeyS')) movement.sub(forward);
+    if (this.keys.has('KeyD')) movement.add(right);
+    if (this.keys.has('KeyA')) movement.sub(right);
+    if (this.keys.has('Space')) movement.y += 1;
+    if (this.keys.has('ShiftLeft') || this.keys.has('ShiftRight')) movement.y -= 1;
+    if (movement.lengthSq() === 0) return;
+    movement.normalize().multiplyScalar(17 * delta * this.flightSpeed);
+    this.camera.position.add(movement);
+    this.controls.target.add(movement);
+    for (const body of CELESTIALS) {
+      if (body.id === 'sun' || !this.solar.group.visible) continue;
+      const location = this.solar.bodies[body.id].root.getWorldPosition(new THREE.Vector3());
+      const deltaPos = this.camera.position.clone().sub(location);
+      const safeRadius = body.radius * 1.08;
+      if (deltaPos.lengthSq() < safeRadius * safeRadius) {
+        this.camera.position.copy(location).add(deltaPos.normalize().multiplyScalar(safeRadius));
+        this.controls.target.add(this.camera.position.clone().sub(location).multiplyScalar(.02));
+      }
+    }
+  }
+
+  updateLabels() {
+    const show = this.showLabels && this.solar.group.visible && !this.transitioning;
+    const width = window.innerWidth, height = window.innerHeight;
+    const world = new THREE.Vector3();
+    const protectedAreas = ['.topbar', '.bottom-interface', '.hero-panel:not(.is-hidden)', '.detail-panel.is-visible']
+      .map(selector => document.querySelector(selector))
+      .filter(Boolean)
+      .map(element => element.getBoundingClientRect());
+    const usedLabels = [];
+    for (const body of ALL_BODIES) {
+      const label = this.labels.get(body.id);
+      if (!label) continue;
+      const focusedMoon = SATELLITES.some(moon => moon.id === this.focusId);
+      const showSatellite = !body.parentId ||
+        (this.mode === 'planet' && (
+          this.focusId === body.parentId ||
+          (focusedMoon && this.solar.bodies[this.focusId].data.parentId === body.parentId)
+        ));
+      if (!show || !showSatellite) {
+        label.classList.remove('is-visible');
+        continue;
+      }
+      this.solar.bodies[body.id].root.getWorldPosition(world);
+      world.y += body.radius * 1.55;
+      world.project(this.camera);
+      const x = (world.x * .5 + .5) * width;
+      const y = (-world.y * .5 + .5) * height;
+      const labelBounds = { left: x - 37, right: x + 37, top: y - 12, bottom: y + 12 };
+      const overlaps = region => labelBounds.left < region.right + 8 &&
+        labelBounds.right > region.left - 8 &&
+        labelBounds.top < region.bottom + 8 &&
+        labelBounds.bottom > region.top - 8;
+      const visible = world.z < 1 && world.z > -1 &&
+        Math.abs(world.x) < .92 && Math.abs(world.y) < .90 &&
+        !(this.mode === 'planet' && body.id === this.focusId) &&
+        !protectedAreas.some(overlaps) && !usedLabels.some(overlaps);
+      label.classList.toggle('is-visible', visible);
+      if (visible) {
+        usedLabels.push(labelBounds);
+        label.style.transform = 'translate(-50%, -50%) translate(' + x + 'px, ' + y + 'px)';
+      }
+    }
+    if (this.galaxyLabel) {
+      const markerVisible = this.mode === 'galaxy' && !this.transitioning && this.showLabels;
+      if (markerVisible) {
+        this.galaxy.beacon.getWorldPosition(world);
+        world.project(this.camera);
+        const x = (world.x * .5 + .5) * width;
+        const y = (-world.y * .5 + .5) * height;
+        const clear = world.z > -1 && world.z < 1 && x > width * .34 &&
+          x < width - 70 && y > 120 && y < height - 200;
+        this.galaxyLabel.classList.toggle('is-visible', clear);
+        if (clear) this.galaxyLabel.style.transform = `translate(${x}px, ${y}px)`;
+      } else this.galaxyLabel.classList.remove('is-visible');
+    }
+  }
+
+  updatePerformance(delta) {
+    this.frameSampleSeconds += delta;
+    this.frameSamples += 1;
+    if (this.frameSampleSeconds < 1.3) return;
+    this.fps = Math.round(this.frameSamples / this.frameSampleSeconds);
+    const interval = this.frameSampleSeconds;
+    this.frameSampleSeconds = 0;
+    this.frameSamples = 0;
+    // Adaptive DPR is conservative and only engages in AUTO mode.
+    if (this.qualityMode === 'auto' && this.fps < 29) {
+      this.lowFpsDuration += interval;
+      if (this.lowFpsDuration > 5 && this.pixelRatio > .85) {
+        this.pixelRatio = Math.max(.85, this.pixelRatio - .15);
+        this.renderer.setPixelRatio(this.pixelRatio);
+        this.composer.setPixelRatio(this.pixelRatio);
+        this.composer.setSize(window.innerWidth, window.innerHeight);
+        this.lowFpsDuration = 0;
+      }
+    } else this.lowFpsDuration = 0;
+    this.onTelemetry({ fps: this.fps, simulatedDays: this.solar.getSimulationDays() });
+  }
+
+  animate = () => {
+    this.animationId = requestAnimationFrame(this.animate);
+    const delta = Math.min(this.clock.getDelta(), .05);
+    this.elapsed += delta;
+    this.galaxy.update(delta, this.elapsed);
+    this.starfield.material.uniforms.uTime.value = this.elapsed;
+    this.solar.update(delta, this.paused ? 0 : this.timeScale);
+    this.updatePerformance(delta);
+    this.updateFreeMovement(delta);
+
+    if (this.mode === 'planet' && this.focusId && !this.flying && this.lastTrackedPosition) {
+      const current = this.solar.bodies[this.focusId].root.getWorldPosition(new THREE.Vector3());
+      const difference = current.clone().sub(this.lastTrackedPosition);
+      this.camera.position.add(difference);
+      this.controls.target.add(difference);
+      this.lastTrackedPosition.copy(current);
+    }
+
+    this.controls.update();
+    if (this.useBloom) this.composer.render();
+    else this.renderer.render(this.scene, this.camera);
+    this.frame++;
+    if (this.frame % 3 === 0) this.updateLabels();
+    if (this.solar.group.visible && this.frame % 22 === 0) {
+      this.solar.updateLevelOfDetail(this.camera);
+    }
+    if (this.frame % 18 === 0) {
+      this.onCameraUpdate(this.camera.position.distanceTo(this.controls.target));
+    }
+  };
+
+  dispose() {
+    cancelAnimationFrame(this.animationId);
+    window.removeEventListener('resize', this.handleResize);
+    window.removeEventListener('keydown', this.handleKeyDown);
+    window.removeEventListener('keyup', this.handleKeyUp);
+    this.controls.dispose();
+    this.composer.dispose();
+    this.renderer.dispose();
+  }
+}

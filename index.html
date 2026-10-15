@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#050912" />
+    <meta name="description" content="一座可交互的 3D 宇宙。穿越银河系，走进太阳系，探索每一颗行星。" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>COSMOS ATLAS V2 · 3D 宇宙图鉴</title>
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="universe-canvas" aria-label="可交互的 3D 宇宙场景"></canvas>
+      <div id="labels-layer" class="labels-layer" aria-hidden="true"></div>
+      <div class="cinema-vignette" aria-hidden="true"></div>
+      <div class="film-grain" aria-hidden="true"></div>
+      <div id="scene-transition" class="scene-transition" aria-hidden="true"></div>
+
+      <header class="topbar">
+        <button class="brand" id="brand-home" aria-label="返回银河系">
+          <span class="brand-symbol" aria-hidden="true"><span></span></span>
+          <span class="brand-text"><strong>COSMOS <sup>V2</sup></strong><small>宇宙图鉴 · ATLAS</small></span>
+        </button>
+
+        <nav class="view-nav" aria-label="场景导航">
+          <button class="view-link is-active" data-view="galaxy"><span>01</span> 宇宙全景</button>
+          <button class="view-link" data-view="solar"><span>02</span> 太阳系</button>
+          <button class="view-link" data-view="free"><span>03</span> 自由漫游</button>
+        </nav>
+
+        <div class="top-actions">
+          <span class="render-status"><i></i> LIVE 3D <b id="fps-value">60 FPS</b></span>
+          <label class="quality-control" title="调整渲染画质">
+            <span>画质</span>
+            <select id="quality-select" aria-label="渲染画质">
+              <option value="auto">自动</option>
+              <option value="low">省电</option>
+              <option value="high">极致</option>
+            </select>
+          </label>
+          <button id="search-trigger" class="icon-button" aria-label="搜索天体" title="搜索天体 (/)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m16 16 5 5"/></svg>
+          </button>
+          <button id="help-trigger" class="icon-button help-button" aria-label="操作帮助" title="操作帮助">?</button>
+        </div>
+      </header>
+
+      <main class="stage-layout">
+        <section class="hero-panel" id="hero-panel">
+          <div class="eyebrow"><span class="eyebrow-mark"></span><span id="hero-eyebrow">AN INFINITE JOURNEY</span></div>
+          <h1 id="hero-title">宇宙，不止<br /><em>于仰望。</em></h1>
+          <p class="hero-description" id="hero-description">从亿万星辰汇成的银河，到太阳系里每一颗独特的行星。现在，开启属于你的星际旅程。</p>
+          <div class="hero-actions">
+            <button id="primary-action" class="primary-button">进入太阳系 <span aria-hidden="true">↗</span></button>
+            <button id="secondary-action" class="text-button">聚焦地球 <span aria-hidden="true">→</span></button>
+          </div>
+          <div class="hero-divider"></div>
+          <div class="hero-metrics">
+            <div><span class="metric-label" id="metric-a-label">银河直径</span><strong id="metric-a-value">约 10 万光年</strong></div>
+            <div><span class="metric-label" id="metric-b-label">恒星数量</span><strong id="metric-b-value">约 1000–4000 亿</strong></div>
+          </div>
+        </section>
+
+        <aside id="detail-panel" class="detail-panel" aria-live="polite" aria-hidden="true">
+          <button id="detail-sheet-handle" class="detail-sheet-handle" type="button" aria-label="展开或折叠天体资料" aria-expanded="true"><span></span></button>
+          <div class="detail-topline"><span>CELESTIAL ARCHIVE <span id="detail-number">/ 03</span></span>
+            <button id="detail-close" class="detail-close" aria-label="关闭天体详情">×</button>
+          </div>
+          <div id="detail-orb" class="detail-orb" aria-hidden="true"></div>
+          <div class="detail-category" id="detail-category">TERRESTRIAL PLANET</div>
+          <h2 id="detail-name">地球</h2>
+          <div id="detail-en" class="detail-en">EARTH</div>
+          <p id="detail-description" class="detail-description"></p>
+          <div class="detail-rule"></div>
+          <div class="detail-stats">
+            <div><span id="detail-distance-label">距太阳</span><strong id="detail-distance">1.00 AU</strong></div>
+            <div><span>直径</span><strong id="detail-diameter">12,742 km</strong></div>
+            <div><span>自转周期</span><strong id="detail-day">23.9 小时</strong></div>
+            <div><span>公转周期</span><strong id="detail-year">365.25 天</strong></div>
+          </div>
+          <div id="detail-moons" class="detail-moons" hidden>
+            <div class="detail-moons-title">探索主要卫星 <small>ORBITAL COMPANIONS</small></div>
+            <div id="detail-moon-list" class="detail-moon-list"></div>
+          </div>
+          <button id="detail-parent" class="detail-parent" hidden>↶ 返回母星</button>
+          <button id="detail-compare-trigger" class="detail-compare-trigger" type="button">⇄ 对比其他天体</button>
+          <div class="detail-navigation">
+            <button id="detail-back" class="detail-back"><span>←</span> 返回太阳系全景</button>
+            <div class="detail-next-prev">
+              <button id="detail-prev" aria-label="上一个行星" title="上一个行星">‹</button>
+              <button id="detail-next" aria-label="下一个行星" title="下一个行星">›</button>
+            </div>
+          </div>
+        </aside>
+      </main>
+
+      <div class="side-readout">
+        <span class="side-track"></span>
+        <span>EXPLORE THE UNKNOWN</span>
+        <span class="side-track"></span>
+      </div>
+
+      <div class="camera-tools">
+        <div id="camera-distance" class="camera-distance">CAM / 82.0</div>
+        <div class="camera-zoom">
+          <button id="zoom-in" aria-label="放大">+</button>
+          <span></span>
+          <button id="zoom-out" aria-label="缩小">−</button>
+        </div>
+      </div>
+
+      <footer class="bottom-interface">
+        <div class="simulation-panel">
+          <div class="section-caption"><span class="caption-dot"></span> TIME CONTROL <span class="section-meta" id="sim-date">演示时间 · 2026.01.01</span></div>
+          <div class="time-row">
+            <button id="play-pause" class="play-button" aria-label="暂停时间" title="暂停 / 播放">Ⅱ</button>
+            <div class="speed-readout"><strong id="speed-value">1.0×</strong><span>运行速度</span></div>
+            <input id="speed-range" type="range" min="0" max="6" value="2" step="1" aria-label="时间运行速度" />
+          </div>
+          <div class="simulation-options">
+            <button id="orbit-toggle" class="option-toggle is-on" aria-pressed="true"><i></i>轨道线</button>
+            <button id="label-toggle" class="option-toggle is-on" aria-pressed="true"><i></i>天体标签</button>
+            <label id="flight-speed-control" class="flight-speed-control" hidden>飞行速度
+              <select id="flight-speed" aria-label="自由漫游飞行速度">
+                <option value="0.5">慢速</option><option value="1" selected>标准</option>
+                <option value="2">快速</option><option value="4">极速</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div class="planet-dock">
+          <div class="dock-title"><div><span class="caption-dot"></span> SOLAR SYSTEM <span class="section-meta">天体导航</span></div><span class="dock-hint">选择一颗星球，开始探索 <b>↗</b></span></div>
+          <div id="planet-list" class="planet-list" aria-label="太阳系天体列表"></div>
+        </div>
+      </footer>
+
+      <div class="corner-note">SCIENTIFICALLY INSPIRED <span>·</span> VISUALLY RESCALED <span>·</span> <a href="/textures/ATTRIBUTION.md" target="_blank" rel="noopener noreferrer">贴图来源</a></div>
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+      <div id="search-overlay" class="modal-overlay" aria-hidden="true">
+        <div class="search-modal" role="dialog" aria-modal="true" aria-labelledby="search-title">
+          <div class="modal-heading"><div><small>DISCOVER</small><h2 id="search-title">寻找一颗星球</h2></div><button id="search-close" class="modal-close" aria-label="关闭搜索">×</button></div>
+          <div class="search-field"><span>⌕</span><input id="search-input" type="search" placeholder="搜索太阳、地球、木星..." autocomplete="off" /><kbd>ESC</kbd></div>
+          <div id="search-results" class="search-results"></div>
+          <p class="modal-footnote">选择天体后，镜头会自动飞往目标。</p>
+        </div>
+      </div>
+
+      <div id="help-overlay" class="modal-overlay" aria-hidden="true">
+        <div class="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-title">
+          <div class="modal-heading"><div><small>FLIGHT MANUAL</small><h2 id="help-title">探索指南</h2></div><button id="help-close" class="modal-close" aria-label="关闭帮助">×</button></div>
+          <div class="help-grid">
+            <div><span>拖动鼠标</span><strong>旋转视角</strong></div>
+            <div><span>滚动滚轮</span><strong>放大 / 缩小</strong></div>
+            <div><span>右键拖动</span><strong>平移场景</strong></div>
+            <div><span>点击星球</span><strong>飞向天体</strong></div>
+            <div><span>点击卫星资料</span><strong>探索月球 / 木卫 / 土卫</strong></div>
+            <div><span>点击银河标记</span><strong>进入太阳系</strong></div>
+            <div><span>W / A / S / D</span><strong>自由漫游移动</strong></div>
+            <div><span>Shift / 空格</span><strong>下降 / 上升</strong></div>
+            <div><span>/</span><strong>搜索天体</strong></div>
+            <div><span>ESC</span><strong>退出详情 / 对话框</strong></div>
+            <div><span>手机双指操作</span><strong>缩放、平移</strong></div>
+            <div><span>手机资料面板</span><strong>上划展开，下划收起</strong></div>
+          </div>
+          <p class="modal-footnote">为了兼顾视觉与探索体验，天体尺寸、轨道距离与运行速度进行了展示性缩放。</p>
+        </div>
+      </div>
+
+      <div id="compare-overlay" class="modal-overlay" aria-hidden="true">
+        <div class="compare-modal" role="dialog" aria-modal="true" aria-labelledby="compare-title">
+          <div class="modal-heading">
+            <div><small>CELESTIAL COMPARISON</small><h2 id="compare-title">探索两颗天体</h2></div>
+            <button id="compare-close" class="modal-close" aria-label="关闭天体对比">×</button>
+          </div>
+          <div class="compare-selects">
+            <label>天体 A<select id="compare-left" aria-label="对比天体 A"></select></label>
+            <span>VS</span>
+            <label>天体 B<select id="compare-right" aria-label="对比天体 B"></select></label>
+          </div>
+          <div id="compare-table" class="compare-table" aria-live="polite"></div>
+          <p class="modal-footnote">天体参数为近似科普数据。场景尺寸和公转速度采用展示性缩放。</p>
+        </div>
+      </div>
+
+      <div id="loading-screen" class="loading-screen">
+        <div class="loading-mark"><span></span></div>
+        <div class="loading-title">COSMOS <span>ATLAS</span></div>
+        <div class="loading-line"><i></i></div>
+        <p>正在点亮星辰 · INITIALIZING UNIVERSE</p>
+      </div>
+      <div id="fallback-message" class="fallback-message" hidden>当前浏览器无法启用 WebGL 3D 渲染。请更新浏览器或启用硬件加速后重试。</div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
