@@ -20,6 +20,18 @@ npm run preview
 
 将 `dist/` 目录部署在静态网站服务即可。所有天体贴图位于 `public/textures/`，无需在运行时请求第三方贴图服务器。
 
+## GitHub Pages 发布
+
+项目地址：<https://duanxirui.github.io/threejs-universe/>
+
+本项目使用 Vite，Pages 必须托管 **构建后的 `dist/`**，不能直接发布 `main` 分支根目录里的源码。
+
+1. 打开仓库 **Settings → Pages**，将 **Build and deployment → Source** 设置为 **GitHub Actions**。
+2. 将项目推送到 `main` 分支。仓库里的 `.github/workflows/deploy.yml` 会自动运行 `npm ci`、生产构建并发布 `dist/`。
+3. 到仓库 **Actions** 页面查看 `Deploy COSMOS ATLAS to GitHub Pages` 的部署状态；成功后访问上方链接。
+
+部署构建设置 `GITHUB_PAGES=true`，Vite 自动使用 `/threejs-universe/` 基础路径，行星和卫星贴图会从对应子目录加载。本地 `npm run dev` / `npm run build` 继续使用 `/`，无需修改启动地址。
+
 ## V2 功能
 
 - 银河系：四条旋臂、星云/星际尘埃、恒星粒子及可点击太阳系定位标记。
