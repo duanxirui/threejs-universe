@@ -33,11 +33,12 @@ export class UniverseApp {
     this.lowFpsDuration = 0;
     this.frameSampleSeconds = 0;
     this.frameSamples = 0;
-    this.isCompact = window.innerWidth <= 640;
+    this.isCompact = this.usesCompactLayout();
     this.showOrbits = true;
     this.showLabels = true;
     this.transitioning = false;
     this.flying = false;
+    this.focusFlight = null;
     this.lastTrackedPosition = null;
     this.keys = new Set();
     this.pointerStart = null;
@@ -98,6 +99,10 @@ export class UniverseApp {
     this.raycaster = new THREE.Raycaster();
     this.pointerNdc = new THREE.Vector2();
     this.labels = new Map();
+    this.labelSizes = new WeakMap();
+    this.labelResizeObserver = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(entries => {
+      for (const entry of entries) this.labelSizes.delete(entry.target);
+    });
     this.createLabels();
     // Assets are loaded asynchronously; initial materials render immediately.
     window.setTimeout(() => this.solar.loadTextures(), 0);
@@ -114,11 +119,22 @@ export class UniverseApp {
       label.textContent = body.name;
       this.labelsLayer.appendChild(label);
       this.labels.set(body.id, label);
+      this.labelResizeObserver?.observe(label);
     }
     this.galaxyLabel = document.createElement('div');
     this.galaxyLabel.className = 'galaxy-marker-label';
     this.galaxyLabel.textContent = '✦ 太阳系 · SOLAR SYSTEM';
     this.labelsLayer.appendChild(this.galaxyLabel);
+    this.labelResizeObserver?.observe(this.galaxyLabel);
+  }
+
+  getLabelSize(label, fallbackWidth, fallbackHeight) {
+    let size = this.labelSizes.get(label);
+    if (!size) {
+      size = { width: label.offsetWidth || fallbackWidth, height: label.offsetHeight || fallbackHeight };
+      this.labelSizes.set(label, size);
+    }
+    return size;
   }
 
   getTargetPixelRatio() {
@@ -126,6 +142,75 @@ export class UniverseApp {
     const cap = this.qualityMode === 'high' ? 2 :
       this.qualityMode === 'low' ? 1 : this.isCompact ? 1.2 : 1.75;
     return Math.min(native, cap);
+  }
+
+  usesCompactLayout() {
+    return window.matchMedia('(max-width: 640px), (max-width: 900px) and (max-height: 480px)').matches;
+  }
+
+  getSceneSafeRect() {
+    const width = window.innerWidth, height = window.innerHeight;
+    if (!this.isCompact) return { left: 0, right: width, top: 0, bottom: height };
+
+    const bounds = selector => document.querySelector(selector)?.getBoundingClientRect();
+    const header = bounds('.topbar');
+    const footer = bounds('.bottom-interface');
+    const detail = bounds('.detail-panel.is-visible');
+    const top = Math.max(8, (header?.bottom ?? 88) + 8);
+    let bottom = Math.min(height - 8, (footer?.top ?? height - 74) - 9);
+    // Temporary menus float over the canvas; opening them must not move the camera.
+    // In landscape the sheet sits on the left and does not cover the scene centre.
+    if (detail?.height && detail.left < width / 2 && detail.right > width / 2) {
+      bottom = Math.min(bottom, detail.top - 9);
+    }
+    return { left: 8, right: width - 8, top, bottom: Math.max(top + 64, bottom) };
+  }
+
+  getFocusShift(distance) {
+    if (!this.isCompact) return new THREE.Vector3();
+    const safe = this.getSceneSafeRect();
+    const centerY = (safe.top + safe.bottom) / 2;
+    const offset = THREE.MathUtils.clamp(centerY / window.innerHeight - .5, -.43, .43);
+    const visibleWorldHeight = 2 * distance * Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2));
+    return new THREE.Vector3(0, offset * visibleWorldHeight, 0);
+  }
+
+  reframeFocusedBody() {
+    if (!this.isCompact || this.mode !== 'planet' || !this.focusId || this.flying || this.transitioning) return;
+    const body = this.solar.bodies[this.focusId];
+    if (!body) return;
+    const position = body.root.getWorldPosition(new THREE.Vector3());
+    const distance = this.camera.position.distanceTo(position);
+    const shift = position.add(this.getFocusShift(distance)).sub(this.controls.target);
+    if (shift.lengthSq() < .0004) return;
+    this.reframeTween?.kill();
+    const motion = { progress: 0 };
+    let previous = 0;
+    this.reframeTween = gsap.to(motion, {
+      progress: 1,
+      duration: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : .32,
+      ease: 'power2.out',
+      onUpdate: () => {
+        // Pan camera and orbit pivot by the same delta while the planet moves.
+        const step = shift.clone().multiplyScalar(motion.progress - previous);
+        this.camera.position.add(step);
+        this.controls.target.add(step);
+        previous = motion.progress;
+      }
+    });
+  }
+
+  clearCameraMomentum() {
+    this.reframeTween?.kill();
+    // OrbitControls keeps rotation/pan inertia even when `enabled` is false.
+    // Consume it before GSAP takes ownership of the camera.
+    const damping = this.controls.enableDamping;
+    const autoRotate = this.controls.autoRotate;
+    this.controls.enableDamping = false;
+    this.controls.autoRotate = false;
+    this.controls.update();
+    this.controls.enableDamping = damping;
+    this.controls.autoRotate = autoRotate;
   }
 
   setQuality(mode) {
@@ -143,7 +228,8 @@ export class UniverseApp {
 
   bindEvents() {
     this.handleResize = () => {
-      this.isCompact = window.innerWidth <= 640;
+      this.labelSizes = new WeakMap();
+      this.isCompact = this.usesCompactLayout();
       this.camera.aspect = window.innerWidth / window.innerHeight;
       this.camera.updateProjectionMatrix();
       this.pixelRatio = this.getTargetPixelRatio();
@@ -157,6 +243,7 @@ export class UniverseApp {
     };
     window.addEventListener('resize', this.handleResize);
     this.canvas.addEventListener('pointerdown', event => {
+      this.reframeTween?.kill();
       this.pointerStart = { x: event.clientX, y: event.clientY };
     });
     this.canvas.addEventListener('pointerup', event => {
@@ -245,8 +332,12 @@ export class UniverseApp {
     this.transitioning = true;
     this.flying = true;
     if (this.flightTween) this.flightTween.kill();
+    this.focusFlight = null;
+    gsap.killTweensOf(this.camera.position);
+    gsap.killTweensOf(this.controls.target);
     if (this.sceneTimeline) this.sceneTimeline.kill();
     this.controls.enabled = false;
+    this.clearCameraMomentum();
 
     return new Promise(resolve => {
       const toSolar = destination !== 'galaxy';
@@ -290,7 +381,7 @@ export class UniverseApp {
           this.controls.minDistance = toSolar ? 1.1 : 6;
           this.controls.maxDistance = toSolar ? 220 : 290;
           this.controls.autoRotate = !toSolar;
-          this.controls.update();
+          this.camera.lookAt(this.controls.target);
           this.emitState();
           gsap.to(this.camera.position, {
             x: endPos.x, y: endPos.y, z: endPos.z,
@@ -306,10 +397,12 @@ export class UniverseApp {
 
   animateCamera(destination, target, duration = 1.8) {
     if (this.flightTween) this.flightTween.kill();
+    this.focusFlight = null;
     gsap.killTweensOf(this.camera.position);
     gsap.killTweensOf(this.controls.target);
     this.flying = true;
     this.controls.enabled = false;
+    this.clearCameraMomentum();
     const startPos = this.camera.position.clone();
     const startTarget = this.controls.target.clone();
     const midpoint = startPos.clone().lerp(destination, .5)
@@ -371,6 +464,9 @@ export class UniverseApp {
     this.focusId = null;
     this.lastTrackedPosition = null;
     if (this.flightTween) this.flightTween.kill();
+    this.focusFlight = null;
+    gsap.killTweensOf(this.camera.position);
+    gsap.killTweensOf(this.controls.target);
     this.flying = false;
     this.controls.enabled = true;
     this.controls.autoRotate = false;
@@ -387,9 +483,15 @@ export class UniverseApp {
       if (!switched) return;
     }
     if (this.flightTween) this.flightTween.kill();
+    this.focusFlight = null;
+    // Scene transitions can leave a short camera-position tween alive.
+    // Cancel it before starting the next body flight.
+    gsap.killTweensOf(this.camera.position);
+    gsap.killTweensOf(this.controls.target);
     this.flying = true;
     this.controls.enabled = false;
     this.controls.autoRotate = false;
+    this.clearCameraMomentum();
     this.mode = 'planet';
     this.focusId = id;
     this.lastTrackedPosition = null;
@@ -397,42 +499,54 @@ export class UniverseApp {
     this.controls.maxDistance = 160;
     this.emitState();
 
-    const compact = window.innerWidth <= 640;
+    const compact = this.isCompact;
     const scale = compact ? (id === 'saturn' ? 12.5 : 9.3) : (id === 'sun' ? 5.5 : 6.3);
     const distance = Math.max(body.data.parentId ? (compact ? 2.7 : 1.35) : (compact ? 5 : 3.3), body.data.radius * scale);
     const offset = new THREE.Vector3(distance * .55, distance * .31, distance);
-    // In portrait layout the information sheet sits below the 3D viewport.
-    // Aim slightly below the body so it appears above the sheet.
-    const focusShift = compact
-      ? new THREE.Vector3(0, -distance * (window.innerHeight < 700 ? .29 : .25), 0)
-      : new THREE.Vector3();
     const startPos = this.camera.position.clone();
     const startTarget = this.controls.target.clone();
     const midpoint = startPos.clone().lerp(body.root.getWorldPosition(new THREE.Vector3()).add(offset), .46);
     midpoint.y += Math.min(24, startPos.distanceTo(midpoint) * .13);
-    const motion = { t: 0 };
-    const now = new THREE.Vector3();
-    this.flightTween = gsap.to(motion, {
+    // GSAP advances progress only. The camera samples the planet's current
+    // world position in animate(), after this frame's orbital simulation.
+    const flight = {
+      body, offset, startPos, startTarget, midpoint,
+      focusShift: this.getFocusShift(offset.length()),
+      t: 0, complete: false,
+      now: new THREE.Vector3(),
+      destination: new THREE.Vector3(),
+      target: new THREE.Vector3()
+    };
+    this.focusFlight = flight;
+    this.flightTween = gsap.to(flight, {
       t: 1,
       duration: 1.9,
       ease: 'power3.inOut',
-      onUpdate: () => {
-        body.root.getWorldPosition(now);
-        const destination = now.clone().add(offset);
-        const t = motion.t, s = 1 - t;
-        this.camera.position.set(
-          s * s * startPos.x + 2 * s * t * midpoint.x + t * t * destination.x,
-          s * s * startPos.y + 2 * s * t * midpoint.y + t * t * destination.y,
-          s * s * startPos.z + 2 * s * t * midpoint.z + t * t * destination.z
-        );
-        this.controls.target.copy(startTarget).lerp(now.clone().add(focusShift), motion.t);
-      },
       onComplete: () => {
-        this.flying = false;
-        this.controls.enabled = true;
-        this.lastTrackedPosition = body.root.getWorldPosition(new THREE.Vector3());
+        // Finish after animate() has rendered the last tween sample.
+        if (this.focusFlight === flight) flight.complete = true;
       }
     });
+  }
+
+  updateFocusFlight() {
+    const flight = this.focusFlight;
+    if (!flight) return;
+    flight.body.root.getWorldPosition(flight.now);
+    flight.destination.copy(flight.now).add(flight.offset);
+    const t = flight.t, s = 1 - t;
+    this.camera.position.copy(flight.startPos).multiplyScalar(s * s)
+      .addScaledVector(flight.midpoint, 2 * s * t)
+      .addScaledVector(flight.destination, t * t);
+    flight.target.copy(flight.now).add(flight.focusShift);
+    this.controls.target.copy(flight.startTarget).lerp(flight.target, t);
+
+    if (flight.complete) {
+      this.lastTrackedPosition = flight.now.clone();
+      this.focusFlight = null;
+      this.flying = false;
+      this.controls.enabled = true;
+    }
   }
 
   setTimeScale(value) {
@@ -499,16 +613,27 @@ export class UniverseApp {
   updateLabels() {
     const show = this.showLabels && this.solar.group.visible && !this.transitioning;
     const width = window.innerWidth, height = window.innerHeight;
+    const safe = this.getSceneSafeRect();
     const world = new THREE.Vector3();
-    const protectedAreas = ['.topbar', '.bottom-interface', '.hero-panel:not(.is-hidden)', '.detail-panel.is-visible']
+    const focusedMoon = SATELLITES.some(moon => moon.id === this.focusId);
+    const protectedAreas = [
+      '.topbar', '.bottom-interface', '.hero-panel:not(.is-hidden)',
+      '.detail-panel.is-visible', '.camera-tools', '.mobile-menu:not([hidden])',
+      '#app[data-dock="open"] .planet-dock'
+    ]
       .map(selector => document.querySelector(selector))
       .filter(Boolean)
-      .map(element => element.getBoundingClientRect());
+      .map(element => element.getBoundingClientRect())
+      .filter(rect => rect.width > 0 && rect.height > 0);
+    const overlaps = (labelBounds, region) =>
+      labelBounds.left < region.right + 8 &&
+      labelBounds.right > region.left - 8 &&
+      labelBounds.top < region.bottom + 8 &&
+      labelBounds.bottom > region.top - 8;
     const usedLabels = [];
     for (const body of ALL_BODIES) {
       const label = this.labels.get(body.id);
       if (!label) continue;
-      const focusedMoon = SATELLITES.some(moon => moon.id === this.focusId);
       const showSatellite = !body.parentId ||
         (this.mode === 'planet' && (
           this.focusId === body.parentId ||
@@ -523,19 +648,24 @@ export class UniverseApp {
       world.project(this.camera);
       const x = (world.x * .5 + .5) * width;
       const y = (-world.y * .5 + .5) * height;
-      const labelBounds = { left: x - 37, right: x + 37, top: y - 12, bottom: y + 12 };
-      const overlaps = region => labelBounds.left < region.right + 8 &&
-        labelBounds.right > region.left - 8 &&
-        labelBounds.top < region.bottom + 8 &&
-        labelBounds.bottom > region.top - 8;
+      const size = this.getLabelSize(label, 74, 24);
+      const halfWidth = size.width / 2;
+      const halfHeight = size.height / 2;
+      const labelBounds = { left: x - halfWidth, right: x + halfWidth, top: y - halfHeight, bottom: y + halfHeight };
       const visible = world.z < 1 && world.z > -1 &&
         Math.abs(world.x) < .92 && Math.abs(world.y) < .90 &&
         !(this.mode === 'planet' && body.id === this.focusId) &&
-        !protectedAreas.some(overlaps) && !usedLabels.some(overlaps);
+        (!this.isCompact || (
+          labelBounds.left > safe.left && labelBounds.right < safe.right &&
+          labelBounds.top > safe.top && labelBounds.bottom < safe.bottom &&
+          usedLabels.length < 4
+        )) &&
+        !protectedAreas.some(rect => overlaps(labelBounds, rect)) &&
+        !usedLabels.some(rect => overlaps(labelBounds, rect));
       label.classList.toggle('is-visible', visible);
       if (visible) {
         usedLabels.push(labelBounds);
-        label.style.transform = 'translate(-50%, -50%) translate(' + x + 'px, ' + y + 'px)';
+        label.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${y}px, 0)`;
       }
     }
     if (this.galaxyLabel) {
@@ -545,10 +675,17 @@ export class UniverseApp {
         world.project(this.camera);
         const x = (world.x * .5 + .5) * width;
         const y = (-world.y * .5 + .5) * height;
+        const size = this.getLabelSize(this.galaxyLabel, 144, 16);
+        const labelBounds = {
+          left: x + 12, right: x + 12 + size.width,
+          top: y - 24, bottom: y + size.height - 24
+        };
         const clear = world.z > -1 && world.z < 1 && x > width * .34 &&
-          x < width - 70 && y > 120 && y < height - 200;
+          labelBounds.left > safe.left && labelBounds.right < safe.right &&
+          labelBounds.top > safe.top && labelBounds.bottom < safe.bottom &&
+          !protectedAreas.some(rect => overlaps(labelBounds, rect));
         this.galaxyLabel.classList.toggle('is-visible', clear);
-        if (clear) this.galaxyLabel.style.transform = `translate(${x}px, ${y}px)`;
+        if (clear) this.galaxyLabel.style.transform = `translate3d(${x}px, ${y}px, 0)`;
       } else this.galaxyLabel.classList.remove('is-visible');
     }
   }
@@ -585,7 +722,8 @@ export class UniverseApp {
     this.updatePerformance(delta);
     this.updateFreeMovement(delta);
 
-    if (this.mode === 'planet' && this.focusId && !this.flying && this.lastTrackedPosition) {
+    if (this.focusFlight) this.updateFocusFlight();
+    else if (this.mode === 'planet' && this.focusId && !this.flying && this.lastTrackedPosition) {
       const current = this.solar.bodies[this.focusId].root.getWorldPosition(new THREE.Vector3());
       const difference = current.clone().sub(this.lastTrackedPosition);
       this.camera.position.add(difference);
@@ -593,11 +731,13 @@ export class UniverseApp {
       this.lastTrackedPosition.copy(current);
     }
 
-    this.controls.update();
+    if (this.flying) this.camera.lookAt(this.controls.target);
+    else this.controls.update();
     if (this.useBloom) this.composer.render();
     else this.renderer.render(this.scene, this.camera);
+    // Keep DOM labels in the same rendered frame as their 3D targets.
+    this.updateLabels();
     this.frame++;
-    if (this.frame % 3 === 0) this.updateLabels();
     if (this.solar.group.visible && this.frame % 22 === 0) {
       this.solar.updateLevelOfDetail(this.camera);
     }
@@ -608,6 +748,13 @@ export class UniverseApp {
 
   dispose() {
     cancelAnimationFrame(this.animationId);
+    this.flightTween?.kill();
+    this.reframeTween?.kill();
+    this.sceneTimeline?.kill();
+    gsap.killTweensOf(this.camera.position);
+    gsap.killTweensOf(this.controls.target);
+    this.focusFlight = null;
+    this.labelResizeObserver?.disconnect();
     window.removeEventListener('resize', this.handleResize);
     window.removeEventListener('keydown', this.handleKeyDown);
     window.removeEventListener('keyup', this.handleKeyUp);

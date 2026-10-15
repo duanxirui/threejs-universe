@@ -2,10 +2,15 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#050912" />
     <meta name="description" content="一座可交互的 3D 宇宙。穿越银河系，走进太阳系，探索每一颗行星。" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <!-- Load layout styles with the document, independently of the 3D module graph. -->
+    <link rel="stylesheet" href="/src/styles.css" />
+    <link rel="stylesheet" href="/src/exploration.css" />
+    <!-- Web fonts are optional: never block the interface on an external request. -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" media="print" onload="this.media='all'" />
     <title>COSMOS ATLAS · 3D 宇宙图鉴</title>
   </head>
   <body>
@@ -41,7 +46,23 @@
           <button id="search-trigger" class="icon-button" aria-label="搜索天体" title="搜索天体 (/)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m16 16 5 5"/></svg>
           </button>
+          <button id="mobile-menu-trigger" class="icon-button mobile-menu-trigger" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="打开更多选项" title="更多选项">☰</button>
           <button id="help-trigger" class="icon-button help-button" aria-label="操作帮助" title="操作帮助">?</button>
+        </div>
+        <div id="mobile-menu" class="mobile-menu" hidden>
+          <div class="mobile-menu-scenes" aria-label="场景切换">
+            <button class="mobile-view-link" data-view="galaxy" type="button">宇宙全景</button>
+            <button class="mobile-view-link" data-view="solar" type="button">太阳系</button>
+            <button class="mobile-view-link" data-view="free" type="button">自由漫游</button>
+          </div>
+          <label>渲染画质
+            <select id="mobile-quality-select" aria-label="手机端渲染画质">
+              <option value="auto">自动</option>
+              <option value="low">省电</option>
+              <option value="high">极致</option>
+            </select>
+          </label>
+          <button id="mobile-help-trigger" type="button">操作帮助与项目说明 ↗</button>
         </div>
       </header>
 
@@ -63,8 +84,17 @@
 
         <aside id="detail-panel" class="detail-panel" aria-live="polite" aria-hidden="true">
           <button id="detail-sheet-handle" class="detail-sheet-handle" type="button" aria-label="展开或折叠天体资料" aria-expanded="true"><span></span></button>
+          <button id="detail-sheet-summary" class="detail-sheet-summary" type="button" aria-label="展开天体介绍" aria-expanded="false">
+            <strong id="detail-summary-name">地球</strong>
+            <span id="detail-summary-stat">直径 12,742 km</span>
+            <span class="detail-summary-arrow" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                <path d="m6.5 14 5.5-5.5 5.5 5.5" />
+              </svg>
+            </span>
+          </button>
           <div class="detail-topline"><span>CELESTIAL ARCHIVE <span id="detail-number">/ 03</span></span>
-            <button id="detail-close" class="detail-close" aria-label="关闭天体详情">×</button>
+            <button id="detail-close" class="detail-close" type="button" aria-label="收起天体介绍" title="收起天体介绍">×</button>
           </div>
           <div id="detail-orb" class="detail-orb" aria-hidden="true"></div>
           <div class="detail-category" id="detail-category">TERRESTRIAL PLANET</div>
@@ -118,8 +148,9 @@
             <input id="speed-range" type="range" min="0" max="6" value="2" step="1" aria-label="时间运行速度" />
           </div>
           <div class="simulation-options">
-            <button id="orbit-toggle" class="option-toggle is-on" aria-pressed="true"><i></i>轨道线</button>
-            <button id="label-toggle" class="option-toggle is-on" aria-pressed="true"><i></i>天体标签</button>
+            <button id="orbit-toggle" class="option-toggle is-on" aria-pressed="true" aria-label="显示轨道线"><i></i>轨道线</button>
+            <button id="label-toggle" class="option-toggle is-on" aria-pressed="true" aria-label="显示天体标签"><i></i>天体标签</button>
+            <button id="planet-dock-toggle" class="mobile-tool planet-dock-toggle" type="button" aria-label="展开天体导航" aria-controls="planet-dock" aria-expanded="false">星球</button>
             <label id="flight-speed-control" class="flight-speed-control" hidden>飞行速度
               <select id="flight-speed" aria-label="自由漫游飞行速度">
                 <option value="0.5">慢速</option><option value="1" selected>标准</option>
@@ -129,7 +160,7 @@
           </div>
         </div>
 
-        <div class="planet-dock">
+        <div class="planet-dock" id="planet-dock">
           <div class="dock-title"><div><span class="caption-dot"></span> SOLAR SYSTEM <span class="section-meta">天体导航</span></div><span class="dock-hint">选择一颗星球，开始探索 <b>↗</b></span></div>
           <div id="planet-list" class="planet-list" aria-label="太阳系天体列表"></div>
         </div>
@@ -150,6 +181,7 @@
       <div id="help-overlay" class="modal-overlay" aria-hidden="true">
         <div class="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-title">
           <div class="modal-heading"><div><small>FLIGHT MANUAL</small><h2 id="help-title">探索指南</h2></div><button id="help-close" class="modal-close" aria-label="关闭帮助">×</button></div>
+          <p id="mobile-intro" class="mobile-intro"></p>
           <div class="help-grid">
             <div><span>拖动鼠标</span><strong>旋转视角</strong></div>
             <div><span>滚动滚轮</span><strong>放大 / 缩小</strong></div>

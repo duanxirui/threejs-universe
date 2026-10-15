@@ -1,5 +1,3 @@
-import './styles.css';
-import './exploration.css';
 import { UniverseApp } from './core/UniverseApp.js';
 import { CELESTIALS, ALL_BODIES, ALL_BY_ID, SATELLITES_BY_PARENT } from './data/celestials.js';
 
@@ -15,7 +13,10 @@ const elements = {
   metricAValue: get('metric-a-value'),
   metricBLabel: get('metric-b-label'),
   metricBValue: get('metric-b-value'),
+  bottomInterface: document.querySelector('.bottom-interface'),
   detail: get('detail-panel'),
+  detailClose: get('detail-close'),
+  detailSummary: get('detail-sheet-summary'),
   detailOrb: get('detail-orb'),
   detailMoons: get('detail-moons'),
   detailMoonList: get('detail-moon-list'),
@@ -27,6 +28,12 @@ const elements = {
   simDate: get('sim-date'),
   qualitySelect: get('quality-select'),
   flightSpeed: get('flight-speed'),
+  mobileQuality: get('mobile-quality-select'),
+  mobileMenu: get('mobile-menu'),
+  mobileMenuTrigger: get('mobile-menu-trigger'),
+  dockToggle: get('planet-dock-toggle'),
+  summaryName: get('detail-summary-name'),
+  summaryStat: get('detail-summary-stat'),
   orbitToggle: get('orbit-toggle'),
   labelToggle: get('label-toggle'),
   searchOverlay: get('search-overlay'),
@@ -72,13 +79,53 @@ let currentState = { mode: 'galaxy' };
 let toastTimer;
 const SPEED_STEPS = [0, .25, 1, 3, 10, 25, 50];
 let sheetState = 'half';
+let dockOpen = false;
+let layoutFrame = 0;
+let dialogReturnFocus = null;
+const compactQuery = window.matchMedia('(max-width: 640px), (max-width: 900px) and (max-height: 480px)');
+const isCompact = () => compactQuery.matches;
+
+function measureMobileLayout() {
+  layoutFrame = 0;
+  if (!isCompact()) return;
+  const viewport = window.visualViewport;
+  const footerTop = elements.bottomInterface.getBoundingClientRect().top;
+  const headerBottom = document.querySelector('.topbar').getBoundingClientRect().bottom;
+  const app = get('app');
+  app.style.setProperty('--visible-viewport-height', Math.floor(viewport?.height ?? window.innerHeight) + 'px');
+  app.style.setProperty('--visible-viewport-top', Math.floor(viewport?.offsetTop ?? 0) + 'px');
+  app.style.setProperty('--mobile-footer-height', Math.ceil(window.innerHeight - footerTop) + 'px');
+  app.style.setProperty('--mobile-detail-limit', Math.max(92, Math.floor(footerTop - headerBottom - 16)) + 'px');
+}
+
+function scheduleLayoutMeasure() {
+  if (!layoutFrame) layoutFrame = requestAnimationFrame(measureMobileLayout);
+}
+
+function setDockOpen(open) {
+  dockOpen = open;
+  get('app').dataset.dock = open ? 'open' : 'closed';
+  elements.dockToggle.setAttribute('aria-expanded', String(open));
+  elements.dockToggle.setAttribute('aria-label', open ? '收起天体导航' : '展开天体导航');
+  scheduleLayoutMeasure();
+}
+
+function setMobileMenuOpen(open) {
+  elements.mobileMenu.hidden = !open;
+  elements.mobileMenuTrigger.setAttribute('aria-expanded', String(open));
+  elements.mobileMenuTrigger.setAttribute('aria-label', open ? '关闭更多选项' : '打开更多选项');
+}
 
 function setSheetState(next) {
+  if (sheetState === next && get('app').dataset.sheet === next) return;
   sheetState = next;
   get('app').dataset.sheet = next;
   elements.sheetHandle.setAttribute('aria-expanded', String(next !== 'collapsed'));
+  elements.detailSummary.setAttribute('aria-expanded', String(next !== 'collapsed'));
   elements.sheetHandle.setAttribute('aria-label',
     next === 'collapsed' ? '展开天体资料' : next === 'expanded' ? '收起天体资料' : '展开更多天体资料');
+  scheduleLayoutMeasure();
+  requestAnimationFrame(() => universe?.reframeFocusedBody());
 }
 
 function showToast(message) {
@@ -115,6 +162,9 @@ function createPlanetDock() {
 function updateDetail(id) {
   const body = ALL_BY_ID[id];
   if (!body) return;
+  elements.summaryName.textContent = body.name + ' · ' + body.en;
+  elements.summaryStat.textContent = '直径 ' + body.diameter;
+  elements.detailSummary.setAttribute('aria-label', '展开' + body.name + '介绍');
   get('detail-number').textContent = '/ ' + body.index;
   get('detail-category').textContent = body.category;
   get('detail-name').textContent = body.name;
@@ -157,7 +207,8 @@ function updateInterface(state) {
   currentState = state;
   get('app').dataset.view = state.mode;
   const showingDetail = state.mode === 'planet' && Boolean(state.focusId);
-  if (showingDetail && previousMode !== 'planet') setSheetState('half');
+  if (showingDetail && previousMode !== 'planet') setSheetState(isCompact() ? 'collapsed' : 'half');
+  if (showingDetail && dockOpen) setDockOpen(false);
   elements.hero.classList.toggle('is-hidden', showingDetail);
   elements.detail.classList.toggle('is-visible', showingDetail);
   elements.detail.setAttribute('aria-hidden', String(!showingDetail));
@@ -185,6 +236,10 @@ function updateInterface(state) {
     button.classList.toggle('is-active', active);
     button.setAttribute('aria-current', active ? 'page' : 'false');
   });
+  document.querySelectorAll('.mobile-view-link[data-view]').forEach(button => {
+    const active = button.dataset.view === displayMode;
+    button.setAttribute('aria-current', active ? 'page' : 'false');
+  });
   document.querySelectorAll('.planet-item').forEach(button => {
     button.classList.toggle('is-selected', button.dataset.id === state.focusId);
     button.setAttribute('aria-pressed', String(button.dataset.id === state.focusId));
@@ -198,6 +253,7 @@ function updateInterface(state) {
   elements.speed.style.setProperty('--fill', speedStep / 6 * 100 + '%');
   elements.speedValue.textContent = (Number.isInteger(state.timeScale) ? state.timeScale.toFixed(0) : state.timeScale.toFixed(2).replace(/0$/, '')) + '×';
   elements.qualitySelect.value = state.qualityMode;
+  elements.mobileQuality.value = state.qualityMode;
   elements.flightSpeed.value = String(state.flightSpeed);
   get('flight-speed-control').hidden = state.mode !== 'free';
 
@@ -205,13 +261,21 @@ function updateInterface(state) {
     element.classList.toggle('is-on', isOn);
     element.setAttribute('aria-pressed', String(isOn));
   }
+  elements.orbitToggle.setAttribute('aria-label', state.showOrbits ? '隐藏轨道线' : '显示轨道线');
+  elements.labelToggle.setAttribute('aria-label', state.showLabels ? '隐藏天体标签' : '显示天体标签');
+  if (previousMode !== state.mode || previousFocusId !== state.focusId) scheduleLayoutMeasure();
 }
 
 function openModal(name) {
+  dialogReturnFocus = elements.mobileMenu.contains(document.activeElement)
+    ? elements.mobileMenuTrigger : document.activeElement;
+  setMobileMenuOpen(false);
+  setDockOpen(false);
   const overlay = name === 'search' ? elements.searchOverlay :
     name === 'compare' ? elements.compareOverlay : elements.helpOverlay;
   overlay.classList.add('is-open');
   overlay.setAttribute('aria-hidden', 'false');
+  get('mobile-intro').textContent = (heroCopy[currentState.mode === 'planet' ? 'solar' : currentState.mode] || heroCopy.galaxy).description;
   if (name === 'search') {
     elements.searchInput.value = '';
     renderSearchResults('');
@@ -223,6 +287,8 @@ function openModal(name) {
     elements.compareRight.value = focus === 'mars' ? 'jupiter' : 'mars';
     renderComparison();
   }
+  if (name === 'help') requestAnimationFrame(() => get('help-close').focus());
+  if (name === 'compare') requestAnimationFrame(() => elements.compareLeft.focus());
 }
 
 function closeModals() {
@@ -230,6 +296,8 @@ function closeModals() {
     overlay.classList.remove('is-open');
     overlay.setAttribute('aria-hidden', 'true');
   }
+  if (dialogReturnFocus?.isConnected) dialogReturnFocus.focus();
+  dialogReturnFocus = null;
 }
 
 function setupComparison() {
@@ -309,6 +377,35 @@ function renderSearchResults(query) {
 }
 
 function bindInterface() {
+  elements.mobileMenuTrigger.addEventListener('click', () => {
+    setDockOpen(false);
+    setMobileMenuOpen(elements.mobileMenu.hidden);
+  });
+  get('mobile-help-trigger').addEventListener('click', () => openModal('help'));
+  document.querySelectorAll('.mobile-view-link[data-view]').forEach(button => {
+    button.addEventListener('click', () => {
+      setMobileMenuOpen(false);
+      if (button.dataset.view === 'galaxy') universe.viewGalaxy();
+      if (button.dataset.view === 'solar') universe.viewSolar();
+      if (button.dataset.view === 'free') universe.activateFree();
+    });
+  });
+  elements.mobileQuality.addEventListener('change', event => universe.setQuality(event.target.value));
+  elements.dockToggle.addEventListener('click', () => {
+    setMobileMenuOpen(false);
+    setDockOpen(!dockOpen);
+  });
+  elements.detailSummary.addEventListener('click', () => {
+    setSheetState('half');
+    elements.detailClose.focus({ preventScroll: true });
+  });
+  document.addEventListener('pointerdown', event => {
+    if (!elements.mobileMenu.hidden &&
+      !elements.mobileMenu.contains(event.target) && !elements.mobileMenuTrigger.contains(event.target)) {
+      setMobileMenuOpen(false);
+    }
+    if (dockOpen && !elements.bottomInterface.contains(event.target)) setDockOpen(false);
+  });
   get('brand-home').addEventListener('click', () => universe.viewGalaxy());
   document.querySelectorAll('.view-link[data-view]').forEach(button => {
     button.addEventListener('click', () => {
@@ -328,7 +425,10 @@ function bindInterface() {
     else universe.viewGalaxy();
   });
   get('detail-back').addEventListener('click', () => universe.viewSolar());
-  get('detail-close').addEventListener('click', () => universe.viewSolar());
+  elements.detailClose.addEventListener('click', () => {
+    setSheetState('collapsed');
+    elements.detailSummary.focus({ preventScroll: true });
+  });
   get('detail-prev').addEventListener('click', () => {
     const current = ALL_BY_ID[currentState.focusId];
     const index = CELESTIALS.findIndex(body => body.id === (current?.parentId || current?.id));
@@ -360,11 +460,33 @@ function bindInterface() {
     });
   }
   document.addEventListener('keydown', event => {
+    const openDialog = document.querySelector('.modal-overlay.is-open [role="dialog"]');
+    if (event.key === 'Tab' && openDialog) {
+      const available = Array.from(openDialog.querySelectorAll('button:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'))
+        .filter(element => element.getClientRects().length > 0);
+      if (available.length) {
+        const first = available[0];
+        const last = available[available.length - 1];
+        if (event.shiftKey && (document.activeElement === first || !openDialog.contains(document.activeElement))) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && (document.activeElement === last || !openDialog.contains(document.activeElement))) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    }
     if (event.key === 'Escape') {
       if (document.querySelector('.modal-overlay.is-open')) closeModals();
+      else if (!elements.mobileMenu.hidden) {
+        setMobileMenuOpen(false);
+        elements.mobileMenuTrigger.focus();
+      }
+      else if (dockOpen) setDockOpen(false);
       else if (currentState.mode === 'planet') universe.viewSolar();
     }
-    if (event.key === '/' && !(event.target instanceof HTMLInputElement)) {
+    if (event.key === '/' && !(event.target instanceof Element &&
+      event.target.closest('input, textarea, select, [contenteditable="true"]'))) {
       event.preventDefault();
       openModal('search');
     }
@@ -379,18 +501,39 @@ function bindInterface() {
     if (sheetPointer === null) return;
     const delta = event.clientY - sheetPointer;
     sheetPointer = null;
-    if (delta < -24) setSheetState('expanded');
-    else if (delta > 24) setSheetState('collapsed');
+    if (delta < -24) setSheetState(sheetState === 'collapsed' ? 'half' : 'expanded');
+    else if (delta > 24) setSheetState(sheetState === 'expanded' ? 'half' : 'collapsed');
     else setSheetState(sheetState === 'collapsed' ? 'half' : sheetState === 'half' ? 'expanded' : 'half');
   });
   elements.sheetHandle.addEventListener('pointercancel', () => { sheetPointer = null; });
+  elements.sheetHandle.addEventListener('click', event => {
+    if (event.detail === 0) setSheetState(sheetState === 'collapsed' ? 'half' : sheetState === 'half' ? 'expanded' : 'collapsed');
+  });
+
+  window.addEventListener('resize', () => {
+    if (!isCompact()) {
+      setMobileMenuOpen(false);
+      setDockOpen(false);
+    }
+    scheduleLayoutMeasure();
+    requestAnimationFrame(() => universe?.reframeFocusedBody());
+  });
+  window.visualViewport?.addEventListener('resize', scheduleLayoutMeasure);
+  window.visualViewport?.addEventListener('scroll', scheduleLayoutMeasure);
+  if (typeof ResizeObserver !== 'undefined') {
+    const observer = new ResizeObserver(scheduleLayoutMeasure);
+    for (const element of [elements.bottomInterface, elements.detail, document.querySelector('.topbar')]) {
+      if (element) observer.observe(element);
+    }
+  }
+  setDockOpen(false);
+  setMobileMenuOpen(false);
 }
 
-createPlanetDock();
-setupComparison();
-bindInterface();
-
 try {
+  createPlanetDock();
+  setupComparison();
+  bindInterface();
   universe = new UniverseApp(get('universe-canvas'), {
     labelsLayer: get('labels-layer'),
     transitionElement: get('scene-transition'),
@@ -415,5 +558,7 @@ try {
 } catch (error) {
   console.error('Universe initialization failed:', error);
   get('loading-screen').classList.add('is-loaded');
-  get('fallback-message').hidden = false;
+  const fallback = get('fallback-message');
+  fallback.textContent = '宇宙场景初始化失败，请刷新页面重试。详细错误可查看浏览器控制台。';
+  fallback.hidden = false;
 }
