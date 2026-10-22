@@ -1,0 +1,568 @@
+{
+  "task": "T15 screenshot reference visual-layout revision",
+  "date": "2026-10-20",
+  "mode": "local Chrome responsive viewport override, not physical mobile",
+  "scenes": [
+    "earth",
+    "galaxy"
+  ],
+  "sizes": [
+    [
+      1707,
+      842
+    ],
+    [
+      1366,
+      768
+    ],
+    [
+      390,
+      844
+    ],
+    [
+      360,
+      740
+    ],
+    [
+      844,
+      390
+    ]
+  ],
+  "reference": "Reference screenshot: brand top-left, actions top-right, small scene state bottom-left, contextual controls bottom-right, 3D scene unobstructed",
+  "limitations": [
+    "Fullscreen API could not enter full screen in controlled Chrome; rejection toast verified",
+    "Hardware and touch performance not measured"
+  ],
+  "records": [
+    {
+      "scene": "earth",
+      "viewport": [
+        1707,
+        842
+      ],
+      "scrollWidth": 1707,
+      "regions": [
+        {
+          "height": 46,
+          "selector": ".topbar",
+          "visible": true,
+          "width": 1663,
+          "x": 22,
+          "y": 22
+        },
+        {
+          "height": 0,
+          "selector": ".hero-panel",
+          "visible": false,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "height": 62,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "width": 418,
+          "x": 1264,
+          "y": 755
+        },
+        {
+          "height": 25,
+          "selector": ".scene-readout",
+          "visible": true,
+          "width": 121,
+          "x": 27,
+          "y": 781
+        },
+        {
+          "height": 35,
+          "selector": ".workspace-panel",
+          "visible": true,
+          "width": 418,
+          "x": 1264,
+          "y": 717
+        }
+      ],
+      "filename": "earth_1707x842.jpg",
+      "bytes": 90625,
+      "format": "JPEG"
+    },
+    {
+      "scene": "earth",
+      "viewport": [
+        1366,
+        768
+      ],
+      "scrollWidth": 1366,
+      "regions": [
+        {
+          "height": 46,
+          "selector": ".topbar",
+          "visible": true,
+          "width": 1322,
+          "x": 22,
+          "y": 22
+        },
+        {
+          "height": 0,
+          "selector": ".hero-panel",
+          "visible": false,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "height": 62,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "width": 418,
+          "x": 923,
+          "y": 681
+        },
+        {
+          "height": 25,
+          "selector": ".scene-readout",
+          "visible": true,
+          "width": 121,
+          "x": 27,
+          "y": 707
+        },
+        {
+          "height": 35,
+          "selector": ".workspace-panel",
+          "visible": true,
+          "width": 418,
+          "x": 923,
+          "y": 643
+        }
+      ],
+      "filename": "earth_1366x768.jpg",
+      "bytes": 79237,
+      "format": "JPEG"
+    },
+    {
+      "scene": "earth",
+      "viewport": [
+        390,
+        844
+      ],
+      "scrollWidth": 390,
+      "regions": [
+        {
+          "height": 46,
+          "selector": ".topbar",
+          "visible": true,
+          "width": 364,
+          "x": 13,
+          "y": 9
+        },
+        {
+          "height": 0,
+          "selector": ".hero-panel",
+          "visible": false,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "height": 60,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "width": 366,
+          "x": 12,
+          "y": 773
+        },
+        {
+          "height": 25,
+          "selector": ".scene-readout",
+          "visible": true,
+          "width": 121,
+          "x": 14,
+          "y": 725
+        },
+        {
+          "height": 35,
+          "selector": ".workspace-panel",
+          "visible": true,
+          "width": 366,
+          "x": 12,
+          "y": 736
+        }
+      ],
+      "filename": "earth_390x844.jpg",
+      "bytes": 26851,
+      "format": "JPEG"
+    },
+    {
+      "scene": "earth",
+      "viewport": [
+        360,
+        740
+      ],
+      "scrollWidth": 360,
+      "regions": [
+        {
+          "height": 46,
+          "selector": ".topbar",
+          "visible": true,
+          "width": 334,
+          "x": 13,
+          "y": 9
+        },
+        {
+          "height": 0,
+          "selector": ".hero-panel",
+          "visible": false,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "height": 60,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "width": 336,
+          "x": 12,
+          "y": 669
+        },
+        {
+          "height": 25,
+          "selector": ".scene-readout",
+          "visible": true,
+          "width": 121,
+          "x": 14,
+          "y": 621
+        },
+        {
+          "height": 35,
+          "selector": ".workspace-panel",
+          "visible": true,
+          "width": 336,
+          "x": 12,
+          "y": 632
+        }
+      ],
+      "filename": "earth_360x740.jpg",
+      "bytes": 19651,
+      "format": "JPEG"
+    },
+    {
+      "scene": "earth",
+      "viewport": [
+        844,
+        390
+      ],
+      "scrollWidth": 844,
+      "regions": [
+        {
+          "height": 44,
+          "selector": ".topbar",
+          "visible": true,
+          "width": 814,
+          "x": 15,
+          "y": 5
+        },
+        {
+          "height": 0,
+          "selector": ".hero-panel",
+          "visible": false,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "height": 55,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "width": 390,
+          "x": 442,
+          "y": 326
+        },
+        {
+          "height": 25,
+          "selector": ".scene-readout",
+          "visible": true,
+          "width": 121,
+          "x": 15,
+          "y": 336
+        },
+        {
+          "height": 35,
+          "selector": ".workspace-panel",
+          "visible": true,
+          "width": 390,
+          "x": 442,
+          "y": 289
+        }
+      ],
+      "filename": "earth_844x390.jpg",
+      "bytes": 25529,
+      "format": "JPEG"
+    },
+    {
+      "scene": "galaxy",
+      "viewport": [
+        1707,
+        842
+      ],
+      "scrollWidth": 1707,
+      "regions": [
+        {
+          "height": 46,
+          "selector": ".topbar",
+          "visible": true,
+          "width": 1663,
+          "x": 22,
+          "y": 22
+        },
+        {
+          "height": 0,
+          "selector": ".hero-panel",
+          "visible": false,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "height": 62,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "width": 418,
+          "x": 1264,
+          "y": 755
+        },
+        {
+          "height": 25,
+          "selector": ".scene-readout",
+          "visible": true,
+          "width": 139,
+          "x": 27,
+          "y": 781
+        },
+        {
+          "height": 35,
+          "selector": ".workspace-panel",
+          "visible": true,
+          "width": 418,
+          "x": 1264,
+          "y": 711
+        }
+      ],
+      "filename": "galaxy_1707x842.jpg",
+      "bytes": 155165,
+      "format": "JPEG"
+    },
+    {
+      "scene": "galaxy",
+      "viewport": [
+        1366,
+        768
+      ],
+      "scrollWidth": 1366,
+      "regions": [
+        {
+          "height": 46,
+          "selector": ".topbar",
+          "visible": true,
+          "width": 1322,
+          "x": 22,
+          "y": 22
+        },
+        {
+          "height": 0,
+          "selector": ".hero-panel",
+          "visible": false,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "height": 62,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "width": 418,
+          "x": 923,
+          "y": 681
+        },
+        {
+          "height": 25,
+          "selector": ".scene-readout",
+          "visible": true,
+          "width": 139,
+          "x": 27,
+          "y": 707
+        },
+        {
+          "height": 35,
+          "selector": ".workspace-panel",
+          "visible": true,
+          "width": 418,
+          "x": 923,
+          "y": 643
+        }
+      ],
+      "filename": "galaxy_1366x768.jpg",
+      "bytes": 123009,
+      "format": "JPEG"
+    },
+    {
+      "scene": "galaxy",
+      "viewport": [
+        390,
+        844
+      ],
+      "scrollWidth": 390,
+      "regions": [
+        {
+          "height": 46,
+          "selector": ".topbar",
+          "visible": true,
+          "width": 364,
+          "x": 13,
+          "y": 9
+        },
+        {
+          "height": 0,
+          "selector": ".hero-panel",
+          "visible": false,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "height": 60,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "width": 366,
+          "x": 12,
+          "y": 773
+        },
+        {
+          "height": 25,
+          "selector": ".scene-readout",
+          "visible": true,
+          "width": 139,
+          "x": 14,
+          "y": 725
+        },
+        {
+          "height": 35,
+          "selector": ".workspace-panel",
+          "visible": true,
+          "width": 366,
+          "x": 12,
+          "y": 736
+        }
+      ],
+      "filename": "galaxy_390x844.jpg",
+      "bytes": 49328,
+      "format": "JPEG"
+    },
+    {
+      "scene": "galaxy",
+      "viewport": [
+        360,
+        740
+      ],
+      "scrollWidth": 360,
+      "regions": [
+        {
+          "height": 46,
+          "selector": ".topbar",
+          "visible": true,
+          "width": 334,
+          "x": 13,
+          "y": 9
+        },
+        {
+          "height": 0,
+          "selector": ".hero-panel",
+          "visible": false,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "height": 60,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "width": 336,
+          "x": 12,
+          "y": 669
+        },
+        {
+          "height": 25,
+          "selector": ".scene-readout",
+          "visible": true,
+          "width": 139,
+          "x": 14,
+          "y": 621
+        },
+        {
+          "height": 35,
+          "selector": ".workspace-panel",
+          "visible": true,
+          "width": 336,
+          "x": 12,
+          "y": 632
+        }
+      ],
+      "filename": "galaxy_360x740.jpg",
+      "bytes": 45269,
+      "format": "JPEG"
+    },
+    {
+      "scene": "galaxy",
+      "viewport": [
+        844,
+        390
+      ],
+      "scrollWidth": 844,
+      "regions": [
+        {
+          "height": 44,
+          "selector": ".topbar",
+          "visible": true,
+          "width": 814,
+          "x": 15,
+          "y": 5
+        },
+        {
+          "height": 0,
+          "selector": ".hero-panel",
+          "visible": false,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "height": 55,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "width": 390,
+          "x": 442,
+          "y": 326
+        },
+        {
+          "height": 25,
+          "selector": ".scene-readout",
+          "visible": true,
+          "width": 139,
+          "x": 15,
+          "y": 336
+        },
+        {
+          "height": 35,
+          "selector": ".workspace-panel",
+          "visible": true,
+          "width": 390,
+          "x": 442,
+          "y": 289
+        }
+      ],
+      "filename": "galaxy_844x390.jpg",
+      "bytes": 44972,
+      "format": "JPEG"
+    }
+  ]
+}

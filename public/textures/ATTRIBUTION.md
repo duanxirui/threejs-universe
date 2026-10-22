@@ -33,4 +33,8 @@
 
 地球、月球和火星的表面法线纹理通过 `src/universe/surfaceDetail.js` 在本地由上述已有彩色纹理**估算生成**；地球另根据海陆颜色估算粗糙度，以模拟海洋的光照反射。这些是演示性视觉增强，并非 NASA / USGS 的真实地形高程产品。若彩色纹理无法加载，将尝试从程序化底图生成法线；法线生成失败时保留普通彩色材质。
 
+2026-10-20 新增的土卫一（Mimas）、土卫二（Enceladus）、土卫三（Tethys）、土卫四（Dione）、土卫五（Rhea）和土卫八（Iapetus）没有新增外部图片资源。它们的表面颜色、撞击坑、冰裂隙、明暗半球由 `src/universe/proceduralTextures.js` 在运行时生成，**仅为科普示意，不是卫星实测贴图或真实地貌数据**。已有土卫六（Titan）继续使用上述 NASA/USGS 来源的本地 JPG。
+
+T12 新增的球形天体遮挡阴影和木星云带纹理变形由 `src/universe/celestialLighting.js` 中的 GLSL 生成；地球等天体的大气边缘渐变增强由 `src/universe/proceduralTextures.js` 中的 GLSL 生成。以上都没有新增第三方贴图或真实天文观测数据，仅模拟可视化投影、晨昏散射及云带运动。
+
 整个应用采用适合屏幕探索的展示比例；天体轨道与时间模拟不应用于天文测量或精确预报。

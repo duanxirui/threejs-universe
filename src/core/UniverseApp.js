@@ -9,6 +9,7 @@ import { CELESTIALS, SATELLITES, ALL_BODIES } from '../data/celestials.js';
 import { createGlowTexture } from '../universe/proceduralTextures.js';
 import { createGalaxy, createStarfield } from '../universe/createGalaxy.js';
 import { createSolarSystem } from '../universe/createSolarSystem.js';
+import { constrainCameraSegment, getArrivalDistance, getBodyClearance } from './freeFlightPhysics.js';
 
 const GALAXY_CAMERA = new THREE.Vector3(0, 15, 116);
 const SOLAR_CAMERA = new THREE.Vector3(0, 42, 100);
@@ -23,9 +24,14 @@ export class UniverseApp {
     this.onCameraUpdate = options.onCameraUpdate || (() => {});
     this.onToast = options.onToast || (() => {});
     this.onTelemetry = options.onTelemetry || (() => {});
+    this.onSimulationTime = options.onSimulationTime || (() => {});
+    this.onContextStatus = options.onContextStatus || (() => {});
+    this.contextLost = false;
+    this.recoverViewOnRestore = false;
     this.mode = 'galaxy';
     this.focusId = null;
     this.timeScale = 1;
+    this.timelineScrubbing = false;
     this.flightSpeed = 1;
     this.paused = false;
     this.qualityMode = 'auto';
@@ -45,9 +51,16 @@ export class UniverseApp {
     this.showLabels = true;
     this.transitioning = false;
     this.flying = false;
+    this.sceneTransitionResolve = null;
     this.focusFlight = null;
     this.lastTrackedPosition = null;
     this.keys = new Set();
+    this.freeTargetId = null;
+    this.freeAutopilot = false;
+    this.freeArrived = false;
+    this.freeFollowing = false;
+    this.freeVelocity = new THREE.Vector3();
+    this.freeLastTargetPosition = null;
     this.pointerStart = null;
     this.activePointerIds = new Set();
     this.multiTouchGesture = false;
@@ -118,6 +131,7 @@ export class UniverseApp {
     // Procedural solar materials are already available if a user enters early.
     this.bindEvents();
     this.emitState();
+    this.onSimulationTime(this.solar.getSimulationDays());
     this.animate();
   }
 
@@ -183,11 +197,40 @@ export class UniverseApp {
 
   getSceneSafeRect() {
     const width = window.innerWidth, height = window.innerHeight;
-    if (!this.isCompact) return { left: 0, right: width, top: 0, bottom: height };
-
+    const root = document.getElementById('app');
     const bounds = selector => document.querySelector(selector)?.getBoundingClientRect();
     const header = bounds('.topbar');
     const footer = bounds('.bottom-interface');
+    if (root?.dataset.layout === 't15') {
+      const pure = root.dataset.uiMode === 'pure';
+      let left = 8, right = width - 8;
+      let top = pure ? 8 : Math.max(8, (header?.bottom ?? 48) + 8);
+      let bottom = height - 8;
+      const active = root.dataset.activeDrawer;
+      const panel = ['objects', 'flight', 'time', 'settings'].includes(active)
+        ? document.querySelector('.workspace-panel') :
+        active === 'detail' ? document.querySelector('.detail-panel.is-visible') : null;
+      const obstacles = pure ? [] : [document.querySelector('.bottom-interface'), panel];
+      for (const el of obstacles) {
+        if (!el) continue;
+        const style = getComputedStyle(el);
+        if (style.display === 'none' || style.visibility === 'hidden' ||
+            style.pointerEvents === 'none') continue;
+        const rect = el.getBoundingClientRect();
+        if (!rect.height || !rect.width) continue;
+        // A right-side panel reduces horizontal viewing space on desktop and
+        // short landscape. A phone-width sheet instead reduces vertical space.
+        if (rect.left > width * .4 && rect.width < width * .55 &&
+            rect.top < height * .75) {
+          right = Math.min(right, rect.left - 9);
+        } else if (rect.top > height * .25 && rect.width > width * .55) {
+          bottom = Math.min(bottom, rect.top - 9);
+        }
+      }
+      return { left, right: Math.max(left + 64, right),
+        top, bottom: Math.max(top + 64, bottom) };
+    }
+    if (!this.isCompact) return { left: 0, right: width, top: 0, bottom: height };
     const detail = bounds('.detail-panel.is-visible');
     const top = Math.max(8, (header?.bottom ?? 88) + 8);
     let bottom = Math.min(height - 8, (footer?.top ?? height - 74) - 9);
@@ -200,16 +243,23 @@ export class UniverseApp {
   }
 
   getFocusShift(distance) {
-    if (!this.isCompact) return new THREE.Vector3();
+    if (!this.isCompact && document.getElementById('app')?.dataset.layout !== 't15')
+      return new THREE.Vector3();
     const safe = this.getSceneSafeRect();
+    const centerX = (safe.left + safe.right) / 2;
     const centerY = (safe.top + safe.bottom) / 2;
-    const offset = THREE.MathUtils.clamp(centerY / window.innerHeight - .5, -.43, .43);
+    const offsetX = THREE.MathUtils.clamp(.5 - centerX / window.innerWidth, -.27, .27);
+    const offsetY = THREE.MathUtils.clamp(centerY / window.innerHeight - .5, -.35, .35);
     const visibleWorldHeight = 2 * distance * Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2));
-    return new THREE.Vector3(0, offset * visibleWorldHeight, 0);
+    const right = new THREE.Vector3(1, 0, 0).applyQuaternion(this.camera.quaternion);
+    const up = new THREE.Vector3(0, 1, 0).applyQuaternion(this.camera.quaternion);
+    return right.multiplyScalar(offsetX * visibleWorldHeight * this.camera.aspect)
+      .add(up.multiplyScalar(offsetY * visibleWorldHeight));
   }
 
   reframeFocusedBody() {
-    if (!this.isCompact || this.mode !== 'planet' || !this.focusId || this.flying || this.transitioning) return;
+    if ((!this.isCompact && document.getElementById('app')?.dataset.layout !== 't15') ||
+        this.mode !== 'planet' || !this.focusId || this.flying || this.transitioning) return;
     const body = this.solar.bodies[this.focusId];
     if (!body) return;
     const position = body.root.getWorldPosition(new THREE.Vector3());
@@ -259,6 +309,88 @@ export class UniverseApp {
   }
 
   bindEvents() {
+    // Three.js recreates renderer GPU state on webglcontextrestored. The app
+    // also needs to stop simulation/GSAP and resume only after restoration.
+    this.handleContextLost = event => {
+      event.preventDefault();
+      if (this.contextLost) return;
+      this.contextLost = true;
+      this.timelineScrubbing = false;
+      this.recoverViewOnRestore = this.transitioning || this.flying;
+      if (this.animationId !== null) cancelAnimationFrame(this.animationId);
+      this.animationId = null;
+      this.clock.stop();
+      this.keys.clear();
+      this.activePointerIds.clear();
+      this.pointerStart = null;
+      this.multiTouchGesture = false;
+      this.freeAutopilot = false;
+      this.freeFollowing = false;
+      this.freeArrived = false;
+      this.freeVelocity.set(0, 0, 0);
+      this.frameSampleSeconds = 0;
+      this.frameSamples = 0;
+      this.lowFpsDuration = 0;
+      this.goodFpsDuration = 0;
+
+      this.sceneTimeline?.kill();
+      this.sceneTimeline = null;
+      this.sceneTransitionResolve?.(false);
+      this.sceneTransitionResolve = null;
+      this.flightTween?.kill();
+      this.flightTween = null;
+      this.reframeTween?.kill();
+      this.reframeTween = null;
+      gsap.killTweensOf(this.camera.position);
+      gsap.killTweensOf(this.controls.target);
+      if (this.transitionElement) {
+        gsap.killTweensOf(this.transitionElement);
+        this.transitionElement.style.opacity = '0';
+      }
+      this.focusFlight = null;
+      this.transitioning = false;
+      this.flying = false;
+      this.controls.enabled = true;
+      this.galaxy.group.visible = this.mode === 'galaxy';
+      this.solar.group.visible = this.mode !== 'galaxy';
+      this.solar.setTextureLoadingEnabled(this.mode !== 'galaxy');
+      this.lastTrackedPosition = this.mode === 'planet' && this.focusId
+        ? this.solar.bodies[this.focusId]?.root.getWorldPosition(new THREE.Vector3()) ?? null
+        : null;
+      this.emitState();
+      this.onContextStatus('lost');
+    };
+    this.handleContextRestored = () => {
+      if (!this.contextLost) return;
+      try {
+        // WebGLRenderer's internal restored listener runs before this listener.
+        // Force composer targets and viewport state to be refreshed afterwards.
+        this.contextLost = false;
+        this.renderer.setPixelRatio(this.pixelRatio);
+        this.composer.setPixelRatio(this.pixelRatio);
+        this.handleResize();
+        this.applyVisualQuality();
+        this.clock.start();
+        this.clock.getDelta();
+        this.frameSampleSeconds = 0;
+        this.frameSamples = 0;
+        this.pageVisible = !document.hidden;
+        const resetInterruptedView = this.recoverViewOnRestore;
+        this.recoverViewOnRestore = false;
+        if (resetInterruptedView) this.resetView();
+        if (this.pageVisible && this.animationId === null) this.animate();
+        this.onContextStatus('restored');
+      } catch (error) {
+        console.error('WebGL restoration failed:', error);
+        if (this.animationId !== null) cancelAnimationFrame(this.animationId);
+        this.animationId = null;
+        this.contextLost = true;
+        this.onContextStatus('failed');
+      }
+    };
+    this.canvas.addEventListener('webglcontextlost', this.handleContextLost, false);
+    this.canvas.addEventListener('webglcontextrestored', this.handleContextRestored, false);
+
     this.handleResize = () => {
       this.labelSizes = new WeakMap();
       const wasCompact = this.isCompact;
@@ -270,6 +402,7 @@ export class UniverseApp {
         this.adaptiveRatio = 1;
         this.applyVisualQuality();
       }
+      if (this.contextLost) return;
       this.applyRenderResolution();
       this.renderer.setSize(window.innerWidth, window.innerHeight, false);
       this.composer.setSize(window.innerWidth, window.innerHeight);
@@ -313,7 +446,15 @@ export class UniverseApp {
       this.canvas.style.cursor = 'grab';
     });
     this.handleKeyDown = event => {
-      if (event.target instanceof HTMLElement && ['INPUT', 'TEXTAREA'].includes(event.target.tagName)) return;
+      if (this.contextLost) return;
+      if (event.target instanceof HTMLElement) {
+        if (['INPUT', 'TEXTAREA', 'SELECT'].includes(event.target.tagName) ||
+            event.target.isContentEditable) return;
+        // A focused flight button must still allow WASD to take manual
+        // control; Space/Enter retain their native button behavior.
+        if (event.target.closest('button, [role="button"]') &&
+            ['Space', 'Enter'].includes(event.code)) return;
+      }
       if (document.querySelector('.modal-overlay.is-open')) return;
       if (['Space', 'ArrowUp', 'ArrowDown'].includes(event.code) && this.mode === 'free') event.preventDefault();
       this.keys.add(event.code);
@@ -321,14 +462,15 @@ export class UniverseApp {
     this.handleKeyUp = event => this.keys.delete(event.code);
     window.addEventListener('keydown', this.handleKeyDown);
     window.addEventListener('keyup', this.handleKeyUp);
-    window.addEventListener('blur', () => this.keys.clear());
+    this.handleWindowBlur = () => this.keys.clear();
+    window.addEventListener('blur', this.handleWindowBlur);
     this.handleVisibilityChange = () => {
       this.pageVisible = !document.hidden;
       this.frameSampleSeconds = 0;
       this.frameSamples = 0;
       this.lowFpsDuration = 0;
       this.goodFpsDuration = 0;
-      if (!this.pageVisible) {
+      if (!this.pageVisible || this.contextLost) {
         cancelAnimationFrame(this.animationId);
         this.animationId = null;
         this.keys.clear();
@@ -364,7 +506,10 @@ export class UniverseApp {
     }
     if (!this.solar.group.visible) return;
     const id = this.pickBody(event);
-    if (id) this.focusBody(id);
+    if (id) {
+      if (this.mode === 'free') this.setFreeTarget(id);
+      else this.focusBody(id);
+    }
   }
 
   emitState() {
@@ -374,6 +519,9 @@ export class UniverseApp {
       paused: this.paused,
       timeScale: this.timeScale,
       flightSpeed: this.flightSpeed,
+      freeTargetId: this.freeTargetId,
+      freeAutopilot: this.freeAutopilot,
+      freeArrived: this.freeArrived,
       qualityMode: this.qualityMode,
       showOrbits: this.showOrbits,
       showLabels: this.showLabels
@@ -392,6 +540,48 @@ export class UniverseApp {
     return { camera: SOLAR_CAMERA, target: ORIGIN };
   }
 
+  resetView() {
+    if (this.transitioning) return false;
+    const duration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? .01 : 1.05;
+
+    if (this.mode === 'planet') {
+      if (!this.focusId || !this.solar.bodies[this.focusId]) return false;
+      // Reuse the moving-body flight, which samples the current orbital
+      // position every frame. It restores the original offset without
+      // replacing the selected body or changing the detail panel state.
+      this.focusBody(this.focusId, duration);
+      this.onToast('已恢复当前天体默认视角');
+      return true;
+    }
+
+    if (this.mode === 'galaxy') {
+      this.controls.minDistance = 6;
+      this.controls.maxDistance = 290;
+      this.controls.autoRotate = true;
+      this.animateCamera(GALAXY_CAMERA.clone(), ORIGIN.clone(), duration);
+    } else if (this.mode === 'solar') {
+      this.controls.minDistance = 2;
+      this.controls.maxDistance = 220;
+      this.controls.autoRotate = false;
+      const overview = this.getSolarOverview();
+      this.animateCamera(overview.camera.clone(), overview.target.clone(), duration);
+    } else if (this.mode === 'free') {
+      // Returning to the default free-flight view also ends autopilot,
+      // velocity and target lock, but keeps free flight as the active mode.
+      this.clearFreeNavigation();
+      this.keys.clear();
+      this.controls.minDistance = .6;
+      this.controls.maxDistance = 1400;
+      this.controls.autoRotate = false;
+      const overview = this.getSolarOverview();
+      this.animateCamera(overview.camera.clone(), overview.target.clone(), duration);
+      this.emitState();
+    } else return false;
+
+    this.onToast('已恢复当前场景默认视角');
+    return true;
+  }
+
   changeScene(destination) {
     if (this.transitioning) return Promise.resolve(false);
     const toSolar = destination !== 'galaxy';
@@ -408,6 +598,7 @@ export class UniverseApp {
     this.clearCameraMomentum();
 
     return new Promise(resolve => {
+      this.sceneTransitionResolve = resolve;
       const fromGalaxy = this.mode === 'galaxy';
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const startPos = this.camera.position.clone();
@@ -421,6 +612,7 @@ export class UniverseApp {
         this.transitioning = false;
         this.flying = false;
         this.controls.enabled = true;
+        this.sceneTransitionResolve = null;
         resolve(true);
       }});
       if (!reduceMotion) {
@@ -497,6 +689,7 @@ export class UniverseApp {
 
   async viewGalaxy() {
     if (this.transitioning) return;
+    this.clearFreeNavigation();
     if (this.mode !== 'galaxy') {
       await this.changeScene('galaxy');
     } else {
@@ -509,6 +702,7 @@ export class UniverseApp {
 
   async viewSolar() {
     if (this.transitioning) return;
+    this.clearFreeNavigation();
     if (this.mode === 'galaxy') {
       await this.changeScene('solar');
     } else {
@@ -528,7 +722,11 @@ export class UniverseApp {
 
   async activateFree() {
     if (this.transitioning) return;
-    if (this.mode === 'galaxy') await this.changeScene('free');
+    if (this.mode !== 'free') this.clearFreeNavigation();
+    if (this.mode === 'galaxy') {
+      const switched = await this.changeScene('free');
+      if (!switched || this.contextLost) return;
+    }
     else this.solar.setTextureLoadingEnabled(true);
     this.mode = 'free';
     this.focusId = null;
@@ -541,13 +739,15 @@ export class UniverseApp {
     this.controls.enabled = true;
     this.controls.autoRotate = false;
     this.controls.minDistance = .6;
+    this.controls.maxDistance = 1400;
     this.emitState();
-    this.onToast('自由漫游已开启 · 使用 W A S D 与空格 / Shift 移动');
+    this.onToast('自由漫游已开启 · 使用航行导航锁定目标，或按 W A S D 手动飞行');
   }
 
-  async focusBody(id) {
+  async focusBody(id, duration = 1.9) {
     const body = this.solar.bodies[id];
     if (!body || this.transitioning) return;
+    this.clearFreeNavigation();
     // Selecting a target promotes its pending texture above overview/idle work.
     this.solar.requestTexture(id, 'focus');
     this.solar.requestNearbyTextures(id);
@@ -593,7 +793,7 @@ export class UniverseApp {
     this.focusFlight = flight;
     this.flightTween = gsap.to(flight, {
       t: 1,
-      duration: 1.9,
+      duration,
       ease: 'power3.inOut',
       onComplete: () => {
         // Finish after animate() has rendered the last tween sample.
@@ -622,6 +822,70 @@ export class UniverseApp {
     }
   }
 
+  setTimelineScrubbing(active) {
+    this.timelineScrubbing = Boolean(active);
+  }
+
+  seekSimulationDays(days) {
+    if (typeof days !== 'number' || !Number.isFinite(days) || this.contextLost) return false;
+    if (Math.abs(this.solar.getSimulationDays() - days) < 1e-7) {
+      this.onSimulationTime(days);
+      return true;
+    }
+    // Preserve the camera's offset to a tracked body. The scene is moved
+    // instantly to the chosen display date, not animated through intervening
+    // celestial positions that could cross the camera.
+    const focusEntry = this.mode === 'planet' && this.focusId
+      ? this.solar.bodies[this.focusId] : null;
+    const lockedEntry = this.mode === 'free' && this.freeTargetId
+      ? this.solar.bodies[this.freeTargetId] : null;
+    const followFree = Boolean(lockedEntry && (this.freeAutopilot || this.freeFollowing));
+    const followed = focusEntry || (followFree ? lockedEntry : null);
+    const before = followed?.root.getWorldPosition(new THREE.Vector3());
+    if (!this.solar.setSimulationDays(days)) return false;
+
+    if (followed && before) {
+      const after = followed.root.getWorldPosition(new THREE.Vector3());
+      const shift = after.clone().sub(before);
+      this.camera.position.add(shift);
+      this.controls.target.add(shift);
+      if (focusEntry) {
+        if (this.focusFlight) {
+          this.focusFlight.startPos.add(shift);
+          this.focusFlight.startTarget.add(shift);
+          this.focusFlight.midpoint.add(shift);
+          this.updateFocusFlight();
+        } else {
+          this.lastTrackedPosition = after;
+        }
+      }
+      if (followFree) {
+        // A time jump teleports the locked target and its observer together.
+        // Check the destination for overlap with another display-scale body.
+        const clearance = constrainCameraSegment(
+          this.camera.position, this.camera.position, Object.values(this.solar.bodies)
+        );
+        this.camera.position.copy(clearance.position);
+        if (clearance.blockedBody) {
+          this.freeAutopilot = false;
+          this.freeFollowing = false;
+          this.freeArrived = false;
+          this.freeVelocity.set(0, 0, 0);
+          this.emitState();
+          this.onToast('新日期下镜头靠近天体，已安全停止自动航行');
+        }
+      }
+    }
+    if (lockedEntry) {
+      // Prevent the next frame from applying the same orbital displacement a
+      // second time through updateFreeMovement's moving-target compensation.
+      this.freeLastTargetPosition = lockedEntry.root.getWorldPosition(new THREE.Vector3());
+    }
+    this.onSimulationTime(this.solar.getSimulationDays());
+    this.onCameraUpdate(this.camera.position.distanceTo(this.controls.target));
+    return true;
+  }
+
   setTimeScale(value) {
     this.timeScale = Math.max(0, Math.min(50, Number(value)));
     if (this.timeScale > 0 && this.paused) this.paused = false;
@@ -644,42 +908,228 @@ export class UniverseApp {
     this.emitState();
   }
 
+  clearFreeNavigation() {
+    this.freeTargetId = null;
+    this.freeAutopilot = false;
+    this.freeArrived = false;
+    this.freeFollowing = false;
+    this.freeLastTargetPosition = null;
+    this.freeVelocity.set(0, 0, 0);
+  }
+
+  setFreeTarget(id) {
+    const body = this.solar.bodies[id];
+    if (this.mode !== 'free' || this.transitioning || !body) return false;
+    this.clearCameraMomentum();
+    this.freeTargetId = id;
+    this.freeAutopilot = false;
+    this.freeArrived = false;
+    this.freeFollowing = false;
+    this.freeVelocity.set(0, 0, 0);
+    this.freeLastTargetPosition = body.root.getWorldPosition(new THREE.Vector3());
+    this.controls.minDistance = getBodyClearance(body.data) + .05;
+    this.solar.requestTexture(id, 'focus');
+    this.solar.requestNearbyTextures(id);
+    this.emitState();
+    this.onToast('已锁定' + body.data.name + ' · 点击“飞往目标”开始自动接近');
+    return true;
+  }
+
+  startFreeAutopilot() {
+    if (this.mode !== 'free' || this.transitioning || !this.freeTargetId) {
+      this.onToast('请先在航行导航或搜索中选择目标');
+      return false;
+    }
+    this.freeAutopilot = true;
+    this.freeArrived = false;
+    this.freeFollowing = false;
+    this.freeVelocity.set(0, 0, 0);
+    this.keys.clear();
+    this.clearCameraMomentum();
+    this.emitState();
+    this.onToast('正飞往' + this.solar.bodies[this.freeTargetId].data.name + ' · 接近时自动减速');
+    return true;
+  }
+
+  stopFreeAutopilot() {
+    if (this.mode !== 'free' || !this.freeAutopilot) return;
+    this.freeAutopilot = false;
+    this.freeArrived = false;
+    this.freeFollowing = false;
+    this.freeVelocity.set(0, 0, 0);
+    this.emitState();
+    this.onToast('自动航行已停止，目标仍保持锁定');
+  }
+
+  unlockFreeTarget() {
+    if (this.mode !== 'free' || !this.freeTargetId) return;
+    const direction = this.camera.getWorldDirection(new THREE.Vector3());
+    const lookDistance = THREE.MathUtils.clamp(
+      this.camera.position.distanceTo(this.controls.target), 10, 40
+    );
+    this.clearFreeNavigation();
+    this.controls.minDistance = .6;
+    this.controls.target.copy(this.camera.position).addScaledVector(direction, lookDistance);
+    this.emitState();
+    this.onToast('已解除目标锁定，可以自由操控镜头');
+  }
+
+  finishFreeArrival() {
+    if (!this.freeAutopilot || !this.freeTargetId) return;
+    this.freeAutopilot = false;
+    this.freeArrived = true;
+    this.freeFollowing = true;
+    this.freeVelocity.set(0, 0, 0);
+    this.emitState();
+    this.onToast('已安全抵达' + this.solar.bodies[this.freeTargetId].data.name + '附近');
+  }
+
   setFlightSpeed(value) {
-    this.flightSpeed = Math.max(.5, Math.min(4, Number(value)));
+    const speed = Number(value);
+    this.flightSpeed = Number.isFinite(speed) ? THREE.MathUtils.clamp(speed, .5, 4) : 1;
     this.emitState();
   }
 
   zoom(factor) {
+    if (this.transitioning) return false;
+    // A quick zoom is a direct user camera command. Take over an in-progress
+    // reset/focus tween so the next GSAP frame cannot undo the button press.
+    if (this.flying) {
+      this.flightTween?.kill();
+      this.flightTween = null;
+      this.focusFlight = null;
+      gsap.killTweensOf(this.camera.position);
+      gsap.killTweensOf(this.controls.target);
+      this.flying = false;
+      this.controls.enabled = true;
+      if (this.mode === 'planet' && this.focusId) {
+        this.lastTrackedPosition =
+          this.solar.bodies[this.focusId]?.root.getWorldPosition(new THREE.Vector3()) ?? null;
+      }
+    }
+    this.reframeTween?.kill();
+    this.reframeTween = null;
+    this.clearCameraMomentum();
+    const before = this.camera.position.clone();
     const offset = this.camera.position.clone().sub(this.controls.target);
     const distance = offset.length();
+    if (distance < 1e-8) return;
     const desired = THREE.MathUtils.clamp(distance * factor, this.controls.minDistance, this.controls.maxDistance);
     this.camera.position.copy(this.controls.target).add(offset.multiplyScalar(desired / distance));
+    if (this.mode === 'free' && this.solar.group.visible) {
+      const result = constrainCameraSegment(
+        before, this.camera.position, Object.values(this.solar.bodies)
+      );
+      this.camera.position.copy(result.position);
+      if (result.blockedBody) {
+        this.freeVelocity.set(0, 0, 0);
+        if (this.freeAutopilot) this.stopFreeAutopilot();
+      }
+    }
+    this.onCameraUpdate(this.camera.position.distanceTo(this.controls.target));
+    return true;
   }
 
   updateFreeMovement(delta) {
-    if (this.mode !== 'free' || this.flying || this.transitioning) return;
-    const forward = this.camera.getWorldDirection(new THREE.Vector3());
-    const right = new THREE.Vector3().crossVectors(forward, this.camera.up).normalize();
-    const movement = new THREE.Vector3();
-    if (this.keys.has('KeyW')) movement.add(forward);
-    if (this.keys.has('KeyS')) movement.sub(forward);
-    if (this.keys.has('KeyD')) movement.add(right);
-    if (this.keys.has('KeyA')) movement.sub(right);
-    if (this.keys.has('Space')) movement.y += 1;
-    if (this.keys.has('ShiftLeft') || this.keys.has('ShiftRight')) movement.y -= 1;
-    if (movement.lengthSq() === 0) return;
-    movement.normalize().multiplyScalar(17 * delta * this.flightSpeed);
-    this.camera.position.add(movement);
-    this.controls.target.add(movement);
-    for (const body of CELESTIALS) {
-      if (body.id === 'sun' || !this.solar.group.visible) continue;
-      const location = this.solar.bodies[body.id].root.getWorldPosition(new THREE.Vector3());
-      const deltaPos = this.camera.position.clone().sub(location);
-      const safeRadius = body.radius * 1.08;
-      if (deltaPos.lengthSq() < safeRadius * safeRadius) {
-        this.camera.position.copy(location).add(deltaPos.normalize().multiplyScalar(safeRadius));
-        this.controls.target.add(this.camera.position.clone().sub(location).multiplyScalar(.02));
+    if (this.mode !== 'free' || this.flying || this.transitioning || delta <= 0) return;
+    const body = this.freeTargetId ? this.solar.bodies[this.freeTargetId] : null;
+    const target = body?.root.getWorldPosition(new THREE.Vector3()) || null;
+    const previousCamera = this.camera.position.clone();
+    if (target && this.freeLastTargetPosition && (this.freeAutopilot || this.freeFollowing)) {
+      // The destination orbits while the camera travels. Approach in its moving
+      // frame; after arrival, follow the same displacement to hold a safe offset.
+      this.camera.position.add(target.clone().sub(this.freeLastTargetPosition));
+    }
+    const from = this.camera.position.clone();
+    const forward = target
+      ? target.clone().sub(from).normalize()
+      : this.camera.getWorldDirection(new THREE.Vector3());
+    const right = new THREE.Vector3().crossVectors(forward, this.camera.up);
+    if (right.lengthSq() < 1e-8) right.set(1, 0, 0);
+    else right.normalize();
+    const input = new THREE.Vector3();
+    if (this.keys.has('KeyW')) input.add(forward);
+    if (this.keys.has('KeyS')) input.sub(forward);
+    if (this.keys.has('KeyD')) input.add(right);
+    if (this.keys.has('KeyA')) input.sub(right);
+    if (this.keys.has('Space')) input.y += 1;
+    if (this.keys.has('ShiftLeft') || this.keys.has('ShiftRight')) input.y -= 1;
+
+    if (input.lengthSq() > 0 && (this.freeAutopilot || this.freeFollowing)) {
+      const wasAutopilot = this.freeAutopilot;
+      this.freeAutopilot = false;
+      this.freeArrived = false;
+      this.freeFollowing = false;
+      this.freeVelocity.set(0, 0, 0);
+      this.emitState();
+      if (wasAutopilot) this.onToast('已切换手动飞行，目标仍保持锁定');
+    }
+
+    const speed = 17 * this.flightSpeed;
+    const braking = 20 * this.flightSpeed;
+    const desiredVelocity = new THREE.Vector3();
+    const remaining = target
+      ? Math.max(0, from.distanceTo(target) - getArrivalDistance(body.data))
+      : Infinity;
+    if (this.freeAutopilot && target) {
+      if (remaining <= .06) this.finishFreeArrival();
+      else {
+        // Gradually taper speed near the stop orbit so the last few frames
+        // approach smoothly instead of relying on a hard distance clamp.
+        desiredVelocity.copy(forward).multiplyScalar(
+          Math.min(speed, Math.sqrt(2 * braking * remaining), remaining * 2.8)
+        );
       }
+    }
+    if (!this.freeAutopilot && input.lengthSq() > 0) {
+      desiredVelocity.copy(input).normalize().multiplyScalar(speed);
+    }
+    this.freeVelocity.lerp(desiredVelocity, 1 - Math.exp(-(this.freeAutopilot ? 6 : 9) * delta));
+    if (!this.freeAutopilot && input.lengthSq() === 0 && this.freeVelocity.lengthSq() < .0004) {
+      this.freeVelocity.set(0, 0, 0);
+    }
+    if (target) {
+      // Manual W also brakes near a locked body; strafing and retreat stay usable.
+      const inwardSpeed = this.freeVelocity.dot(forward);
+      const cap = Math.sqrt(2 * braking * remaining);
+      if (inwardSpeed > cap) this.freeVelocity.addScaledVector(forward, cap - inwardSpeed);
+    }
+
+    const requested = from.clone().addScaledVector(this.freeVelocity, delta);
+    if (this.freeAutopilot && target) {
+      // A large frame or high flight speed must never overshoot the stop orbit.
+      const inwardStep = requested.clone().sub(from).dot(forward);
+      if (inwardStep > remaining) requested.addScaledVector(forward, remaining - inwardStep);
+    }
+    const result = constrainCameraSegment(
+      previousCamera, requested, Object.values(this.solar.bodies)
+    );
+    this.camera.position.copy(result.position);
+    if (result.blockedBody) {
+      this.freeVelocity.set(0, 0, 0);
+      if (this.freeAutopilot) {
+        this.freeAutopilot = false;
+        this.freeArrived = false;
+        this.freeFollowing = false;
+        this.emitState();
+        this.onToast('航线靠近' + result.blockedBody.name + '，已安全停止；可手动绕行');
+      } else if (this.freeFollowing) {
+        this.freeFollowing = false;
+        this.freeArrived = false;
+        this.emitState();
+      }
+    }
+    if (target) {
+      if (this.freeAutopilot &&
+        this.camera.position.distanceTo(target) <= getArrivalDistance(body.data) + .08) {
+        this.finishFreeArrival();
+      }
+      if (this.freeAutopilot || this.freeFollowing) this.controls.target.copy(target);
+      else this.controls.target.lerp(target, 1 - Math.exp(-12 * delta));
+      this.freeLastTargetPosition.copy(target);
+    } else {
+      // Unlocked free flight translates the camera and its orbit pivot together.
+      this.controls.target.add(this.camera.position.clone().sub(previousCamera));
     }
   }
 
@@ -691,11 +1141,17 @@ export class UniverseApp {
     const focusedMoon = SATELLITES.some(moon => moon.id === this.focusId);
     const protectedAreas = [
       '.topbar', '.bottom-interface', '.hero-panel:not(.is-hidden)',
-      '.detail-panel.is-visible', '.camera-tools', '.mobile-menu:not([hidden])',
+      '.detail-panel.is-visible', '.workspace-panel',
+      '.scene-readout', '.flight-safety', '.camera-tools', '.mobile-menu:not([hidden])',
       '#app[data-dock="open"] .planet-dock'
     ]
       .map(selector => document.querySelector(selector))
       .filter(Boolean)
+      .filter(element => {
+        const style = getComputedStyle(element);
+        return style.display !== 'none' && style.visibility !== 'hidden' &&
+          Number(style.opacity) > .05;
+      })
       .map(element => element.getBoundingClientRect())
       .filter(rect => rect.width > 0 && rect.height > 0);
     const overlaps = (labelBounds, region) =>
@@ -815,6 +1271,9 @@ export class UniverseApp {
       minFps: samples.length ? Math.min(...samples) : this.fps,
       samples: samples.length,
       mode: this.mode,
+      transitioning: this.transitioning,
+      flying: this.flying,
+      cameraDistance: Number(this.camera.position.distanceTo(this.controls.target).toFixed(2)),
       qualityMode: this.qualityMode,
       qualityTier: ['省电', '均衡', '精细'][this.visualQualityTier],
       dpr: Number(this.pixelRatio.toFixed(2)),
@@ -822,20 +1281,26 @@ export class UniverseApp {
       triangles: this.renderer.info.render.triangles,
       geometries: this.renderer.info.memory.geometries,
       textures: this.renderer.info.memory.textures,
+      contextLost: this.contextLost,
       // WebGL renderer.info contains object counts, not GPU memory in bytes.
       gpuMemoryBytes: null
     };
   }
 
   animate = () => {
-    if (!this.pageVisible) return;
+    if (!this.pageVisible || this.contextLost) return;
     this.animationId = requestAnimationFrame(this.animate);
     const elapsedFrame = this.clock.getDelta();
     const delta = Math.min(elapsedFrame, .05);
     this.elapsed += delta;
     this.galaxy.update(delta, this.elapsed);
     this.starfield.material.uniforms.uTime.value = this.elapsed;
-    this.solar.update(delta, this.paused ? 0 : this.timeScale);
+    // Orbit playback speed belongs to solar/body viewing. Free flight uses a
+    // predictable baseline orbital rate; the galaxy scene has no solar clock.
+    const orbitalRate = this.mode === 'free' ? 1 :
+      this.mode === 'galaxy' || this.paused || this.timelineScrubbing ? 0 : this.timeScale;
+    this.solar.update(delta, orbitalRate);
+    if (this.frame % 10 === 0) this.onSimulationTime(this.solar.getSimulationDays());
     this.updatePerformance(elapsedFrame);
     this.updateFreeMovement(delta);
 
@@ -849,7 +1314,28 @@ export class UniverseApp {
     }
 
     if (this.flying) this.camera.lookAt(this.controls.target);
-    else this.controls.update();
+    else {
+      const beforeControls = this.camera.position.clone();
+      this.controls.update();
+      if (this.mode === 'free' && this.solar.group.visible) {
+        // OrbitControls zoom/pan/rotation can also move the camera. Enforce
+        // clearances after its update, before anything reaches the renderer.
+        const result = constrainCameraSegment(
+          beforeControls, this.camera.position, Object.values(this.solar.bodies)
+        );
+        if (result.blockedBody) {
+          this.camera.position.copy(result.position);
+          this.camera.lookAt(this.controls.target);
+          this.freeVelocity.set(0, 0, 0);
+          if (this.freeAutopilot) this.stopFreeAutopilot();
+          else if (this.freeFollowing) {
+            this.freeFollowing = false;
+            this.freeArrived = false;
+            this.emitState();
+          }
+        }
+      }
+    }
     if (this.useBloom) this.composer.render();
     else this.renderer.render(this.scene, this.camera);
     // Keep DOM labels in the same rendered frame as their 3D targets.
@@ -865,6 +1351,10 @@ export class UniverseApp {
 
   dispose() {
     cancelAnimationFrame(this.animationId);
+    this.sceneTransitionResolve?.(false);
+    this.sceneTransitionResolve = null;
+    this.canvas.removeEventListener('webglcontextlost', this.handleContextLost);
+    this.canvas.removeEventListener('webglcontextrestored', this.handleContextRestored);
     this.flightTween?.kill();
     this.reframeTween?.kill();
     this.sceneTimeline?.kill();
@@ -875,6 +1365,7 @@ export class UniverseApp {
     window.removeEventListener('resize', this.handleResize);
     window.removeEventListener('keydown', this.handleKeyDown);
     window.removeEventListener('keyup', this.handleKeyUp);
+    window.removeEventListener('blur', this.handleWindowBlur);
     document.removeEventListener('visibilitychange', this.handleVisibilityChange);
     this.controls.dispose();
     this.composer.dispose();

@@ -1,0 +1,422 @@
+/* T15 reference layout — the scene remains the visual centre.
+   Top-left brand / top-right global actions / bottom-left location /
+   bottom-right three contextual controls. Loaded after stage-1 layout CSS. */
+
+#app[data-layout="t15"] .scene-rail { display: none !important; }
+
+#app[data-layout="t15"] .topbar {
+  position: fixed; z-index: 24;
+  top: calc(22px + env(safe-area-inset-top, 0px));
+  left: max(22px, env(safe-area-inset-left, 0px));
+  right: max(22px, env(safe-area-inset-right, 0px));
+  width: auto; height: 46px; min-width: 0; padding: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  background: transparent; border: 0; pointer-events: none;
+}
+#app[data-layout="t15"] .topbar .brand {
+  display: flex !important; position: static; min-height: 44px;
+  align-items: center; gap: 10px; pointer-events: auto;
+  padding: 0; margin: 0; background: none;
+}
+#app[data-layout="t15"] .topbar .brand-text {
+  display: flex; flex-direction: column; gap: 2px;
+}
+#app[data-layout="t15"] .topbar .brand-text strong {
+  font-size: 15px; line-height: 1.2; letter-spacing: .18em;
+}
+#app[data-layout="t15"] .topbar .brand-text small { font-size: 9px; letter-spacing: .1em; }
+#app[data-layout="t15"] .mobile-scene-trigger,
+#app[data-layout="t15"] #mobile-menu-trigger { display: none !important; }
+#app[data-layout="t15"] .topbar .top-actions { gap: 8px; align-items: center; }
+#app[data-layout="t15"] .topbar .top-actions .icon-button {
+  width: 43px; min-width: 43px; height: 43px; min-height: 43px;
+  border: 1px solid rgba(154,196,220,.2); border-radius: 10px;
+  background: rgba(8,17,29,.74); color: #d4e6f2;
+  transition: color .2s, background .2s, border-color .2s;
+}
+#app[data-layout="t15"] .topbar .top-actions .icon-button:hover,
+#app[data-layout="t15"] .topbar .top-actions .icon-button[aria-pressed="true"],
+#app[data-layout="t15"] .topbar .top-actions .icon-button[aria-expanded="true"] {
+  background: rgba(41,69,91,.74); border-color: rgba(166,212,234,.52);
+  color: #fff;
+}
+#app[data-layout="t15"] .header-scene-state {
+  display: inline-flex; align-items: center; gap: 8px; margin-right: 7px;
+  color: rgba(184,205,225,.73);
+  font: 600 10px 'Space Grotesk','Microsoft YaHei',sans-serif;
+  letter-spacing: .13em; white-space: nowrap;
+}
+#app[data-layout="t15"] .header-scene-state i {
+  display: block; width: 5px; height: 5px; flex: none;
+  border-radius: 50%; background: #b9d9dd; box-shadow: 0 0 10px #65a8ca;
+}
+
+/* All large introductory blocks move out of the observed scene. Information
+   stays in the existing help/about modal, reachable from the contextual dock. */
+#app[data-layout="t15"] .hero-panel,
+#app[data-layout="t15"] #hero-panel { display: none !important; }
+#app[data-layout="t15"] .side-readout,
+#app[data-layout="t15"] .corner-note { display: none !important; }
+
+/* Subtle spatial reference, comparable to the screenshot's showroom number. */
+#app[data-layout="t15"] .scene-readout {
+  position: fixed; z-index: 14;
+  left: max(27px, env(safe-area-inset-left, 0px));
+  bottom: calc(36px + env(safe-area-inset-bottom, 0px));
+  display: flex; align-items: baseline; gap: 11px;
+  pointer-events: none; max-width: 42vw;
+}
+#app[data-layout="t15"] .scene-readout #scene-readout-label {
+  font: 500 10px 'DM Sans','Microsoft YaHei',sans-serif;
+  color: #788fa6; letter-spacing: .12em; white-space: nowrap;
+}
+#app[data-layout="t15"] .scene-readout #scene-readout-number {
+  color: #ceb187; font: 400 25px/1 'Space Grotesk',sans-serif;
+  letter-spacing: .03em;
+}
+#app[data-layout="t15"] .scene-readout #scene-readout-name {
+  font-size: 11px; color: #9cb5c5; white-space: nowrap;
+  max-width: 120px; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* Three compact buttons at bottom-right replace the old floating transport
+   and persistent left navigation. The original controls are reparented. */
+#app[data-layout="t15"] .bottom-interface {
+  position: fixed; z-index: 22; display: block;
+  left: auto; right: max(25px, env(safe-area-inset-right, 0px));
+  bottom: calc(25px + env(safe-area-inset-bottom, 0px));
+  width: min(418px, calc(100vw - 48px)); height: 62px;
+  padding: 0; margin: 0; transform: none; pointer-events: auto;
+}
+#app[data-layout="t15"] .time-capsule {
+  display: flex; align-items: stretch; width: 100%; height: 62px;
+  gap: 0; padding: 6px; border-radius: 13px;
+  border: 1px solid rgba(140,179,207,.22);
+  background: rgba(8,15,25,.91);
+  box-shadow: 0 9px 32px rgba(0,0,0,.28);
+  backdrop-filter: blur(10px);
+}
+#app[data-layout="t15"] #capsule-play-slot,
+#app[data-layout="t15"] #capsule-speed { display: none !important; }
+#app[data-layout="t15"] #capsule-info-slot,
+#app[data-layout="t15"] #capsule-dock-slot {
+  display: flex; align-items: center; justify-content: stretch;
+  flex: 1 1 0; min-width: 0; width: auto;
+}
+#app[data-layout="t15"] #capsule-info-slot,
+#app[data-layout="t15"] .time-open-trigger {
+  border-right: 1px solid rgba(137,178,209,.16);
+}
+#app[data-layout="t15"] .detail-peek-trigger,
+#app[data-layout="t15"] .time-open-trigger,
+#app[data-layout="t15"] #planet-dock-toggle {
+  position: static; display: flex; flex: 1 1 0; flex-direction: row;
+  align-items: center; justify-content: center; gap: 7px;
+  width: 100%; min-width: 0; max-width: none; height: 49px; min-height: 49px;
+  top: auto; right: auto; bottom: auto; left: auto;
+  padding: 3px 7px; margin: 0; border: 0; border-radius: 8px;
+  background: transparent; color: #b8cbdb;
+  font: 500 12px/1.3 'DM Sans','Microsoft YaHei',sans-serif;
+  box-shadow: none; letter-spacing: 0; white-space: nowrap;
+  transition: background .18s, color .18s;
+}
+#app[data-layout="t15"] .detail-peek-trigger::before {
+  content: 'ⓘ'; font-size: 17px; color: #cbb187;
+}
+#app[data-layout="t15"] .time-open-trigger::before {
+  content: '☷'; font-size: 15px; color: #cbb187;
+}
+#app[data-layout="t15"] #planet-dock-toggle::before {
+  content: '◎'; font-size: 18px; color: #cbb187;
+}
+#app[data-layout="t15"] .detail-peek-trigger > span[aria-hidden="true"],
+#app[data-layout="t15"] .time-open-trigger > span[aria-hidden="true"] { display: none; }
+#app[data-layout="t15"] .time-open-trigger .dock-item-label {
+  display: inline; font-size: inherit; white-space: nowrap;
+}
+#app[data-layout="t15"] .detail-peek-trigger:hover,
+#app[data-layout="t15"] .time-open-trigger:hover,
+#app[data-layout="t15"] #planet-dock-toggle:hover,
+#app[data-layout="t15"] .detail-peek-trigger[aria-expanded="true"],
+#app[data-layout="t15"] .time-open-trigger[aria-expanded="true"],
+#app[data-layout="t15"] #planet-dock-toggle[aria-expanded="true"] {
+  background: rgba(90,130,163,.19); color: #f7fdff;
+}
+#app[data-layout="t15"] #capsule-dock-slot { border-left: 0; }
+
+/* The contextual workspace grows *upwards* from its dock, leaving the
+   observed object at the centre and keeping existing inputs in one DOM. */
+#app[data-layout="t15"] .workspace-panel {
+  position: fixed; z-index: 23;
+  top: auto; left: auto;
+  right: max(25px, env(safe-area-inset-right, 0px));
+  bottom: calc(99px + env(safe-area-inset-bottom, 0px));
+  width: min(418px, calc(100vw - 48px));
+  max-height: min(67dvh, calc(100dvh - 140px));
+  overflow: auto; padding: 17px;
+  border-radius: 15px; background: rgba(8,18,31,.96);
+  transform: translateY(9px); border: 1px solid rgba(151,194,220,.23);
+}
+#app[data-layout="t15"][data-active-drawer="objects"] .workspace-panel,
+#app[data-layout="t15"][data-active-drawer="flight"] .workspace-panel,
+#app[data-layout="t15"][data-active-drawer="time"] .workspace-panel,
+#app[data-layout="t15"][data-active-drawer="settings"] .workspace-panel { transform: none; }
+#app[data-layout="t15"] #objects-workspace-slot .view-nav {
+  display: grid; position: static; grid-template-columns: repeat(3,minmax(0,1fr));
+  width: 100%; height: auto; gap: 6px; padding: 0 0 12px; margin: 0 0 13px;
+  border: 0; border-bottom: 1px solid rgba(137,181,211,.16);
+}
+#app[data-layout="t15"] #objects-workspace-slot .view-link {
+  display: block; width: 100%; min-height: 38px;
+  padding: 9px 3px; margin: 0; border: 1px solid rgba(142,188,219,.12);
+  border-radius: 7px; background: rgba(65,104,135,.11);
+  font-size: 11px; color: #b1cadb; white-space: nowrap;
+  text-align: center;
+}
+#app[data-layout="t15"] #objects-workspace-slot .view-link span { display: none; }
+#app[data-layout="t15"] #objects-workspace-slot .view-link.is-active {
+  color: #f0faff; border-color: rgba(160,209,233,.34);
+  background: rgba(94,153,186,.21);
+}
+#app[data-layout="t15"] #objects-workspace-slot .view-link::after { display: none; }
+#app[data-layout="t15"] .workspace-panel .camera-tools {
+  position: static !important; inset: auto !important;
+  display: flex !important; align-items: center; justify-content: flex-end;
+  gap: 10px; padding: 12px 0 0; margin-top: 12px; transform: none !important;
+  border-top: 1px solid rgba(139,181,208,.16);
+}
+#app[data-layout="t15"] .workspace-panel .camera-zoom {
+  display: flex; width: auto; gap: 6px; border: 0; background: none;
+}
+#app[data-layout="t15"] .workspace-panel .camera-zoom > span { display: none; }
+#app[data-layout="t15"] .workspace-panel .camera-zoom button {
+  width: 43px; height: 42px; border: 1px solid rgba(147,191,224,.25);
+  border-radius: 8px; background: rgba(80,117,151,.13);
+}
+#app[data-layout="t15"] .workspace-panel .camera-reset-button {
+  min-width: 55px; min-height: 42px; border-radius: 8px;
+}
+#app[data-layout="t15"] .workspace-panel .camera-distance {
+  display: inline; flex: 1; white-space: nowrap;
+}
+#app[data-layout="t15"] .detail-panel {
+  position: fixed; z-index: 23;
+  top: auto; left: auto;
+  right: max(25px, env(safe-area-inset-right, 0px));
+  bottom: calc(99px + env(safe-area-inset-bottom, 0px));
+  width: min(418px, calc(100vw - 48px));
+  height: auto; min-height: 0;
+  max-height: min(67dvh, calc(100dvh - 140px));
+  overflow-y: auto; padding: 19px;
+  border-radius: 15px; transform: translateY(10px);
+}
+#app[data-layout="t15"][data-active-drawer="detail"] .detail-panel.is-visible {
+  transform: none; height: auto; min-height: 0;
+}
+#app[data-layout="t15"] .flight-safety {
+  position: fixed; z-index: 26;
+  left: max(28px, env(safe-area-inset-left,0px));
+  right: auto; bottom: calc(94px + env(safe-area-inset-bottom,0px));
+}
+
+/* Pure viewing keeps the COSMOS brand and celestial annotations. The
+   bottom-left scene readout joins secondary controls in disappearing.
+   The user's existing celestial-label preference remains authoritative. */
+#app[data-layout="t15"][data-ui-mode="pure"] .header-scene-state,
+#app[data-layout="t15"][data-ui-mode="pure"] .scene-readout,
+#app[data-layout="t15"][data-ui-mode="pure"] #search-trigger,
+#app[data-layout="t15"][data-ui-mode="pure"] #global-settings-trigger,
+#app[data-layout="t15"][data-ui-mode="pure"] .bottom-interface,
+#app[data-layout="t15"][data-ui-mode="pure"] .workspace-panel,
+#app[data-layout="t15"][data-ui-mode="pure"] .detail-panel {
+  display: none !important;
+}
+#app[data-layout="t15"][data-ui-mode="pure"] .topbar .top-actions {
+  margin-left: auto; opacity: .63; transition: opacity .2s;
+}
+#app[data-layout="t15"][data-ui-mode="pure"] .topbar .top-actions:hover { opacity: 1; }
+#app:fullscreen { width: 100vw; height: 100vh; background: #030811; }
+
+@media (max-width: 900px) {
+  #app[data-layout="t15"] .topbar {
+    top: calc(9px + env(safe-area-inset-top, 0px));
+    left: calc(13px + env(safe-area-inset-left,0px));
+    right: calc(13px + env(safe-area-inset-right,0px));
+    height: 46px; justify-content: space-between;
+  }
+  #app[data-layout="t15"] .header-scene-state { display: none; }
+  #app[data-layout="t15"] .topbar .brand-text strong { font-size: 13px; }
+  #app[data-layout="t15"] .topbar .brand-text small { display: none; }
+  #app[data-layout="t15"] .topbar .brand-symbol { transform: scale(.86); }
+  #app[data-layout="t15"] .topbar .brand { gap: 4px; }
+  #app[data-layout="t15"] .topbar .top-actions { gap: 5px; }
+  #app[data-layout="t15"] .topbar .top-actions .icon-button {
+    width: 43px; min-width: 43px; height: 44px; min-height: 44px;
+  }
+  #app[data-layout="t15"] .scene-readout {
+    left: calc(14px + env(safe-area-inset-left,0px));
+    bottom: calc(94px + env(safe-area-inset-bottom,0px));
+  }
+  #app[data-layout="t15"] .bottom-interface {
+    top: auto; left: auto;
+    right: calc(12px + env(safe-area-inset-right,0px));
+    bottom: calc(11px + env(safe-area-inset-bottom,0px));
+    width: min(390px, calc(100vw - 24px)); height: 60px;
+    transform: none;
+  }
+  #app[data-layout="t15"] .time-capsule { height: 60px; padding: 5px; }
+  #app[data-layout="t15"] .workspace-panel,
+  #app[data-layout="t15"] .detail-panel {
+    left: auto; top: auto;
+    right: calc(12px + env(safe-area-inset-right,0px));
+    bottom: calc(82px + env(safe-area-inset-bottom,0px));
+    width: min(390px, calc(100vw - 24px));
+    max-height: min(62dvh, calc(100dvh - 147px));
+  }
+  #app[data-layout="t15"] .detail-panel .detail-sheet-handle { display: grid; }
+  #app[data-layout="t15"] .detail-panel .detail-sheet-summary { display: none; }
+}
+@media (max-width: 400px) {
+  #app[data-layout="t15"] .detail-peek-trigger,
+  #app[data-layout="t15"] .time-open-trigger,
+  #app[data-layout="t15"] #planet-dock-toggle { gap: 4px; padding: 4px 3px; font-size: 10px; }
+  #app[data-layout="t15"] .topbar .brand-text strong { letter-spacing: .08em; }
+  #app[data-layout="t15"] .scene-readout #scene-readout-name { max-width: 85px; }
+}
+/* On narrow phones the bottom sheet overlaps the lower-left scene readout.
+   Keep that label in the unobstructed scene, and hide it while a sheet is open. */
+@media (max-width: 640px) {
+  #app[data-layout="t15"]:not([data-active-drawer="none"]) .scene-readout {
+    display: none;
+  }
+  #app[data-layout="t15"]:not([data-active-drawer="none"]) .toast {
+    top: calc(70px + env(safe-area-inset-top, 0px));
+    bottom: auto;
+  }
+}
+@media (max-height: 480px) and (max-width: 900px) and (orientation: landscape) {
+  #app[data-layout="t15"] .topbar {
+    top: 5px; left: calc(15px + env(safe-area-inset-left,0px));
+    right: calc(15px + env(safe-area-inset-right,0px));
+    height: 44px;
+  }
+  #app[data-layout="t15"] .bottom-interface {
+    top: auto; left: auto;
+    right: calc(12px + env(safe-area-inset-right,0px));
+    bottom: calc(9px + env(safe-area-inset-bottom,0px));
+    width: min(390px, 51vw); height: 55px; transform: none;
+  }
+  #app[data-layout="t15"] .time-capsule {
+    flex-direction: row; width: 100%; height: 55px; min-height: 0;
+    padding: 4px; gap: 0;
+  }
+  #app[data-layout="t15"] .scene-readout {
+    bottom: calc(29px + env(safe-area-inset-bottom,0px));
+    left: calc(15px + env(safe-area-inset-left,0px));
+  }
+  #app[data-layout="t15"] .workspace-panel,
+  #app[data-layout="t15"] .detail-panel {
+    top: auto; left: auto;
+    right: calc(12px + env(safe-area-inset-right,0px));
+    bottom: calc(75px + env(safe-area-inset-bottom,0px));
+    width: min(390px,51vw); max-height: calc(100dvh - 134px);
+  }
+  #app[data-layout="t15"] .time-open-trigger::before { content: '☷'; }
+  #app[data-layout="t15"] .time-open-trigger .dock-item-label { display: inline; }
+  #app[data-layout="t15"] .detail-panel { max-height: calc(100dvh - 135px); }
+  #app[data-layout="t15"] .flight-safety { bottom: 77px; left: 13px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #app[data-layout="t15"] .workspace-panel,
+  #app[data-layout="t15"] .detail-panel,
+  #app[data-layout="t15"] .topbar .icon-button { transition-duration: 0s; }
+}
+
+/* T14/T15: camera controls are always within reach in ordinary viewing. The
+   slim left rail stays outside right-hand drawers and bottom scene readouts. */
+#app[data-layout="t15"] .camera-tools {
+  position: fixed; z-index: 20; display: flex;
+  top: 50%; left: calc(16px + env(safe-area-inset-left, 0px));
+  right: auto; bottom: auto; width: 48px;
+  transform: translateY(-50%); align-items: stretch; gap: 8px;
+  pointer-events: auto;
+}
+#app[data-layout="t15"] .camera-distance { display: none; }
+#app[data-layout="t15"] .camera-zoom {
+  width: 48px; display: grid; justify-items: center;
+  padding: 2px 0; border-radius: 12px;
+  background: rgba(8, 18, 31, .78);
+  border-color: rgba(150, 195, 222, .25);
+}
+#app[data-layout="t15"] .camera-zoom button {
+  width: 44px; height: 44px; font-size: 22px;
+}
+#app[data-layout="t15"] .camera-zoom span { width: 27px; }
+#app[data-layout="t15"] .camera-reset-button {
+  width: 48px; min-width: 48px; height: 48px; min-height: 48px;
+  border-radius: 12px;
+}
+#app[data-layout="t15"][data-ui-mode="pure"] .camera-tools {
+  display: none !important;
+}
+
+/* Orbital playback is a scene-specific control, not global navigation.
+   Galaxy and free flight keep a two-action dock; free flight has its own speed. */
+#app[data-layout="t15"] .time-open-trigger[hidden] { display: none !important; }
+#app[data-layout="t15"] .time-open-trigger #capsule-speed {
+  display: inline-flex !important; align-items: center;
+  color: #8abbd4; font-size: 11px; white-space: nowrap;
+  padding: 1px 5px; border-radius: 4px;
+  background: rgba(94, 144, 173, .13);
+}
+#app[data-layout="t15"][data-view="galaxy"] .bottom-interface,
+#app[data-layout="t15"][data-view="free"] .bottom-interface {
+  width: min(290px, calc(100vw - 24px));
+}
+#app[data-layout="t15"] #time-workspace-slot .simulation-panel {
+  min-height: 0; display: flex; flex-direction: column; gap: 13px;
+  width: 100%; margin: 0; padding: 2px 0 5px;
+  background: transparent; border: 0; box-shadow: none; backdrop-filter: none;
+}
+#app[data-layout="t15"] #time-workspace-slot .section-caption {
+  display: block; margin: 0;
+}
+#app[data-layout="t15"] #time-workspace-slot .time-row {
+  display: flex; width: 100%; margin: 0; align-items: center; gap: 12px;
+}
+#app[data-layout="t15"] #time-workspace-slot .play-button {
+  width: 44px; height: 44px; min-width: 44px; min-height: 44px;
+}
+#app[data-layout="t15"] #time-workspace-slot .speed-readout {
+  flex: 0 0 65px; gap: 3px;
+}
+#app[data-layout="t15"] #time-workspace-slot .speed-readout span {
+  display: block; font-size: 10px;
+}
+#app[data-layout="t15"] #time-workspace-slot .time-row input[type="range"] {
+  flex: 1 1 0; min-width: 60px; width: auto;
+  height: 22px; touch-action: pan-y;
+}
+#app[data-layout="t15"] #time-workspace-slot .simulation-options {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  #app[data-layout="t15"] .camera-tools {
+    top: 48%; left: calc(10px + env(safe-area-inset-left, 0px));
+    width: 44px; transform: translateY(-50%);
+  }
+  #app[data-layout="t15"] .camera-zoom,
+  #app[data-layout="t15"] .camera-reset-button {
+    width: 44px; min-width: 44px;
+  }
+  #app[data-layout="t15"] .camera-reset-button { height: 48px; }
+  #app[data-layout="t15"] .camera-zoom button { width: 44px; height: 44px; }
+  #app[data-layout="t15"] .time-open-trigger #capsule-speed { font-size: 10px; padding: 1px 3px; }
+}
+@media (max-width: 640px) and (min-height: 481px) {
+  /* Keep all three camera buttons above the open bottom sheet. */
+  #app[data-layout="t15"]:not([data-active-drawer="none"]) .camera-tools {
+    top: clamp(160px, 31dvh, 240px);
+  }
+}

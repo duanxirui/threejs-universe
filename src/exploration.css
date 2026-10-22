@@ -20,7 +20,8 @@
 .detail-panel { scrollbar-width: thin; scrollbar-color: #365572 transparent; }
 .detail-panel::-webkit-scrollbar { display: initial; width: 3px; }
 .detail-panel::-webkit-scrollbar-thumb { background: #365572; border-radius: 4px; }
-.detail-moons[hidden], .detail-parent[hidden], .flight-speed-control[hidden] { display: none !important; }
+.detail-moons[hidden], .detail-parent[hidden], .flight-speed-control[hidden],
+.flight-quick-stop[hidden], .free-flight-dock[hidden], .dock-hint[hidden] { display: none !important; }
 .detail-moons { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
 .detail-moons-title { color: #b3cfdf; font-size: 11px; letter-spacing: .09em; }
 .detail-moons-title small { display: block; margin-top: 3px; color: #607b92;
@@ -47,12 +48,79 @@
 .detail-sheet-handle { display: none; }
 .flight-speed-control { color: #7f9bae; font-size: 10px; align-items: center; gap: 5px; }
 .flight-speed-control:not([hidden]) { display: flex; }
+.flight-quick-stop { flex-shrink: 0; padding: 6px 8px; border: 1px solid rgba(132,207,244,.5);
+  border-radius: 6px; background: rgba(50,125,173,.24); color: #e1f5ff; font-size: 11px; }
+.free-flight-dock { display: grid; grid-template-columns: minmax(100px, 1fr) auto auto;
+  gap: 7px; align-items: end; margin-top: 10px; }
+.free-target-picker { min-width: 0; display: flex; flex-direction: column; gap: 4px;
+  color: #8eacc0; font-size: 10px; }
+.free-target-picker select { min-width: 0; max-width: 100%; height: 35px; padding: 0 8px;
+  border: 1px solid rgba(125,188,222,.38); border-radius: 6px;
+  background: #102b43; color: #e6f7ff; font-size: 12px; }
+.free-flight-dock button { min-height: 35px; padding: 6px 12px;
+  border: 1px solid rgba(126,200,239,.32); border-radius: 6px;
+  background: rgba(56,132,178,.16); color: #d5f1ff; font-size: 11px; white-space: nowrap; }
+.free-flight-dock button:hover:not(:disabled) { border-color: #78c6ec; background: rgba(72,160,204,.25); }
+.free-flight-dock button:disabled { opacity: .42; cursor: not-allowed; }
+.free-flight-status { grid-column: 1 / -1; min-height: 15px; font-size: 10px;
+  color: #86b4cd; letter-spacing: .02em; }
+#app[data-view="free"] .planet-list { display: none; }
 .corner-note a { color: #819aab; text-decoration: none; }
 .corner-note a:hover { color: #cceaf9; text-decoration: underline; }
 .planet-item.is-selected .planet-thumbnail { box-shadow: 0 0 18px rgba(121,216,255,.29),
   inset -9px -4px 12px rgba(0,0,0,.48); }
 .detail-panel.is-visible { border-color: rgba(141,212,246,.25); }
 .time-row .speed-readout strong { font-variant-numeric: tabular-nums; }
+
+/* Scene and body information use the same right-hand detail panel. The
+   scene mode reuses the original left-hand introductory copy and metrics. */
+.detail-scene-headline {
+  margin: -5px 0 16px; font-size: 18px; line-height: 1.55;
+  font-weight: 400; letter-spacing: .01em; color: #e6eff7;
+}
+.detail-scene-headline em { color: #b9dbf0; font-style: normal; }
+.detail-scene-extra {
+  margin: 14px 0 0; font-size: 12px; line-height: 1.85;
+  color: #92b1c6;
+}
+.detail-scene-members {
+  margin-top: 20px; padding: 16px 0 0; border-top: 1px solid var(--line);
+}
+.detail-scene-members > strong {
+  display: block; font-size: 11px; font-weight: 600;
+  letter-spacing: .06em; color: #afd0e3;
+}
+.detail-scene-members p {
+  margin: 9px 0 0; color: #9eb9cb;
+  font-size: 12px; line-height: 1.8;
+}
+.detail-scene-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 23px; }
+.detail-scene-actions .primary-button { padding: 10px 15px; min-height: 43px; font-size: 12px; }
+.detail-scene-actions .text-button { padding: 10px 4px; min-height: 43px; font-size: 12px; }
+.detail-scene-headline[hidden], .detail-scene-extra[hidden],
+.detail-scene-members[hidden], .detail-scene-actions[hidden],
+.detail-stats > div[hidden] { display: none !important; }
+.detail-panel:not([data-detail-kind="planet"]) .detail-moons,
+.detail-panel:not([data-detail-kind="planet"]) .detail-parent,
+.detail-panel:not([data-detail-kind="planet"]) .detail-compare-trigger,
+.detail-panel:not([data-detail-kind="planet"]) .detail-navigation,
+.detail-panel:not([data-detail-kind="planet"]) .detail-sheet-summary { display: none !important; }
+.detail-panel:not([data-detail-kind="planet"]) .detail-stats > .detail-mass:not([hidden]) {
+  grid-column: auto; flex-direction: column; align-items: stretch;
+  gap: 8px; padding-top: 0; border-top: 0;
+}
+.detail-panel:not([data-detail-kind="planet"]) .detail-stats > .detail-mass strong { white-space: normal; }
+.detail-panel[data-detail-kind="galaxy"] .detail-orb {
+  --orb-light: #91b7e1; --orb-dark: #182d55;
+  background: radial-gradient(ellipse 65% 22% at 51% 48%, #d8efff 0%, #6d9cba 32%, #1d3762 70%, transparent 85%),
+    radial-gradient(ellipse 78% 43% at 45% 48%, transparent 20%, rgba(114,179,212,.57) 39%, transparent 62%),
+    radial-gradient(circle at 48% 48%, #304d79, #081728 76%);
+  box-shadow: 0 0 36px rgba(72,139,205,.24);
+}
+.detail-panel[data-detail-kind="free"] .detail-orb {
+  --orb-light: #81b0d9; --orb-dark: #1a314f;
+  box-shadow: inset -13px -8px 20px rgba(0,0,0,.57), 0 0 25px rgba(86,163,203,.17);
+}
 
 /* Side-by-side celestial data comparison. */
 .detail-compare-trigger {
@@ -89,6 +157,12 @@
   padding-bottom: 12px; color: #77c6ec;
   font: 700 12px 'Space Grotesk', sans-serif; letter-spacing: .1em;
 }
+.compare-reference-note {
+  padding: 9px 11px; margin: 0 0 12px;
+  border-left: 2px solid rgba(129,191,228,.55);
+  background: rgba(87,149,184,.07);
+  color: #b2cbdc; font-size: 11px; line-height: 1.65;
+}
 .compare-table { border-top: 1px solid rgba(134,177,209,.3); }
 .compare-row {
   display: grid; grid-template-columns: minmax(78px,.65fr) minmax(0,1fr) minmax(0,1fr);
@@ -96,6 +170,8 @@
   align-items: start; line-height: 1.65;
 }
 .compare-row:nth-child(even) { background: rgba(109,166,198,.035); }
+.compare-header { background: rgba(107,180,222,.13); }
+.compare-header [role="columnheader"] { color: #cdeefa; font-size: 11px; font-weight: 600; }
 .compare-key { color: #7696ad; font-size: 11px; }
 .compare-value { color: #dcecf8; font-size: 12px; overflow-wrap: anywhere; }
 .compare-value:last-child { color: #9ed5ee; }
@@ -111,6 +187,9 @@
 }
 @media (max-width: 640px) {
   .modal-overlay { padding: 12px; }
+  .detail-scene-headline { font-size: 15px; margin-bottom: 12px; }
+  .detail-scene-extra, .detail-scene-members p { font-size: 11px; line-height: 1.65; }
+  .detail-scene-actions .primary-button, .detail-scene-actions .text-button { font-size: 11px; }
   .compare-modal { padding: 20px 14px; max-height: 86dvh; }
   .compare-modal .modal-heading { margin-bottom: 18px; }
   .compare-modal .modal-heading h2 { font-size: 22px; }
@@ -257,8 +336,9 @@
     z-index: 15; pointer-events: auto;
   }
   .simulation-panel {
-    display: flex; align-items: center; gap: 5px;
-    padding: 5px 7px; min-height: 0; height: 58px;
+    display: grid; grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center; column-gap: 5px; row-gap: 1px;
+    padding: 5px 7px 6px; min-height: 0; height: auto;
     border-radius: 11px; background: rgba(9,22,39,.94);
   }
   .simulation-panel .section-caption { display: none; }
@@ -268,6 +348,13 @@
   .speed-readout strong { font-size: 12px; }
   .time-row input[type="range"] { flex: 1 1 35px; width: clamp(26px, 8vw, 64px); min-width: 26px; height: 20px; }
   .simulation-options { display: flex; flex: 0 0 auto; gap: 2px; justify-content: flex-end; margin: 0; }
+  .timeline-control { margin-top: 3px; padding-top: 4px; gap: 1px; }
+  .timeline-heading label { font-size: 10px; }
+  .timeline-heading input[type="date"] { width: 139px; max-width: 63%;
+    min-height: 29px; padding: 2px 5px; font-size: 12px; }
+  .timeline-control input[type="range"] { height: 19px; min-height: 19px; }
+  .timeline-labels { font-size: 9px; }
+  .timeline-labels small { font-size: 9px; }
   .option-toggle {
     display: flex; justify-content: center; align-items: center; min-width: 41px;
     height: 44px; font-size: 10px; line-height: 1.2; padding: 4px;
@@ -289,6 +376,9 @@
     border-radius: 10px; background: rgba(10,25,43,.97);
   }
   #app[data-dock="open"] .planet-dock { display: block; }
+  #app[data-view="free"] .planet-dock {
+    max-height: min(190px, 43dvh); overflow-y: auto; overscroll-behavior: contain;
+  }
   .planet-list { margin-top: 7px; padding-bottom: 5px; overflow-x: auto; }
   .planet-item { flex: 0 0 60px; min-width: 60px; max-width: 75px; gap: 4px; padding: 4px 5px; }
   .planet-thumbnail { width: 31px; height: 31px; }
@@ -300,6 +390,10 @@
   }
   #app[data-dock="open"] .flight-speed-control:not([hidden]) { display: none; }
   .flight-speed-control select { font-size: 16px; min-height: 32px; }
+  .free-flight-dock { grid-template-columns: minmax(0, 1fr) auto auto; margin-top: 8px; gap: 6px; }
+  .free-target-picker select { height: 44px; font-size: 16px; }
+  .free-flight-dock button { min-height: 44px; padding: 7px 9px; }
+  .free-flight-status { font-size: 11px; }
 
   .detail-panel {
     position: absolute; top: auto; left: 8px; right: 8px; width: auto;
@@ -348,6 +442,7 @@
   .camera-distance { display: none; }
   .camera-zoom { width: 39px; }
   .camera-zoom button { height: 38px; width: 37px; }
+  .camera-reset-button { min-width: 44px; min-height: 44px; border-radius: 10px; }
   .toast { bottom: calc(var(--mobile-footer-height, 73px) + 15px); max-width: min(84vw, 340px); white-space: normal; text-align: center; }
   .corner-note { display: none; }
 
@@ -374,6 +469,7 @@
   .option-toggle { min-width: 39px; font-size: 10px; }
   .mobile-tool { min-width: 40px; }
   .speed-readout { min-width: 29px; }
+  .timeline-heading input[type="date"] { width: 128px; font-size: 11px; }
   .hero-panel h1 { font-size: 27px; }
   .help-grid { grid-template-columns: 1fr; }
 }

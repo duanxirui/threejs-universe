@@ -1,0 +1,1842 @@
+{
+  "task": "T15 stage 0 visual baseline",
+  "date": "2026-10-20",
+  "source": "http://localhost:5173/",
+  "scenes": [
+    "galaxy",
+    "solar",
+    "planet-earth",
+    "free"
+  ],
+  "requestedSizes": [
+    [
+      1707,
+      842
+    ],
+    [
+      1366,
+      768
+    ],
+    [
+      390,
+      844
+    ],
+    [
+      360,
+      740
+    ],
+    [
+      844,
+      390
+    ]
+  ],
+  "method": "Browser viewport override with local Chrome on Windows. Screenshot is JPEG. Rectangle sizes are CSS getBoundingClientRect, not opaque-pixel area. fpsLabel is a one-time on-page readout, not stable FPS or physical-device testing.",
+  "diagnosticsReadoutSample": {
+    "browserPixelRatio": 1.0000000298023224,
+    "diagnosticsGlobalAccessible": false,
+    "horizontalOverflow": false,
+    "onPageFps": "60 FPS",
+    "qualitySelection": "auto",
+    "rendererStatusTitle": "渲染倍率 1 · 均衡 · 31 次绘制",
+    "scene": "free",
+    "viewport": [
+      844,
+      390
+    ]
+  },
+  "renderingPerformanceLimit": "getCosmosPerformance() is not accessible through browser read-only evaluation; on-page FPS and renderer title are recorded as visible samples only. No true GPU memory benchmark.",
+  "records": [
+    {
+      "scene": "galaxy",
+      "width": 1707,
+      "height": 842,
+      "rects": [
+        {
+          "h": 96,
+          "selector": ".topbar",
+          "visible": true,
+          "w": 1707,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 592,
+          "selector": "#hero-panel",
+          "visible": true,
+          "w": 575,
+          "x": 97,
+          "y": 73
+        },
+        {
+          "h": 241,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "w": 1513,
+          "x": 97,
+          "y": 566
+        },
+        {
+          "h": 241,
+          "selector": ".simulation-panel",
+          "visible": true,
+          "w": 282,
+          "x": 97,
+          "y": 566
+        },
+        {
+          "h": 241,
+          "selector": ".planet-dock",
+          "visible": true,
+          "w": 1218,
+          "x": 392,
+          "y": 566
+        },
+        {
+          "h": 589,
+          "selector": "#detail-panel",
+          "visible": false,
+          "w": 360,
+          "x": 1278,
+          "y": 74
+        },
+        {
+          "h": 164,
+          "selector": ".camera-tools",
+          "visible": true,
+          "w": 67,
+          "x": 1543,
+          "y": 460
+        },
+        {
+          "h": 148,
+          "selector": ".side-readout",
+          "visible": true,
+          "w": 47,
+          "x": 39,
+          "y": 354
+        }
+      ],
+      "filename": "galaxy_1707x842.jpg",
+      "fpsLabel": "60 FPS",
+      "bytes": 166343,
+      "documentWidth": 1707,
+      "coverage": {
+        "headerHeightPercent": 11.4,
+        "footerHeightPercent": 28.6,
+        "heroBoundingBoxAreaPercent": 23.7,
+        "detailBoundingBoxAreaPercent": 0
+      }
+    },
+    {
+      "scene": "galaxy",
+      "width": 1366,
+      "height": 768,
+      "rects": [
+        {
+          "h": 96,
+          "selector": ".topbar",
+          "visible": true,
+          "w": 1366,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 540,
+          "selector": "#hero-panel",
+          "visible": true,
+          "w": 575,
+          "x": 78,
+          "y": 62
+        },
+        {
+          "h": 241,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "w": 1210,
+          "x": 78,
+          "y": 492
+        },
+        {
+          "h": 241,
+          "selector": ".simulation-panel",
+          "visible": true,
+          "w": 282,
+          "x": 78,
+          "y": 492
+        },
+        {
+          "h": 241,
+          "selector": ".planet-dock",
+          "visible": true,
+          "w": 915,
+          "x": 373,
+          "y": 492
+        },
+        {
+          "h": 538,
+          "selector": "#detail-panel",
+          "visible": false,
+          "w": 360,
+          "x": 956,
+          "y": 63
+        },
+        {
+          "h": 164,
+          "selector": ".camera-tools",
+          "visible": true,
+          "w": 67,
+          "x": 1221,
+          "y": 386
+        },
+        {
+          "h": 148,
+          "selector": ".side-readout",
+          "visible": true,
+          "w": 47,
+          "x": 31,
+          "y": 323
+        }
+      ],
+      "documentWidth": 1366,
+      "filename": "galaxy_1366x768.jpg",
+      "fpsLabel": "60 FPS",
+      "bytes": 132542,
+      "coverage": {
+        "headerHeightPercent": 12.5,
+        "footerHeightPercent": 31.4,
+        "heroBoundingBoxAreaPercent": 29.6,
+        "detailBoundingBoxAreaPercent": 0
+      }
+    },
+    {
+      "scene": "galaxy",
+      "width": 390,
+      "height": 844,
+      "rects": [
+        {
+          "h": 79,
+          "selector": ".topbar",
+          "visible": true,
+          "w": 390,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 120,
+          "selector": "#hero-panel",
+          "visible": true,
+          "w": 255,
+          "x": 15,
+          "y": 95
+        },
+        {
+          "h": 128,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "w": 374,
+          "x": 8,
+          "y": 709
+        },
+        {
+          "h": 128,
+          "selector": ".simulation-panel",
+          "visible": true,
+          "w": 374,
+          "x": 8,
+          "y": 709
+        },
+        {
+          "h": 0,
+          "selector": ".planet-dock",
+          "visible": false,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 170,
+          "selector": "#detail-panel",
+          "visible": false,
+          "w": 374,
+          "x": 36,
+          "y": 532
+        },
+        {
+          "h": 139,
+          "selector": ".camera-tools",
+          "visible": true,
+          "w": 44,
+          "x": 336,
+          "y": 560
+        },
+        {
+          "h": 0,
+          "selector": ".side-readout",
+          "visible": false,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "documentWidth": 390,
+      "filename": "galaxy_390x844.jpg",
+      "fpsLabel": "60 FPS",
+      "bytes": 57363,
+      "coverage": {
+        "headerHeightPercent": 9.4,
+        "footerHeightPercent": 15.2,
+        "heroBoundingBoxAreaPercent": 9.3,
+        "detailBoundingBoxAreaPercent": 0
+      }
+    },
+    {
+      "scene": "galaxy",
+      "width": 360,
+      "height": 740,
+      "rects": [
+        {
+          "h": 79,
+          "selector": ".topbar",
+          "visible": true,
+          "w": 360,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 117,
+          "selector": "#hero-panel",
+          "visible": true,
+          "w": 255,
+          "x": 15,
+          "y": 95
+        },
+        {
+          "h": 127,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "w": 344,
+          "x": 8,
+          "y": 606
+        },
+        {
+          "h": 127,
+          "selector": ".simulation-panel",
+          "visible": true,
+          "w": 344,
+          "x": 8,
+          "y": 606
+        },
+        {
+          "h": 0,
+          "selector": ".planet-dock",
+          "visible": false,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 170,
+          "selector": "#detail-panel",
+          "visible": false,
+          "w": 344,
+          "x": 16,
+          "y": 442
+        },
+        {
+          "h": 139,
+          "selector": ".camera-tools",
+          "visible": true,
+          "w": 44,
+          "x": 306,
+          "y": 457
+        },
+        {
+          "h": 0,
+          "selector": ".side-readout",
+          "visible": false,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "documentWidth": 360,
+      "filename": "galaxy_360x740.jpg",
+      "fpsLabel": "54 FPS",
+      "bytes": 50081,
+      "coverage": {
+        "headerHeightPercent": 10.7,
+        "footerHeightPercent": 17.2,
+        "heroBoundingBoxAreaPercent": 11.2,
+        "detailBoundingBoxAreaPercent": 0
+      }
+    },
+    {
+      "scene": "galaxy",
+      "width": 844,
+      "height": 390,
+      "rects": [
+        {
+          "h": 49,
+          "selector": ".topbar",
+          "visible": true,
+          "w": 844,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 104,
+          "selector": "#hero-panel",
+          "visible": true,
+          "w": 160,
+          "x": 10,
+          "y": 68
+        },
+        {
+          "h": 127,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "w": 565,
+          "x": 271,
+          "y": 256
+        },
+        {
+          "h": 127,
+          "selector": ".simulation-panel",
+          "visible": true,
+          "w": 565,
+          "x": 271,
+          "y": 256
+        },
+        {
+          "h": 0,
+          "selector": ".planet-dock",
+          "visible": false,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 170,
+          "selector": "#detail-panel",
+          "visible": false,
+          "w": 295,
+          "x": 10,
+          "y": 97
+        },
+        {
+          "h": 139,
+          "selector": ".camera-tools",
+          "visible": true,
+          "w": 44,
+          "x": 790,
+          "y": 107
+        },
+        {
+          "h": 0,
+          "selector": ".side-readout",
+          "visible": false,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "documentWidth": 844,
+      "filename": "galaxy_844x390.jpg",
+      "fpsLabel": "54 FPS",
+      "bytes": 47045,
+      "coverage": {
+        "headerHeightPercent": 12.6,
+        "footerHeightPercent": 32.6,
+        "heroBoundingBoxAreaPercent": 5.1,
+        "detailBoundingBoxAreaPercent": 0
+      }
+    },
+    {
+      "scene": "solar",
+      "width": 1707,
+      "height": 842,
+      "rects": [
+        {
+          "h": 96,
+          "selector": ".topbar",
+          "visible": true,
+          "w": 1707,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 592,
+          "selector": "#hero-panel",
+          "visible": true,
+          "w": 575,
+          "x": 97,
+          "y": 73
+        },
+        {
+          "h": 241,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "w": 1513,
+          "x": 97,
+          "y": 566
+        },
+        {
+          "h": 241,
+          "selector": ".simulation-panel",
+          "visible": true,
+          "w": 282,
+          "x": 97,
+          "y": 566
+        },
+        {
+          "h": 241,
+          "selector": ".planet-dock",
+          "visible": true,
+          "w": 1218,
+          "x": 392,
+          "y": 566
+        },
+        {
+          "h": 589,
+          "selector": "#detail-panel",
+          "visible": false,
+          "w": 360,
+          "x": 1278,
+          "y": 74
+        },
+        {
+          "h": 164,
+          "selector": ".camera-tools",
+          "visible": true,
+          "w": 63,
+          "x": 1547,
+          "y": 460
+        },
+        {
+          "h": 148,
+          "selector": ".side-readout",
+          "visible": true,
+          "w": 47,
+          "x": 39,
+          "y": 354
+        }
+      ],
+      "documentWidth": 1707,
+      "filename": "solar_1707x842.jpg",
+      "fpsLabel": "51 FPS",
+      "bytes": 72994,
+      "coverage": {
+        "headerHeightPercent": 11.4,
+        "footerHeightPercent": 28.6,
+        "heroBoundingBoxAreaPercent": 23.7,
+        "detailBoundingBoxAreaPercent": 0
+      }
+    },
+    {
+      "scene": "solar",
+      "width": 1366,
+      "height": 768,
+      "rects": [
+        {
+          "h": 96,
+          "selector": ".topbar",
+          "visible": true,
+          "w": 1366,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 540,
+          "selector": "#hero-panel",
+          "visible": true,
+          "w": 575,
+          "x": 78,
+          "y": 62
+        },
+        {
+          "h": 241,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "w": 1210,
+          "x": 78,
+          "y": 492
+        },
+        {
+          "h": 241,
+          "selector": ".simulation-panel",
+          "visible": true,
+          "w": 282,
+          "x": 78,
+          "y": 492
+        },
+        {
+          "h": 241,
+          "selector": ".planet-dock",
+          "visible": true,
+          "w": 915,
+          "x": 373,
+          "y": 492
+        },
+        {
+          "h": 538,
+          "selector": "#detail-panel",
+          "visible": false,
+          "w": 360,
+          "x": 956,
+          "y": 63
+        },
+        {
+          "h": 164,
+          "selector": ".camera-tools",
+          "visible": true,
+          "w": 70,
+          "x": 1218,
+          "y": 386
+        },
+        {
+          "h": 148,
+          "selector": ".side-readout",
+          "visible": true,
+          "w": 47,
+          "x": 31,
+          "y": 323
+        }
+      ],
+      "documentWidth": 1366,
+      "filename": "solar_1366x768.jpg",
+      "fpsLabel": "60 FPS",
+      "bytes": 98345,
+      "coverage": {
+        "headerHeightPercent": 12.5,
+        "footerHeightPercent": 31.4,
+        "heroBoundingBoxAreaPercent": 29.6,
+        "detailBoundingBoxAreaPercent": 0
+      }
+    },
+    {
+      "scene": "solar",
+      "width": 390,
+      "height": 844,
+      "rects": [
+        {
+          "h": 79,
+          "selector": ".topbar",
+          "visible": true,
+          "w": 390,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 120,
+          "selector": "#hero-panel",
+          "visible": true,
+          "w": 255,
+          "x": 15,
+          "y": 95
+        },
+        {
+          "h": 128,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "w": 374,
+          "x": 8,
+          "y": 709
+        },
+        {
+          "h": 128,
+          "selector": ".simulation-panel",
+          "visible": true,
+          "w": 374,
+          "x": 8,
+          "y": 709
+        },
+        {
+          "h": 0,
+          "selector": ".planet-dock",
+          "visible": false,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 170,
+          "selector": "#detail-panel",
+          "visible": false,
+          "w": 374,
+          "x": 36,
+          "y": 532
+        },
+        {
+          "h": 139,
+          "selector": ".camera-tools",
+          "visible": true,
+          "w": 44,
+          "x": 336,
+          "y": 560
+        },
+        {
+          "h": 0,
+          "selector": ".side-readout",
+          "visible": false,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "documentWidth": 390,
+      "filename": "solar_390x844.jpg",
+      "fpsLabel": "44 FPS",
+      "bytes": 32430,
+      "coverage": {
+        "headerHeightPercent": 9.4,
+        "footerHeightPercent": 15.2,
+        "heroBoundingBoxAreaPercent": 9.3,
+        "detailBoundingBoxAreaPercent": 0
+      }
+    },
+    {
+      "scene": "solar",
+      "width": 360,
+      "height": 740,
+      "rects": [
+        {
+          "h": 79,
+          "selector": ".topbar",
+          "visible": true,
+          "w": 360,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 115,
+          "selector": "#hero-panel",
+          "visible": true,
+          "w": 255,
+          "x": 15,
+          "y": 95
+        },
+        {
+          "h": 127,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "w": 344,
+          "x": 8,
+          "y": 606
+        },
+        {
+          "h": 127,
+          "selector": ".simulation-panel",
+          "visible": true,
+          "w": 344,
+          "x": 8,
+          "y": 606
+        },
+        {
+          "h": 0,
+          "selector": ".planet-dock",
+          "visible": false,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 170,
+          "selector": "#detail-panel",
+          "visible": false,
+          "w": 344,
+          "x": 16,
+          "y": 442
+        },
+        {
+          "h": 139,
+          "selector": ".camera-tools",
+          "visible": true,
+          "w": 44,
+          "x": 306,
+          "y": 457
+        },
+        {
+          "h": 0,
+          "selector": ".side-readout",
+          "visible": false,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "documentWidth": 360,
+      "filename": "solar_360x740.jpg",
+      "fpsLabel": "44 FPS",
+      "bytes": 28428,
+      "coverage": {
+        "headerHeightPercent": 10.7,
+        "footerHeightPercent": 17.2,
+        "heroBoundingBoxAreaPercent": 11,
+        "detailBoundingBoxAreaPercent": 0
+      }
+    },
+    {
+      "scene": "solar",
+      "width": 844,
+      "height": 390,
+      "rects": [
+        {
+          "h": 49,
+          "selector": ".topbar",
+          "visible": true,
+          "w": 844,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 104,
+          "selector": "#hero-panel",
+          "visible": true,
+          "w": 160,
+          "x": 10,
+          "y": 68
+        },
+        {
+          "h": 127,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "w": 565,
+          "x": 271,
+          "y": 256
+        },
+        {
+          "h": 127,
+          "selector": ".simulation-panel",
+          "visible": true,
+          "w": 565,
+          "x": 271,
+          "y": 256
+        },
+        {
+          "h": 0,
+          "selector": ".planet-dock",
+          "visible": false,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 170,
+          "selector": "#detail-panel",
+          "visible": false,
+          "w": 295,
+          "x": 10,
+          "y": 97
+        },
+        {
+          "h": 139,
+          "selector": ".camera-tools",
+          "visible": true,
+          "w": 44,
+          "x": 790,
+          "y": 107
+        },
+        {
+          "h": 0,
+          "selector": ".side-readout",
+          "visible": false,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "documentWidth": 844,
+      "filename": "solar_844x390.jpg",
+      "fpsLabel": "44 FPS",
+      "bytes": 30233,
+      "coverage": {
+        "headerHeightPercent": 12.6,
+        "footerHeightPercent": 32.6,
+        "heroBoundingBoxAreaPercent": 5.1,
+        "detailBoundingBoxAreaPercent": 0
+      }
+    },
+    {
+      "scene": "planet-earth",
+      "width": 1707,
+      "height": 842,
+      "rects": [
+        {
+          "h": 96,
+          "selector": ".topbar",
+          "visible": true,
+          "w": 1707,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 592,
+          "selector": "#hero-panel",
+          "visible": false,
+          "w": 575,
+          "x": 69,
+          "y": 73
+        },
+        {
+          "h": 241,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "w": 1513,
+          "x": 97,
+          "y": 566
+        },
+        {
+          "h": 241,
+          "selector": ".simulation-panel",
+          "visible": true,
+          "w": 282,
+          "x": 97,
+          "y": 566
+        },
+        {
+          "h": 241,
+          "selector": ".planet-dock",
+          "visible": true,
+          "w": 1218,
+          "x": 392,
+          "y": 566
+        },
+        {
+          "h": 589,
+          "selector": "#detail-panel",
+          "visible": true,
+          "w": 360,
+          "x": 1250,
+          "y": 74
+        },
+        {
+          "h": 164,
+          "selector": ".camera-tools",
+          "visible": true,
+          "w": 56,
+          "x": 1554,
+          "y": 460
+        },
+        {
+          "h": 148,
+          "selector": ".side-readout",
+          "visible": true,
+          "w": 47,
+          "x": 39,
+          "y": 354
+        }
+      ],
+      "documentWidth": 1707,
+      "filename": "planet-earth_1707x842.jpg",
+      "fpsLabel": "60 FPS",
+      "bytes": 112445,
+      "coverage": {
+        "headerHeightPercent": 11.4,
+        "footerHeightPercent": 28.6,
+        "heroBoundingBoxAreaPercent": 0,
+        "detailBoundingBoxAreaPercent": 14.8
+      }
+    },
+    {
+      "scene": "planet-earth",
+      "width": 1366,
+      "height": 768,
+      "rects": [
+        {
+          "h": 96,
+          "selector": ".topbar",
+          "visible": true,
+          "w": 1366,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 540,
+          "selector": "#hero-panel",
+          "visible": false,
+          "w": 575,
+          "x": 50,
+          "y": 62
+        },
+        {
+          "h": 241,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "w": 1210,
+          "x": 78,
+          "y": 492
+        },
+        {
+          "h": 241,
+          "selector": ".simulation-panel",
+          "visible": true,
+          "w": 282,
+          "x": 78,
+          "y": 492
+        },
+        {
+          "h": 241,
+          "selector": ".planet-dock",
+          "visible": true,
+          "w": 915,
+          "x": 373,
+          "y": 492
+        },
+        {
+          "h": 538,
+          "selector": "#detail-panel",
+          "visible": true,
+          "w": 360,
+          "x": 928,
+          "y": 63
+        },
+        {
+          "h": 164,
+          "selector": ".camera-tools",
+          "visible": true,
+          "w": 56,
+          "x": 1232,
+          "y": 386
+        },
+        {
+          "h": 148,
+          "selector": ".side-readout",
+          "visible": true,
+          "w": 47,
+          "x": 31,
+          "y": 323
+        }
+      ],
+      "documentWidth": 1366,
+      "filename": "planet-earth_1366x768.jpg",
+      "fpsLabel": "60 FPS",
+      "bytes": 92054,
+      "coverage": {
+        "headerHeightPercent": 12.5,
+        "footerHeightPercent": 31.4,
+        "heroBoundingBoxAreaPercent": 0,
+        "detailBoundingBoxAreaPercent": 18.5
+      }
+    },
+    {
+      "scene": "planet-earth",
+      "width": 390,
+      "height": 844,
+      "rects": [
+        {
+          "h": 79,
+          "selector": ".topbar",
+          "visible": true,
+          "w": 390,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 120,
+          "selector": "#hero-panel",
+          "visible": false,
+          "w": 255,
+          "x": -13,
+          "y": 95
+        },
+        {
+          "h": 128,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "w": 374,
+          "x": 8,
+          "y": 709
+        },
+        {
+          "h": 128,
+          "selector": ".simulation-panel",
+          "visible": true,
+          "w": 374,
+          "x": 8,
+          "y": 709
+        },
+        {
+          "h": 0,
+          "selector": ".planet-dock",
+          "visible": false,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 170,
+          "selector": "#detail-panel",
+          "visible": true,
+          "w": 374,
+          "x": 8,
+          "y": 532
+        },
+        {
+          "h": 139,
+          "selector": ".camera-tools",
+          "visible": true,
+          "w": 44,
+          "x": 336,
+          "y": 91
+        },
+        {
+          "h": 0,
+          "selector": ".side-readout",
+          "visible": false,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "documentWidth": 390,
+      "filename": "planet-earth_390x844.jpg",
+      "fpsLabel": "60 FPS",
+      "bytes": 40693,
+      "coverage": {
+        "headerHeightPercent": 9.4,
+        "footerHeightPercent": 15.2,
+        "heroBoundingBoxAreaPercent": 0,
+        "detailBoundingBoxAreaPercent": 19.3
+      }
+    },
+    {
+      "scene": "planet-earth",
+      "width": 360,
+      "height": 740,
+      "rects": [
+        {
+          "h": 79,
+          "selector": ".topbar",
+          "visible": true,
+          "w": 360,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 117,
+          "selector": "#hero-panel",
+          "visible": false,
+          "w": 255,
+          "x": -13,
+          "y": 95
+        },
+        {
+          "h": 127,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "w": 344,
+          "x": 8,
+          "y": 606
+        },
+        {
+          "h": 127,
+          "selector": ".simulation-panel",
+          "visible": true,
+          "w": 344,
+          "x": 8,
+          "y": 606
+        },
+        {
+          "h": 0,
+          "selector": ".planet-dock",
+          "visible": false,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 170,
+          "selector": "#detail-panel",
+          "visible": true,
+          "w": 344,
+          "x": 8,
+          "y": 429
+        },
+        {
+          "h": 139,
+          "selector": ".camera-tools",
+          "visible": true,
+          "w": 44,
+          "x": 306,
+          "y": 91
+        },
+        {
+          "h": 0,
+          "selector": ".side-readout",
+          "visible": false,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "documentWidth": 360,
+      "filename": "planet-earth_360x740.jpg",
+      "fpsLabel": "54 FPS",
+      "bytes": 34324,
+      "coverage": {
+        "headerHeightPercent": 10.7,
+        "footerHeightPercent": 17.2,
+        "heroBoundingBoxAreaPercent": 0,
+        "detailBoundingBoxAreaPercent": 22
+      }
+    },
+    {
+      "scene": "planet-earth",
+      "width": 844,
+      "height": 390,
+      "rects": [
+        {
+          "h": 49,
+          "selector": ".topbar",
+          "visible": true,
+          "w": 844,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 104,
+          "selector": "#hero-panel",
+          "visible": false,
+          "w": 160,
+          "x": -18,
+          "y": 68
+        },
+        {
+          "h": 127,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "w": 565,
+          "x": 271,
+          "y": 256
+        },
+        {
+          "h": 127,
+          "selector": ".simulation-panel",
+          "visible": true,
+          "w": 565,
+          "x": 271,
+          "y": 256
+        },
+        {
+          "h": 0,
+          "selector": ".planet-dock",
+          "visible": false,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 170,
+          "selector": "#detail-panel",
+          "visible": true,
+          "w": 295,
+          "x": 10,
+          "y": 79
+        },
+        {
+          "h": 139,
+          "selector": ".camera-tools",
+          "visible": true,
+          "w": 44,
+          "x": 790,
+          "y": 59
+        },
+        {
+          "h": 0,
+          "selector": ".side-readout",
+          "visible": false,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "documentWidth": 844,
+      "filename": "planet-earth_844x390.jpg",
+      "fpsLabel": "54 FPS",
+      "bytes": 34329,
+      "coverage": {
+        "headerHeightPercent": 12.6,
+        "footerHeightPercent": 32.6,
+        "heroBoundingBoxAreaPercent": 0,
+        "detailBoundingBoxAreaPercent": 15.2
+      }
+    },
+    {
+      "scene": "free",
+      "width": 1707,
+      "height": 842,
+      "rects": [
+        {
+          "h": 96,
+          "selector": ".topbar",
+          "visible": true,
+          "w": 1707,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 592,
+          "selector": "#hero-panel",
+          "visible": true,
+          "w": 575,
+          "x": 97,
+          "y": 73
+        },
+        {
+          "h": 282,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "w": 1513,
+          "x": 97,
+          "y": 525
+        },
+        {
+          "h": 282,
+          "selector": ".simulation-panel",
+          "visible": true,
+          "w": 282,
+          "x": 97,
+          "y": 525
+        },
+        {
+          "h": 282,
+          "selector": ".planet-dock",
+          "visible": true,
+          "w": 1218,
+          "x": 392,
+          "y": 525
+        },
+        {
+          "h": 589,
+          "selector": "#detail-panel",
+          "visible": false,
+          "w": 360,
+          "x": 1278,
+          "y": 74
+        },
+        {
+          "h": 164,
+          "selector": ".camera-tools",
+          "visible": true,
+          "w": 56,
+          "x": 1554,
+          "y": 460
+        },
+        {
+          "h": 148,
+          "selector": ".side-readout",
+          "visible": true,
+          "w": 47,
+          "x": 39,
+          "y": 354
+        }
+      ],
+      "documentWidth": 1707,
+      "filename": "free_1707x842.jpg",
+      "fpsLabel": "60 FPS",
+      "extraControls": [
+        {
+          "h": 75,
+          "selector": "#free-flight-dock",
+          "visible": true,
+          "w": 1175,
+          "x": 416,
+          "y": 569
+        },
+        {
+          "h": 56,
+          "selector": "#flight-speed-control",
+          "visible": true,
+          "w": 64,
+          "x": 291,
+          "y": 733
+        }
+      ],
+      "bytes": 118485,
+      "coverage": {
+        "headerHeightPercent": 11.4,
+        "footerHeightPercent": 33.5,
+        "heroBoundingBoxAreaPercent": 23.7,
+        "detailBoundingBoxAreaPercent": 0
+      }
+    },
+    {
+      "scene": "free",
+      "width": 1366,
+      "height": 768,
+      "rects": [
+        {
+          "h": 96,
+          "selector": ".topbar",
+          "visible": true,
+          "w": 1366,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 540,
+          "selector": "#hero-panel",
+          "visible": true,
+          "w": 575,
+          "x": 78,
+          "y": 62
+        },
+        {
+          "h": 282,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "w": 1210,
+          "x": 78,
+          "y": 451
+        },
+        {
+          "h": 282,
+          "selector": ".simulation-panel",
+          "visible": true,
+          "w": 282,
+          "x": 78,
+          "y": 451
+        },
+        {
+          "h": 282,
+          "selector": ".planet-dock",
+          "visible": true,
+          "w": 915,
+          "x": 373,
+          "y": 451
+        },
+        {
+          "h": 538,
+          "selector": "#detail-panel",
+          "visible": false,
+          "w": 360,
+          "x": 956,
+          "y": 63
+        },
+        {
+          "h": 164,
+          "selector": ".camera-tools",
+          "visible": true,
+          "w": 56,
+          "x": 1232,
+          "y": 386
+        },
+        {
+          "h": 148,
+          "selector": ".side-readout",
+          "visible": true,
+          "w": 47,
+          "x": 31,
+          "y": 323
+        }
+      ],
+      "documentWidth": 1366,
+      "filename": "free_1366x768.jpg",
+      "fpsLabel": "60 FPS",
+      "extraControls": [
+        {
+          "h": 75,
+          "selector": "#free-flight-dock",
+          "visible": true,
+          "w": 873,
+          "x": 397,
+          "y": 495
+        },
+        {
+          "h": 56,
+          "selector": "#flight-speed-control",
+          "visible": true,
+          "w": 64,
+          "x": 272,
+          "y": 659
+        }
+      ],
+      "bytes": 94239,
+      "coverage": {
+        "headerHeightPercent": 12.5,
+        "footerHeightPercent": 36.7,
+        "heroBoundingBoxAreaPercent": 29.6,
+        "detailBoundingBoxAreaPercent": 0
+      }
+    },
+    {
+      "scene": "free",
+      "width": 390,
+      "height": 844,
+      "rects": [
+        {
+          "h": 79,
+          "selector": ".topbar",
+          "visible": true,
+          "w": 390,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 120,
+          "selector": "#hero-panel",
+          "visible": true,
+          "w": 255,
+          "x": 15,
+          "y": 95
+        },
+        {
+          "h": 128,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "w": 374,
+          "x": 8,
+          "y": 709
+        },
+        {
+          "h": 128,
+          "selector": ".simulation-panel",
+          "visible": true,
+          "w": 374,
+          "x": 8,
+          "y": 709
+        },
+        {
+          "h": 0,
+          "selector": ".planet-dock",
+          "visible": false,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 170,
+          "selector": "#detail-panel",
+          "visible": false,
+          "w": 374,
+          "x": 36,
+          "y": 532
+        },
+        {
+          "h": 139,
+          "selector": ".camera-tools",
+          "visible": true,
+          "w": 44,
+          "x": 336,
+          "y": 560
+        },
+        {
+          "h": 0,
+          "selector": ".side-readout",
+          "visible": false,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "documentWidth": 390,
+      "filename": "free_390x844.jpg",
+      "fpsLabel": "60 FPS",
+      "extraControls": [
+        {
+          "h": 0,
+          "selector": "#free-flight-dock",
+          "visible": true,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 47,
+          "selector": "#flight-speed-control",
+          "visible": true,
+          "w": 128,
+          "x": 245,
+          "y": 655
+        }
+      ],
+      "bytes": 31163,
+      "coverage": {
+        "headerHeightPercent": 9.4,
+        "footerHeightPercent": 15.2,
+        "heroBoundingBoxAreaPercent": 9.3,
+        "detailBoundingBoxAreaPercent": 0
+      }
+    },
+    {
+      "scene": "free",
+      "width": 360,
+      "height": 740,
+      "rects": [
+        {
+          "h": 79,
+          "selector": ".topbar",
+          "visible": true,
+          "w": 360,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 117,
+          "selector": "#hero-panel",
+          "visible": true,
+          "w": 255,
+          "x": 15,
+          "y": 95
+        },
+        {
+          "h": 127,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "w": 344,
+          "x": 8,
+          "y": 606
+        },
+        {
+          "h": 127,
+          "selector": ".simulation-panel",
+          "visible": true,
+          "w": 344,
+          "x": 8,
+          "y": 606
+        },
+        {
+          "h": 0,
+          "selector": ".planet-dock",
+          "visible": false,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 170,
+          "selector": "#detail-panel",
+          "visible": false,
+          "w": 344,
+          "x": 13,
+          "y": 444
+        },
+        {
+          "h": 139,
+          "selector": ".camera-tools",
+          "visible": true,
+          "w": 44,
+          "x": 306,
+          "y": 457
+        },
+        {
+          "h": 0,
+          "selector": ".side-readout",
+          "visible": false,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "documentWidth": 360,
+      "filename": "free_360x740.jpg",
+      "fpsLabel": "60 FPS",
+      "extraControls": [
+        {
+          "h": 0,
+          "selector": "#free-flight-dock",
+          "visible": true,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 47,
+          "selector": "#flight-speed-control",
+          "visible": true,
+          "w": 128,
+          "x": 215,
+          "y": 552
+        }
+      ],
+      "bytes": 27222,
+      "coverage": {
+        "headerHeightPercent": 10.7,
+        "footerHeightPercent": 17.2,
+        "heroBoundingBoxAreaPercent": 11.2,
+        "detailBoundingBoxAreaPercent": 0
+      }
+    },
+    {
+      "scene": "free",
+      "width": 844,
+      "height": 390,
+      "rects": [
+        {
+          "h": 49,
+          "selector": ".topbar",
+          "visible": true,
+          "w": 844,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 104,
+          "selector": "#hero-panel",
+          "visible": true,
+          "w": 160,
+          "x": 10,
+          "y": 68
+        },
+        {
+          "h": 127,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "w": 565,
+          "x": 271,
+          "y": 256
+        },
+        {
+          "h": 127,
+          "selector": ".simulation-panel",
+          "visible": true,
+          "w": 565,
+          "x": 271,
+          "y": 256
+        },
+        {
+          "h": 0,
+          "selector": ".planet-dock",
+          "visible": false,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 170,
+          "selector": "#detail-panel",
+          "visible": false,
+          "w": 295,
+          "x": 10,
+          "y": 97
+        },
+        {
+          "h": 139,
+          "selector": ".camera-tools",
+          "visible": true,
+          "w": 44,
+          "x": 790,
+          "y": 107
+        },
+        {
+          "h": 0,
+          "selector": ".side-readout",
+          "visible": false,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "documentWidth": 844,
+      "filename": "free_844x390.jpg",
+      "fpsLabel": "55 FPS",
+      "extraControls": [
+        {
+          "h": 0,
+          "selector": "#free-flight-dock",
+          "visible": true,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 47,
+          "selector": "#flight-speed-control",
+          "visible": true,
+          "w": 128,
+          "x": 699,
+          "y": 202
+        }
+      ],
+      "bytes": 31166,
+      "coverage": {
+        "headerHeightPercent": 12.6,
+        "footerHeightPercent": 32.6,
+        "heroBoundingBoxAreaPercent": 5.1,
+        "detailBoundingBoxAreaPercent": 0
+      }
+    },
+    {
+      "scene": "free-dock-open",
+      "width": 390,
+      "height": 844,
+      "rects": [
+        {
+          "h": 79,
+          "selector": ".topbar",
+          "visible": true,
+          "w": 390,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "h": 120,
+          "selector": "#hero-panel",
+          "visible": true,
+          "w": 255,
+          "x": 15,
+          "y": 95
+        },
+        {
+          "h": 128,
+          "selector": ".bottom-interface",
+          "visible": true,
+          "w": 374,
+          "x": 8,
+          "y": 709
+        },
+        {
+          "h": 128,
+          "selector": ".simulation-panel",
+          "visible": true,
+          "w": 374,
+          "x": 8,
+          "y": 709
+        },
+        {
+          "h": 123,
+          "selector": ".planet-dock",
+          "visible": true,
+          "w": 374,
+          "x": 8,
+          "y": 579
+        },
+        {
+          "h": 170,
+          "selector": "#detail-panel",
+          "visible": false,
+          "w": 374,
+          "x": 8,
+          "y": 550
+        },
+        {
+          "h": 139,
+          "selector": ".camera-tools",
+          "visible": true,
+          "w": 44,
+          "x": 336,
+          "y": 560
+        },
+        {
+          "h": 0,
+          "selector": ".side-readout",
+          "visible": false,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "documentWidth": 390,
+      "filename": "free-dock-open_390x844.jpg",
+      "fpsLabel": "59 FPS",
+      "bytes": 33733,
+      "coverage": {
+        "headerHeightPercent": 9.4,
+        "footerHeightPercent": 15.2,
+        "heroBoundingBoxAreaPercent": 0,
+        "detailBoundingBoxAreaPercent": 0
+      }
+    }
+  ],
+  "extraScenario": "free navigation drawer expanded on phone (390x844)"
+}

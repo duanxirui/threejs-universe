@@ -1,0 +1,125 @@
+{
+  "date": "2026-10-20",
+  "source": "Chrome local preview, read-only UI values",
+  "warning": "Instantaneous displayed FPS, not benchmark; do not infer phone physical performance or GPU memory",
+  "sample": {
+    "browserPixelRatio": 1.0000000298023224,
+    "diagnosticsGlobalAccessible": false,
+    "horizontalOverflow": false,
+    "onPageFps": "60 FPS",
+    "qualitySelection": "auto",
+    "rendererStatusTitle": "渲染倍率 1 · 均衡 · 31 次绘制",
+    "scene": "free",
+    "viewport": [
+      844,
+      390
+    ]
+  },
+  "values": [
+    {
+      "scene": "galaxy",
+      "viewport": "1707x842",
+      "fpsLabel": "60 FPS"
+    },
+    {
+      "scene": "galaxy",
+      "viewport": "1366x768",
+      "fpsLabel": "60 FPS"
+    },
+    {
+      "scene": "galaxy",
+      "viewport": "390x844",
+      "fpsLabel": "60 FPS"
+    },
+    {
+      "scene": "galaxy",
+      "viewport": "360x740",
+      "fpsLabel": "54 FPS"
+    },
+    {
+      "scene": "galaxy",
+      "viewport": "844x390",
+      "fpsLabel": "54 FPS"
+    },
+    {
+      "scene": "solar",
+      "viewport": "1707x842",
+      "fpsLabel": "51 FPS"
+    },
+    {
+      "scene": "solar",
+      "viewport": "1366x768",
+      "fpsLabel": "60 FPS"
+    },
+    {
+      "scene": "solar",
+      "viewport": "390x844",
+      "fpsLabel": "44 FPS"
+    },
+    {
+      "scene": "solar",
+      "viewport": "360x740",
+      "fpsLabel": "44 FPS"
+    },
+    {
+      "scene": "solar",
+      "viewport": "844x390",
+      "fpsLabel": "44 FPS"
+    },
+    {
+      "scene": "planet-earth",
+      "viewport": "1707x842",
+      "fpsLabel": "60 FPS"
+    },
+    {
+      "scene": "planet-earth",
+      "viewport": "1366x768",
+      "fpsLabel": "60 FPS"
+    },
+    {
+      "scene": "planet-earth",
+      "viewport": "390x844",
+      "fpsLabel": "60 FPS"
+    },
+    {
+      "scene": "planet-earth",
+      "viewport": "360x740",
+      "fpsLabel": "54 FPS"
+    },
+    {
+      "scene": "planet-earth",
+      "viewport": "844x390",
+      "fpsLabel": "54 FPS"
+    },
+    {
+      "scene": "free",
+      "viewport": "1707x842",
+      "fpsLabel": "60 FPS"
+    },
+    {
+      "scene": "free",
+      "viewport": "1366x768",
+      "fpsLabel": "60 FPS"
+    },
+    {
+      "scene": "free",
+      "viewport": "390x844",
+      "fpsLabel": "60 FPS"
+    },
+    {
+      "scene": "free",
+      "viewport": "360x740",
+      "fpsLabel": "60 FPS"
+    },
+    {
+      "scene": "free",
+      "viewport": "844x390",
+      "fpsLabel": "55 FPS"
+    },
+    {
+      "scene": "free-dock-open",
+      "viewport": "390x844",
+      "fpsLabel": "59 FPS"
+    }
+  ]
+}

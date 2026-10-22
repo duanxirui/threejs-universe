@@ -1,0 +1,353 @@
+/* T15 stage 1 — spatial layout foundation. The original WebGL scene remains
+   edge-to-edge; interaction regions are moved to the periphery. */
+#app[data-layout="t15"] .scene-rail {
+  position: fixed; z-index: 23; top: 16px; bottom: 96px;
+  left: max(12px, env(safe-area-inset-left, 0px));
+  width: 76px; display: flex; flex-direction: column; align-items: center;
+  padding: 13px 5px; gap: 20px; pointer-events: auto;
+  border: 1px solid rgba(146,196,226,.14); border-radius: 19px;
+  background: linear-gradient(180deg, rgba(6,17,32,.79), rgba(9,25,42,.55));
+  backdrop-filter: blur(13px);
+}
+#app[data-layout="t15"] .rail-brand-slot .brand {
+  display: flex; align-items: center; justify-content: center; width: 60px;
+  min-height: 51px; padding: 0; margin: 0; border: 0;
+}
+#app[data-layout="t15"] .rail-brand-slot .brand-text { display: none; }
+#app[data-layout="t15"] .rail-navigation-slot { width: 100%; }
+#app[data-layout="t15"] .scene-rail .view-nav {
+  display: flex; position: static; flex-direction: column; width: 100%;
+  height: auto; padding: 0; margin: 0; border: 0; gap: 7px;
+}
+#app[data-layout="t15"] .scene-rail .view-link {
+  display: grid; place-items: center; min-width: 0; width: 100%;
+  min-height: 59px; padding: 8px 1px; margin: 0; border: 0;
+  border-radius: 10px; font-size: 11px; line-height: 1.5;
+  letter-spacing: 0; text-align: center; white-space: normal;
+  color: #9bb8ca; background: transparent;
+}
+#app[data-layout="t15"] .scene-rail .view-link span { display: none; }
+#app[data-layout="t15"] .scene-rail .view-link:hover,
+#app[data-layout="t15"] .scene-rail .view-link.is-active {
+  background: rgba(106,177,220,.16); color: #e1f5ff;
+}
+#app[data-layout="t15"] .scene-rail .view-link.is-active::after { display: none; }
+#app[data-layout="t15"] .rail-actions {
+  width: 100%; display: grid; gap: 8px; padding-top: 13px;
+  margin-top: 2px; border-top: 1px solid rgba(134,176,207,.2);
+}
+#app[data-layout="t15"] .rail-action {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 2px; min-height: 51px; padding: 5px 0;
+  border: 1px solid transparent; border-radius: 10px;
+  color: #cee4f3; background: transparent; font-size: 19px;
+}
+#app[data-layout="t15"] .rail-action span { font-size: 10px; }
+#app[data-layout="t15"] .rail-action[aria-expanded="true"],
+#app[data-layout="t15"] .rail-action:hover {
+  border-color: rgba(151,212,239,.24); background: rgba(117,181,214,.14);
+}
+
+/* Header is now a small set of global actions at the right edge. */
+#app[data-layout="t15"] .topbar {
+  top: 16px; left: auto; right: max(16px, env(safe-area-inset-right, 0px));
+  width: auto; min-width: 0; height: 48px; padding: 0;
+  display: flex; align-items: center; justify-content: flex-end;
+  border: 0; background: none; pointer-events: none; z-index: 24;
+}
+#app[data-layout="t15"] .topbar .brand,
+#app[data-layout="t15"] .topbar .view-nav { display: none; }
+#app[data-layout="t15"] .topbar .top-actions {
+  display: flex; align-items: center; gap: 9px; pointer-events: auto;
+}
+#app[data-layout="t15"] .topbar .top-actions .icon-button {
+  width: 44px; height: 44px; min-height: 44px; border-radius: 13px;
+  background: rgba(8,22,40,.72);
+}
+#app[data-layout="t15"] #mobile-menu-trigger { display: none !important; }
+#app[data-layout="t15"] .mobile-scene-trigger { display: none; }
+
+/* The 3D stage and the short contextual welcome occupy independent regions. */
+#app[data-layout="t15"] .stage-layout {
+  inset: 0; padding: 0; display: block; pointer-events: none;
+}
+#app[data-layout="t15"] .hero-panel {
+  position: absolute; top: 17%; left: 116px; width: min(350px, 35vw);
+  padding: 0; pointer-events: auto;
+}
+#app[data-layout="t15"] .hero-panel h1 {
+  font-size: clamp(32px, 3.3vw, 57px); line-height: 1.15;
+  margin: 16px 0 14px;
+}
+#app[data-layout="t15"] .hero-description { line-height: 1.7; }
+#app[data-layout="t15"] .hero-actions { margin-top: 15px; gap: 14px; }
+#app[data-layout="t15"] .hero-divider { margin: 22px 0 14px; }
+#app[data-layout="t15"] .hero-metrics { gap: 22px; }
+#app[data-layout="t15"] .side-readout,
+#app[data-layout="t15"] .corner-note { display: none; }
+#app[data-layout="t15"] .camera-tools {
+  top: 35%; bottom: auto; right: 16px;
+  z-index: 14; transform: scale(.89); transform-origin: right center;
+}
+
+/* The former full-width footer becomes a compact transport control. */
+#app[data-layout="t15"] .bottom-interface {
+  position: fixed; z-index: 22; display: block;
+  left: 50%; right: auto; bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  width: min(440px, calc(100vw - 124px));
+  min-height: 0; height: auto; padding: 0;
+  transform: translateX(-50%); pointer-events: auto;
+}
+#app[data-layout="t15"] .time-capsule {
+  display: flex; align-items: center; gap: 10px;
+  height: 56px; width: 100%; padding: 6px 12px; border-radius: 16px;
+  border: 1px solid rgba(155,207,232,.22);
+  background: rgba(9,24,42,.85); box-shadow: 0 8px 30px rgba(0,0,0,.19);
+  backdrop-filter: blur(16px);
+}
+#app[data-layout="t15"] .time-capsule .play-button {
+  width: 42px; height: 42px; min-height: 42px; border-radius: 11px;
+}
+#app[data-layout="t15"] #capsule-play-slot,
+#app[data-layout="t15"] #capsule-dock-slot { display: flex; align-items: center; flex: none; }
+#app[data-layout="t15"] .time-open-trigger {
+  flex: 1; min-width: 0; min-height: 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 11px; gap: 8px; color: #cce9fa;
+  background: rgba(107,161,196,.09); border-radius: 9px;
+  border: 1px solid rgba(166,207,234,.11); font-size: 12px;
+}
+#app[data-layout="t15"] .time-open-trigger[aria-expanded="true"] {
+  background: rgba(117,187,230,.18); border-color: rgba(166,207,234,.37);
+}
+#app[data-layout="t15"] .capsule-speed { font-size: 12px; color: #a8d3eb; white-space: nowrap; }
+#app[data-layout="t15"] #planet-dock-toggle {
+  display: flex; justify-content: center; align-items: center;
+  width: 48px; height: 42px; min-height: 42px;
+  border-radius: 9px; white-space: nowrap;
+}
+#app[data-layout="t15"] #planet-dock-toggle[aria-expanded="true"] {
+  border-color: rgba(155,218,248,.5); background: rgba(110,178,214,.24);
+}
+
+/* One floating workspace at a time, shared by the clock, object list and settings. */
+#app[data-layout="t15"] .workspace-panel {
+  position: fixed; z-index: 22; display: block; visibility: hidden;
+  pointer-events: none; opacity: 0; transform: translateX(-10px);
+  left: 102px; bottom: 87px; top: auto;
+  width: min(345px, calc(100vw - 220px));
+  max-height: min(72dvh, calc(100dvh - 112px));
+  overflow: auto; overscroll-behavior: contain; padding: 15px;
+  border-radius: 17px; border: 1px solid rgba(152,204,233,.22);
+  background: rgba(9,24,42,.95);
+  box-shadow: 0 18px 50px rgba(0,0,0,.36);
+  transition: opacity .2s, transform .2s, visibility .2s;
+}
+#app[data-layout="t15"][data-active-drawer="objects"] .workspace-panel,
+#app[data-layout="t15"][data-active-drawer="flight"] .workspace-panel,
+#app[data-layout="t15"][data-active-drawer="time"] .workspace-panel,
+#app[data-layout="t15"][data-active-drawer="settings"] .workspace-panel {
+  visibility: visible; pointer-events: auto; opacity: 1; transform: none;
+}
+#app[data-layout="t15"] .workspace-slot { display: none; min-width: 0; }
+#app[data-layout="t15"][data-active-drawer="objects"] #objects-workspace-slot,
+#app[data-layout="t15"][data-active-drawer="flight"] #objects-workspace-slot,
+#app[data-layout="t15"][data-active-drawer="time"] #time-workspace-slot,
+#app[data-layout="t15"][data-active-drawer="settings"] #settings-workspace-slot { display: block; }
+#app[data-layout="t15"] #objects-workspace-slot .planet-dock {
+  display: block !important; position: static !important;
+  width: 100%; min-width: 0; max-height: none; overflow: visible;
+  margin: 0; padding: 0; border: 0; background: none;
+  backdrop-filter: none; min-height: 0;
+}
+#app[data-layout="t15"] .planet-list {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px; padding: 8px 0 0; margin: 0;
+  overflow: visible; max-height: none;
+}
+#app[data-layout="t15"] .planet-list .planet-item {
+  min-width: 0; width: 100%; max-width: none;
+  flex: none; border-radius: 9px; padding: 7px 4px;
+}
+#app[data-layout="t15"] .dock-title { font-size: 10px; }
+#app[data-layout="t15"] .free-flight-dock {
+  grid-template-columns: minmax(0, 1fr) auto auto; gap: 7px; margin-top: 12px;
+}
+#app[data-layout="t15"] .free-flight-dock .free-flight-status { grid-column: 1 / -1; }
+#app[data-layout="t15"] .flight-speed-control:not([hidden]) {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 12px; margin-top: 10px; flex-wrap: wrap;
+}
+#app[data-layout="t15"] .simulation-panel {
+  display: block; width: 100%; min-height: 0; height: auto;
+  padding: 0; border: 0; background: none; backdrop-filter: none;
+}
+#app[data-layout="t15"] .simulation-panel .section-caption { display: block; }
+#app[data-layout="t15"] .time-row { display: flex; margin: 14px 0 0; }
+#app[data-layout="t15"] .timeline-control { display: grid; margin-top: 15px; }
+#app[data-layout="t15"] .simulation-options { display: none; }
+#app[data-layout="t15"] #settings-workspace-slot > * { margin: 0 0 12px; }
+#app[data-layout="t15"] #settings-workspace-slot > .quality-control {
+  display: flex; justify-content: space-between; min-height: 44px;
+}
+#app[data-layout="t15"] #settings-workspace-slot > .option-toggle {
+  display: flex; align-items: center; width: 100%; min-height: 42px;
+  padding: 0 12px; text-align: left; border-radius: 9px;
+}
+#app[data-layout="t15"] #settings-workspace-slot > .help-button {
+  width: 100%; border-radius: 9px; min-height: 42px; font-size: 12px;
+}
+#app[data-layout="t15"] #settings-workspace-slot > .render-status { display: block; }
+
+/* Planet data is a right-side workspace, opened by the context cue. */
+#app[data-layout="t15"] .detail-peek-trigger {
+  position: fixed; z-index: 20; right: 18px; bottom: 110px;
+  display: flex; align-items: center; gap: 12px; min-height: 46px;
+  padding: 8px 13px; color: #d4ebf8; background: rgba(9,23,41,.84);
+  border: 1px solid rgba(155,211,242,.28); border-radius: 11px;
+}
+#app[data-layout="t15"] .detail-peek-trigger[hidden] { display: none !important; }
+#app[data-layout="t15"] .detail-panel {
+  position: fixed; left: auto; right: 18px; top: 80px;
+  bottom: 94px; width: min(350px, calc(100vw - 125px));
+  height: auto; max-height: calc(100dvh - 174px); overflow-y: auto;
+  padding: 20px; opacity: 0; visibility: hidden;
+  pointer-events: none; transform: translateX(20px);
+  border-radius: 16px; z-index: 21;
+}
+#app[data-layout="t15"][data-active-drawer="detail"] .detail-panel.is-visible {
+  visibility: visible; opacity: 1; pointer-events: auto; transform: none;
+}
+#app[data-layout="t15"] .flight-safety {
+  position: fixed; right: 20px; bottom: 105px; z-index: 25;
+}
+#app[data-layout="t15"] .flight-safety:not(:has(button:not([hidden]))) { display: none; }
+#app[data-layout="t15"] .flight-safety button:not([hidden]) {
+  min-width: 100px; min-height: 44px; padding: 9px 14px;
+  border: 1px solid rgba(255,157,151,.48); border-radius: 10px;
+  background: rgba(74,22,28,.91); color: #ffe2df;
+}
+
+@media (max-width: 900px) {
+  #app[data-layout="t15"] .scene-rail { display: none; }
+  #app[data-layout="t15"] .topbar {
+    top: calc(6px + env(safe-area-inset-top, 0px));
+    left: calc(8px + env(safe-area-inset-left, 0px));
+    right: calc(8px + env(safe-area-inset-right, 0px));
+    height: 52px; width: auto; display: flex;
+    justify-content: space-between; padding: 0; align-items: center;
+  }
+  #app[data-layout="t15"] .mobile-scene-trigger {
+    display: flex; align-items: center; gap: 8px;
+    min-height: 44px; min-width: 110px; max-width: 180px;
+    border: 1px solid rgba(152,203,234,.26);
+    border-radius: 12px; padding: 0 14px; font-size: 13px;
+    color: #d9ecf6; background: rgba(8,22,40,.81);
+    pointer-events: auto;
+  }
+  #app[data-layout="t15"] .topbar .top-actions { gap: 6px; }
+  #app[data-layout="t15"] .topbar .top-actions .icon-button { width: 44px; height: 44px; }
+  #app[data-layout="t15"] .mobile-menu:not([hidden]) {
+    position: absolute; right: 0; left: auto;
+    top: calc(51px + env(safe-area-inset-top, 0px));
+    width: min(360px, calc(100vw - 16px)); max-height: min(75dvh, 420px);
+    overflow-y: auto; z-index: 27; pointer-events: auto;
+  }
+  #app[data-layout="t15"] .stage-layout { inset: 0; padding: 0; }
+  #app[data-layout="t15"] .hero-panel,
+  #app[data-layout="t15"][data-view="solar"] .hero-panel {
+    left: 17px; top: 19%; width: min(300px, 75vw); padding: 0;
+  }
+  #app[data-layout="t15"] .hero-panel h1 { font-size: clamp(27px, 7vw, 41px); }
+  #app[data-layout="t15"] .hero-panel .hero-metrics,
+  #app[data-layout="t15"] .hero-panel .hero-divider { display: none; }
+  #app[data-layout="t15"] .bottom-interface {
+    left: calc(8px + env(safe-area-inset-left, 0px));
+    right: calc(8px + env(safe-area-inset-right, 0px));
+    width: auto; bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+    transform: none; display: block; height: auto;
+  }
+  #app[data-layout="t15"] .time-capsule { height: 56px; padding: 5px 7px; gap: 6px; }
+  #app[data-layout="t15"] .time-open-trigger { font-size: 11px; padding: 6px; }
+  #app[data-layout="t15"] .capsule-speed { font-size: 11px; }
+  #app[data-layout="t15"] .workspace-panel {
+    left: calc(8px + env(safe-area-inset-left, 0px));
+    right: calc(8px + env(safe-area-inset-right, 0px));
+    bottom: calc(73px + env(safe-area-inset-bottom, 0px));
+    top: auto; width: auto; max-height: min(53dvh, calc(100dvh - 150px));
+    transform: translateY(12px); padding: 14px;
+  }
+  #app[data-layout="t15"][data-active-drawer="objects"] .workspace-panel,
+  #app[data-layout="t15"][data-active-drawer="flight"] .workspace-panel,
+  #app[data-layout="t15"][data-active-drawer="time"] .workspace-panel,
+  #app[data-layout="t15"][data-active-drawer="settings"] .workspace-panel { transform: none; }
+  #app[data-layout="t15"] .detail-panel {
+    left: calc(8px + env(safe-area-inset-left, 0px));
+    right: calc(8px + env(safe-area-inset-right, 0px));
+    width: auto; top: auto;
+    bottom: calc(73px + env(safe-area-inset-bottom, 0px));
+    height: auto; min-height: 0; max-height: min(54dvh, calc(100dvh - 150px));
+    padding: 14px; overflow-y: auto; transform: translateY(12px);
+  }
+  #app[data-layout="t15"][data-active-drawer="detail"] .detail-panel.is-visible {
+    transform: none; height: auto; min-height: 0;
+  }
+  #app[data-layout="t15"] .detail-peek-trigger {
+    left: 12px; right: auto;
+    bottom: calc(77px + env(safe-area-inset-bottom, 0px));
+  }
+  #app[data-layout="t15"] .camera-tools {
+    right: calc(9px + env(safe-area-inset-right, 0px));
+    top: 30%; bottom: auto; transform: scale(.85);
+  }
+  #app[data-layout="t15"] .flight-safety {
+    right: 12px; bottom: calc(79px + env(safe-area-inset-bottom, 0px));
+  }
+  #app[data-layout="t15"] .detail-panel .detail-sheet-handle { display: grid; }
+  #app[data-layout="t15"] .detail-panel .detail-sheet-summary { display: none; }
+  #app[data-layout="t15"][data-sheet="half"] .detail-panel {
+    max-height: min(38dvh, calc(100dvh - 150px));
+  }
+  #app[data-layout="t15"][data-sheet="expanded"] .detail-panel {
+    max-height: min(60dvh, calc(100dvh - 150px));
+  }
+}
+
+@media (max-height: 480px) and (max-width: 900px) and (orientation: landscape) {
+  #app[data-layout="t15"] .topbar { top: 3px; height: 49px; }
+  #app[data-layout="t15"] .mobile-menu:not([hidden]) { top: 50px; }
+  #app[data-layout="t15"] .hero-panel,
+  #app[data-layout="t15"][data-view="solar"] .hero-panel {
+    top: 16%; left: 13px; width: min(210px, 28vw);
+  }
+  #app[data-layout="t15"] .hero-panel h1 { font-size: 23px; }
+  #app[data-layout="t15"] .bottom-interface {
+    left: auto; right: calc(8px + env(safe-area-inset-right, 0px));
+    top: 66px; bottom: auto; width: 64px;
+  }
+  #app[data-layout="t15"] .time-capsule {
+    width: 64px; height: auto; min-height: 160px;
+    padding: 7px 5px; flex-direction: column;
+  }
+  #app[data-layout="t15"] .time-open-trigger { min-height: 43px; width: 52px; justify-content: center; }
+  #app[data-layout="t15"] #capsule-date { display: none; }
+  #app[data-layout="t15"] .time-open-trigger::before { content: '时间'; font-size: 11px; }
+  #app[data-layout="t15"] .capsule-speed { font-size: 10px; }
+  #app[data-layout="t15"] .workspace-panel {
+    left: auto; right: 80px; top: 62px; bottom: 7px;
+    width: min(330px, 42vw); max-height: calc(100dvh - 69px);
+    transform: translateX(10px);
+  }
+  #app[data-layout="t15"] .detail-panel {
+    left: auto; right: 80px; top: 60px; bottom: 8px;
+    width: min(310px, 42vw); max-height: calc(100dvh - 69px);
+  }
+  #app[data-layout="t15"] .detail-peek-trigger { left: auto; right: 80px; bottom: 12px; }
+  #app[data-layout="t15"] .camera-tools { display: none; }
+  #app[data-layout="t15"] .flight-safety { right: 81px; bottom: 11px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #app[data-layout="t15"] .workspace-panel,
+  #app[data-layout="t15"] .detail-panel { transition-duration: 0s; }
+}

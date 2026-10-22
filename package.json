@@ -7,7 +7,9 @@
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "textures:encode": "node scripts/encode-etc2-ktx2.mjs"
+    "textures:encode": "node scripts/encode-etc2-ktx2.mjs",
+    "audit:t15": "node scripts/t15-browser-audit.mjs",
+    "docs:check": "node scripts/check-docs.mjs"
   },
   "dependencies": {
     "gsap": "^3.14.0",

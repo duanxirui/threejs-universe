@@ -54,10 +54,55 @@ function blend(a, b, t) {
   ];
 }
 
+// Educational surface illustrations for Saturn's moons without local photo
+// atlases. The colors and features suggest ice, impact craters and fractures;
+// they are not NASA/USGS maps or measured surface elevations.
+const SATURN_ICE_PALETTES = {
+  mimas: [[73, 79, 87], [197, 199, 195]],
+  enceladus: [[129, 168, 192], [237, 249, 252]],
+  tethys: [[111, 114, 111], [217, 214, 207]],
+  dione: [[93, 103, 111], [213, 216, 214]],
+  rhea: [[96, 98, 102], [198, 198, 197]],
+  iapetus: [[78, 70, 65], [221, 209, 192]]
+};
+
 function planetColor(id, u, v, seed) {
   const latitude = Math.abs(v - 0.5) * 2;
   const n = fbm(u, v, seed, 3, 5);
   const detail = fbm(u + .157, v + .267, seed + 91, 9, 4);
+
+  if (Object.prototype.hasOwnProperty.call(SATURN_ICE_PALETTES, id)) {
+    const [dark, light] = SATURN_ICE_PALETTES[id];
+    const craters = Math.pow(Math.max(0, Math.sin(u * 109 + detail * 3) *
+      Math.cos(v * 96 + n * 3)), 15) * .16;
+    let shade = clamp(.17 + n * .75 + (detail - .5) * .25 - craters);
+
+    if (id === 'enceladus') {
+      // Crossed, bright icy fractures suggest the south polar tiger stripes.
+      const fractures = Math.pow(Math.max(0,
+        Math.cos(u * 76 + v * 94 + n * 9)), 24);
+      shade = clamp(shade + fractures * (.2 + latitude * .2) + .12);
+    } else if (id === 'dione') {
+      const streaks = Math.pow(Math.max(0,
+        Math.cos(u * 59 - v * 75 + detail * 8)), 20);
+      shade = clamp(shade + streaks * .18);
+    } else if (id === 'iapetus') {
+      // Large-scale bright/dark hemisphere contrast (illustrative longitude).
+      const brightSide = smoothstep(-.22, .22, Math.cos(TAU * u + .28));
+      return blend([44, 40, 38], blend(dark, light, clamp(.3 + n * .65)),
+        brightSide * .96 + .025);
+    } else if (id === 'mimas' || id === 'tethys') {
+      const craterU = id === 'mimas' ? .37 : .62;
+      const craterV = id === 'mimas' ? .46 : .58;
+      const dx = Math.min(Math.abs(u - craterU), 1 - Math.abs(u - craterU));
+      const distance = Math.hypot(dx * 2, (v - craterV) * 2);
+      const radius = id === 'mimas' ? .23 : .19;
+      const rim = Math.exp(-Math.pow((distance - radius) / .033, 2));
+      const floor = 1 - smoothstep(radius - .07, radius, distance);
+      shade = clamp(shade - floor * .26 + rim * .22);
+    }
+    return blend(dark, light, shade);
+  }
 
   if (id === 'earth') {
     const continental = n * .84 + (detail - .5) * .19;
@@ -305,22 +350,41 @@ const atmosphereVertex = [
 
 const atmosphereFragment = [
   'uniform vec3 uColor;',
+  'uniform float uQualityTier;',
   'varying vec3 vNormalWorld;',
   'varying vec3 vWorld;',
   'void main() {',
   '  vec3 viewDirection = normalize(cameraPosition - vWorld);',
-  '  float edge = 1.0 - abs(dot(normalize(vNormalWorld), viewDirection));',
-  '  float glow = pow(edge, 3.1);',
-  '  float sunlight = dot(normalize(vNormalWorld), normalize(-vWorld));',
+  '  vec3 normal = normalize(vNormalWorld);',
+  '  vec3 sunward = normalize(-vWorld);',
+  '  float edge = clamp(1.0 - abs(dot(normal, viewDirection)), 0.0, 1.0);',
+  '  float sunlight = dot(normal, sunward);',
   '  float day = smoothstep(-.2, .45, sunlight);',
-  '  vec3 tint = mix(uColor * .45, uColor * 1.65, day);',
-  '  gl_FragColor = vec4(tint, glow * (.35 + day * .5));',
+  '  if (uQualityTier < .5) {',
+  '    float simpleGlow = pow(edge, 3.1);',
+  '    gl_FragColor = vec4(mix(uColor * .45, uColor * 1.65, day),',
+  '                        simpleGlow * (.35 + day * .5));',
+  '    return;',
+  '  }',
+  '  // Limb brightening and a soft terminator approximate forward scattering.',
+  '  float rim = pow(edge, uQualityTier > 1.5 ? 2.35 : 2.75);',
+  '  float twilight = 1.0 - smoothstep(.03, .64, abs(sunlight));',
+  '  float forward = pow(max(dot(viewDirection, sunward), 0.0), 5.0);',
+  '  vec3 sky = mix(uColor * .18, uColor * 1.7, day);',
+  '  sky = mix(sky, vec3(1.0, .47, .19), twilight * .36);',
+  '  sky += uColor * forward * twilight * .32;',
+  '  float density = mix(.50, .76, day) + twilight * .18;',
+  '  float alpha = min(.84, rim * density);',
+  '  gl_FragColor = vec4(sky, alpha);',
   '}'
 ].join('\n');
 
 export function createAtmosphereMaterial(color = 0x56b6ff) {
   return new THREE.ShaderMaterial({
-    uniforms: { uColor: { value: new THREE.Color(color) } },
+    uniforms: {
+      uColor: { value: new THREE.Color(color) },
+      uQualityTier: { value: 0 }
+    },
     vertexShader: atmosphereVertex,
     fragmentShader: atmosphereFragment,
     blending: THREE.AdditiveBlending,

@@ -9,19 +9,65 @@
     <!-- Load layout styles with the document, independently of the 3D module graph. -->
     <link rel="stylesheet" href="/src/styles.css" />
     <link rel="stylesheet" href="/src/exploration.css" />
+    <link rel="stylesheet" href="/src/layout.css" />
+    <link rel="stylesheet" href="/src/showcase.css" />
+    <link rel="stylesheet" href="/src/ui-polish.css" />
     <!-- Web fonts are optional: never block the interface on an external request. -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" media="print" onload="this.media='all'" />
     <title>COSMOS ATLAS · 3D 宇宙图鉴</title>
   </head>
   <body>
     <div id="app">
-      <canvas id="universe-canvas" aria-label="可交互的 3D 宇宙场景"></canvas>
+      <!-- One local 24px outline family for the interface; no icon fonts or network requests. -->
+      <svg class="ui-icon-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16 16 4.5 4.5"/></symbol>
+        <symbol id="ic-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.5"/></symbol>
+        <symbol id="ic-maximize" viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></symbol>
+        <symbol id="ic-settings" viewBox="0 0 24 24"><path d="M9.5 3h5l.6 2.1 1.7.9 2-.7 2.3 4-1.7 1.5v2l1.7 1.5-2.3 4-2-.7-1.7.9-.6 2.1h-5l-.6-2.1-1.7-.9-2 .7-2.3-4 1.7-1.5v-2L2.9 9.3l2.3-4 2 .7 1.7-.9L9.5 3Z"/><circle cx="12" cy="12" r="3.2"/></symbol>
+        <symbol id="ic-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+        <symbol id="ic-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.2a2.6 2.6 0 1 1 4.4 2c-.9.7-2 1.2-2 2.7"/><path d="M12 17.2h.01"/></symbol>
+        <symbol id="ic-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></symbol>
+        <symbol id="ic-orbit" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="10" ry="5.4" transform="rotate(-32 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="5.4" transform="rotate(32 12 12)"/><circle cx="12" cy="12" r="1.8"/></symbol>
+        <symbol id="ic-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r=".7"/><circle cx="4.5" cy="12" r=".7"/><circle cx="4.5" cy="18" r=".7"/></symbol>
+        <symbol id="ic-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+        <symbol id="ic-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+        <symbol id="ic-reset" viewBox="0 0 24 24"><path d="M3 11a9 9 0 1 1 2.5 6.4"/><path d="M3 4v7h7"/></symbol>
+        <symbol id="ic-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7V5Z"/></symbol>
+        <symbol id="ic-pause" viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></symbol>
+        <symbol id="ic-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4"/><path d="M12 1v3M12 20v3M1 12h3M20 12h3"/></symbol>
+        <symbol id="ic-gauge" viewBox="0 0 24 24"><path d="M4.2 17a9 9 0 1 1 15.6 0"/><path d="m12 14 4-5"/><circle cx="12" cy="14" r="1.3"/><path d="M8 19h8"/></symbol>
+        <symbol id="ic-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+        <symbol id="ic-chevron-up" viewBox="0 0 24 24"><path d="m6 15 6-6 6 6"/></symbol>
+        <symbol id="ic-chevron-left" viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></symbol>
+        <symbol id="ic-chevron-right" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+        <symbol id="ic-check" viewBox="0 0 24 24"><path d="m5 12 4.3 4.3L19 6.8"/></symbol>
+        <symbol id="ic-x" viewBox="0 0 24 24"><path d="M6 6 18 18M18 6 6 18"/></symbol>
+        <symbol id="ic-arrow-left" viewBox="0 0 24 24"><path d="M20 12H4m7-7-7 7 7 7"/></symbol>
+        <symbol id="ic-arrow-up-right" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></symbol>
+        <symbol id="ic-swap" viewBox="0 0 24 24"><path d="M4 8h16m-4-4 4 4-4 4M20 16H4m4-4-4 4 4 4"/></symbol>
+        <symbol id="ic-navigation" viewBox="0 0 24 24"><path d="m20 4-5 16-3-7-8-3 16-6Z"/><path d="m12 13 8-9"/></symbol>
+        <symbol id="ic-unlock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M9 10.5V7a4 4 0 0 1 7.5-2"/></symbol>
+        <symbol id="ic-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></symbol>
+      </svg>
+      <canvas id="universe-canvas" role="img" aria-label="3D 宇宙模拟画面"
+        aria-describedby="canvas-accessible-description"></canvas>
+      <p id="canvas-accessible-description" class="visually-hidden">可以通过场景导航、天体搜索和天体导航按钮选择星球。使用鼠标或触摸操作旋转和缩放画面；按斜杠键打开搜索，按 R 恢复视角。</p>
       <div id="labels-layer" class="labels-layer" aria-hidden="true"></div>
       <div class="cinema-vignette" aria-hidden="true"></div>
       <div class="film-grain" aria-hidden="true"></div>
       <div id="scene-transition" class="scene-transition" aria-hidden="true"></div>
 
+      <aside id="scene-rail" class="scene-rail" aria-label="场景与探索导航">
+        <div id="rail-brand-slot"></div>
+        <div id="rail-navigation-slot"></div>
+        <div class="rail-actions">
+          <button id="rail-objects-trigger" class="rail-action" type="button" aria-controls="objects-workspace-slot" aria-expanded="false" title="打开天体目录"><svg class="ui-icon" aria-hidden="true"><use href="#ic-list"/></svg><span>天体</span></button>
+          <button id="rail-time-trigger" class="rail-action" type="button" aria-controls="time-workspace-slot" aria-expanded="false" title="打开天体运动控制"><svg class="ui-icon" aria-hidden="true"><use href="#ic-orbit"/></svg><span>运动</span></button>
+          <button id="rail-settings-trigger" class="rail-action" type="button" aria-controls="settings-workspace-slot" aria-expanded="false" title="打开设置"><svg class="ui-icon" aria-hidden="true"><use href="#ic-settings"/></svg><span>设置</span></button>
+        </div>
+      </aside>
       <header class="topbar">
+        <button id="mobile-scene-trigger" class="mobile-scene-trigger" type="button" aria-controls="mobile-menu" aria-expanded="false"><span>宇宙全景 </span><svg class="ui-icon" aria-hidden="true"><use href="#ic-chevron-down"/></svg></button>
         <button class="brand" id="brand-home" aria-label="返回银河系">
           <span class="brand-symbol" aria-hidden="true"><span></span></span>
           <span class="brand-text"><strong>COSMOS</strong><small>宇宙图鉴 · ATLAS</small></span>
@@ -34,20 +80,28 @@
         </nav>
 
         <div class="top-actions">
+          <span class="header-scene-state" aria-hidden="true"><i></i><span id="header-scene-status">宇宙全景 / 01</span></span>
           <span class="render-status"><i></i> LIVE 3D <b id="fps-value">60 FPS</b></span>
-          <label class="quality-control" title="调整渲染画质">
+          <div class="quality-control" title="调整渲染画质">
             <span>画质</span>
             <select id="quality-select" aria-label="渲染画质">
               <option value="auto">自动</option>
               <option value="low">省电</option>
               <option value="high">极致</option>
             </select>
-          </label>
+          </div>
           <button id="search-trigger" class="icon-button" aria-label="搜索天体" title="搜索天体 (/)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m16 16 5 5"/></svg>
+            <svg class="ui-icon" aria-hidden="true"><use href="#ic-search"/></svg>
           </button>
-          <button id="mobile-menu-trigger" class="icon-button mobile-menu-trigger" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="打开更多选项" title="更多选项">☰</button>
-          <button id="help-trigger" class="icon-button help-button" aria-label="操作帮助" title="操作帮助">?</button>
+          <button id="pure-mode-trigger" class="icon-button" type="button" aria-label="进入纯净观赏模式" aria-pressed="false" title="纯净观赏 (H)">
+            <svg class="ui-icon" aria-hidden="true"><use href="#ic-eye"/></svg>
+          </button>
+          <button id="fullscreen-trigger" class="icon-button" type="button" aria-label="进入浏览器全屏" aria-pressed="false" title="全屏显示 (F)">
+            <svg class="ui-icon" aria-hidden="true"><use href="#ic-maximize"/></svg>
+          </button>
+          <button id="global-settings-trigger" class="icon-button" type="button" aria-label="打开更多设置" aria-controls="settings-workspace-slot" aria-expanded="false" title="更多设置"><svg class="ui-icon" aria-hidden="true"><use href="#ic-settings"/></svg></button>
+          <button id="mobile-menu-trigger" class="icon-button mobile-menu-trigger" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="打开更多选项" title="更多选项"><svg class="ui-icon" aria-hidden="true"><use href="#ic-menu"/></svg></button>
+          <button id="help-trigger" class="icon-button help-button" aria-label="操作帮助" title="操作帮助"><svg class="ui-icon" aria-hidden="true"><use href="#ic-help"/></svg></button>
         </div>
         <div id="mobile-menu" class="mobile-menu" hidden>
           <div class="mobile-menu-scenes" aria-label="场景切换">
@@ -62,7 +116,7 @@
               <option value="high">极致</option>
             </select>
           </label>
-          <button id="mobile-help-trigger" type="button">操作帮助与项目说明 ↗</button>
+          <button id="mobile-help-trigger" type="button">操作帮助与项目说明 <svg class="ui-icon" aria-hidden="true"><use href="#ic-arrow-up-right"/></svg></button>
         </div>
       </header>
 
@@ -72,8 +126,8 @@
           <h1 id="hero-title">宇宙，不止<br /><em>于仰望。</em></h1>
           <p class="hero-description" id="hero-description">从亿万星辰汇成的银河，到太阳系里每一颗独特的行星。现在，开启属于你的星际旅程。</p>
           <div class="hero-actions">
-            <button id="primary-action" class="primary-button">进入太阳系 <span aria-hidden="true">↗</span></button>
-            <button id="secondary-action" class="text-button">聚焦地球 <span aria-hidden="true">→</span></button>
+            <button id="primary-action" class="primary-button">进入太阳系 <svg class="ui-icon" aria-hidden="true"><use href="#ic-arrow-up-right"/></svg></button>
+            <button id="secondary-action" class="text-button">聚焦地球 <svg class="ui-icon" aria-hidden="true"><use href="#ic-arrow-up-right"/></svg></button>
           </div>
           <div class="hero-divider"></div>
           <div class="hero-metrics">
@@ -82,48 +136,64 @@
           </div>
         </section>
 
-        <aside id="detail-panel" class="detail-panel" aria-live="polite" aria-hidden="true">
+        <aside id="detail-panel" class="detail-panel" aria-labelledby="detail-name" aria-hidden="true">
           <button id="detail-sheet-handle" class="detail-sheet-handle" type="button" aria-label="展开或折叠天体资料" aria-expanded="true"><span></span></button>
           <button id="detail-sheet-summary" class="detail-sheet-summary" type="button" aria-label="展开天体介绍" aria-expanded="false">
             <strong id="detail-summary-name">地球</strong>
             <span id="detail-summary-stat">直径 12,742 km</span>
             <span class="detail-summary-arrow" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false">
-                <path d="m6.5 14 5.5-5.5 5.5 5.5" />
-              </svg>
+              <svg class="ui-icon" focusable="false"><use href="#ic-chevron-up"/></svg>
             </span>
           </button>
           <div class="detail-topline"><span>CELESTIAL ARCHIVE <span id="detail-number">/ 03</span></span>
-            <button id="detail-close" class="detail-close" type="button" aria-label="收起天体介绍" title="收起天体介绍">×</button>
+            <button id="detail-close" class="detail-close" type="button" aria-label="收起天体介绍" title="收起天体介绍"><svg class="ui-icon" aria-hidden="true"><use href="#ic-x"/></svg></button>
           </div>
           <div id="detail-orb" class="detail-orb" aria-hidden="true"></div>
           <div class="detail-category" id="detail-category">TERRESTRIAL PLANET</div>
-          <h2 id="detail-name">地球</h2>
+          <h2 id="detail-name" tabindex="-1">地球</h2>
           <div id="detail-en" class="detail-en">EARTH</div>
+          <div id="detail-scene-headline" class="detail-scene-headline" hidden></div>
           <p id="detail-description" class="detail-description"></p>
+          <p id="detail-scene-extra" class="detail-scene-extra" hidden></p>
           <div class="detail-rule"></div>
           <div class="detail-stats">
             <div><span id="detail-distance-label">距太阳</span><strong id="detail-distance">1.00 AU</strong></div>
-            <div><span>直径</span><strong id="detail-diameter">12,742 km</strong></div>
-            <div><span>自转周期</span><strong id="detail-day">23.9 小时</strong></div>
-            <div><span>公转周期</span><strong id="detail-year">365.25 天</strong></div>
-            <div class="detail-mass"><span>质量</span><strong id="detail-mass">5.97 × 10²⁴ kg</strong></div>
+            <div><span id="detail-diameter-label">直径</span><strong id="detail-diameter">12,742 km</strong></div>
+            <div><span id="detail-day-label">自转周期</span><strong id="detail-day">23.9 小时</strong></div>
+            <div><span id="detail-year-label">公转周期</span><strong id="detail-year">365.25 天</strong></div>
+            <div class="detail-mass"><span id="detail-mass-label">质量</span><strong id="detail-mass">5.97 × 10²⁴ kg</strong></div>
+          </div>
+          <div id="detail-scene-members" class="detail-scene-members" hidden>
+            <strong id="detail-scene-members-title"></strong>
+            <p id="detail-scene-members-text"></p>
+          </div>
+          <div id="detail-scene-actions" class="detail-scene-actions" hidden>
+            <button id="detail-scene-primary" type="button" class="primary-button"></button>
+            <button id="detail-scene-secondary" type="button" class="text-button"></button>
           </div>
           <div id="detail-moons" class="detail-moons" hidden>
             <div class="detail-moons-title">探索主要卫星 <small>ORBITAL COMPANIONS</small></div>
             <div id="detail-moon-list" class="detail-moon-list"></div>
           </div>
-          <button id="detail-parent" class="detail-parent" hidden>↶ 返回母星</button>
-          <button id="detail-compare-trigger" class="detail-compare-trigger" type="button">⇄ 对比其他天体</button>
+          <button id="detail-parent" class="detail-parent" hidden><svg class="ui-icon" aria-hidden="true"><use href="#ic-arrow-left"/></svg><span id="detail-parent-label">返回母星</span></button>
+          <button id="detail-compare-trigger" class="detail-compare-trigger" type="button"><svg class="ui-icon" aria-hidden="true"><use href="#ic-swap"/></svg><span>对比其他天体</span></button>
           <div class="detail-navigation">
-            <button id="detail-back" class="detail-back"><span>←</span> 返回太阳系全景</button>
+            <button id="detail-back" class="detail-back"><svg class="ui-icon" aria-hidden="true"><use href="#ic-arrow-left"/></svg> 返回太阳系全景</button>
             <div class="detail-next-prev">
-              <button id="detail-prev" aria-label="上一个行星" title="上一个行星">‹</button>
-              <button id="detail-next" aria-label="下一个行星" title="下一个行星">›</button>
+              <button id="detail-prev" aria-label="上一个行星" title="上一个行星"><svg class="ui-icon" aria-hidden="true"><use href="#ic-chevron-left"/></svg></button>
+              <button id="detail-next" aria-label="下一个行星" title="下一个行星"><svg class="ui-icon" aria-hidden="true"><use href="#ic-chevron-right"/></svg></button>
             </div>
           </div>
         </aside>
       </main>
+
+      <button id="detail-peek-trigger" class="detail-peek-trigger" type="button" aria-controls="detail-panel" aria-expanded="false" hidden><svg class="ui-icon" aria-hidden="true"><use href="#ic-info"/></svg><span id="detail-peek-name">天体资料</span></button>
+
+      <div id="scene-readout" class="scene-readout" aria-label="当前探索位置">
+        <span id="scene-readout-label">当前场景</span>
+        <strong id="scene-readout-number">01</strong>
+        <span id="scene-readout-name">宇宙全景</span>
+      </div>
 
       <div class="side-readout">
         <span class="side-track"></span>
@@ -131,89 +201,162 @@
         <span class="side-track"></span>
       </div>
 
-      <div class="camera-tools">
+      <div class="camera-tools" role="group" aria-label="镜头快捷控制">
         <div id="camera-distance" class="camera-distance">CAM / 82.0</div>
         <div class="camera-zoom">
-          <button id="zoom-in" aria-label="放大">+</button>
+          <button id="zoom-in" aria-label="放大"><svg class="ui-icon" aria-hidden="true"><use href="#ic-plus"/></svg></button>
           <span></span>
-          <button id="zoom-out" aria-label="缩小">−</button>
+          <button id="zoom-out" aria-label="缩小"><svg class="ui-icon" aria-hidden="true"><use href="#ic-minus"/></svg></button>
         </div>
+        <button id="reset-view" class="camera-reset-button" type="button"
+          aria-label="重置当前视角" aria-keyshortcuts="R" title="重置当前视角 (R)">
+          <svg class="ui-icon" aria-hidden="true"><use href="#ic-reset"/></svg><small aria-hidden="true">复位</small>
+        </button>
       </div>
 
       <footer class="bottom-interface">
+        <div id="time-capsule" class="time-capsule" aria-label="场景快捷操作">
+          <div id="capsule-info-slot"></div>
+          <div id="capsule-play-slot"></div>
+          <button id="time-open-trigger" class="time-open-trigger" type="button" aria-controls="time-workspace-slot" aria-expanded="false">
+            <svg class="ui-icon" aria-hidden="true"><use href="#ic-orbit"/></svg><span class="dock-item-label">天体运动</span><span id="capsule-speed" class="capsule-speed" aria-hidden="true">1×</span>
+          </button>
+          <div id="capsule-dock-slot"></div>
+        </div>
         <div class="simulation-panel">
-          <div class="section-caption"><span class="caption-dot"></span> TIME CONTROL <span class="section-meta" id="sim-date">演示时间 · 2026.01.01</span></div>
+          <div class="section-caption"><span class="caption-dot"></span> 天体运动 · ORBITAL MOTION</div>
           <div class="time-row">
-            <button id="play-pause" class="play-button" aria-label="暂停时间" title="暂停 / 播放">Ⅱ</button>
-            <div class="speed-readout"><strong id="speed-value">1.0×</strong><span>运行速度</span></div>
-            <input id="speed-range" type="range" min="0" max="6" value="2" step="1" aria-label="时间运行速度" />
+            <button id="play-pause" class="play-button" aria-label="暂停天体运动" title="暂停 / 继续天体运动"><svg class="ui-icon" aria-hidden="true"><use href="#ic-pause"/></svg></button>
+            <div class="speed-readout"><strong id="speed-value">1×</strong><span>运动倍速</span></div>
+            <input id="speed-range" type="range" min="0" max="6" value="2" step="1" aria-label="天体运动倍速" />
           </div>
           <div class="simulation-options">
             <button id="orbit-toggle" class="option-toggle is-on" aria-pressed="true" aria-label="显示轨道线"><i></i>轨道线</button>
             <button id="label-toggle" class="option-toggle is-on" aria-pressed="true" aria-label="显示天体标签"><i></i>天体标签</button>
-            <button id="planet-dock-toggle" class="mobile-tool planet-dock-toggle" type="button" aria-label="展开天体导航" aria-controls="planet-dock" aria-expanded="false">星球</button>
-            <label id="flight-speed-control" class="flight-speed-control" hidden>飞行速度
-              <select id="flight-speed" aria-label="自由漫游飞行速度">
-                <option value="0.5">慢速</option><option value="1" selected>标准</option>
-                <option value="2">快速</option><option value="4">极速</option>
-              </select>
-            </label>
+            <button id="planet-dock-toggle" class="mobile-tool planet-dock-toggle" type="button" aria-label="展开天体导航" aria-controls="planet-dock" aria-expanded="false"><svg class="ui-icon" aria-hidden="true"><use href="#ic-list"/></svg><span id="dock-toggle-label">天体列表</span></button>
+            <div id="flight-speed-control" class="flight-speed-control" hidden>
+              <label for="flight-speed">自由航行速度</label>
+              <div class="flight-select-shell">
+                <svg class="ui-icon select-leading" aria-hidden="true"><use href="#ic-gauge"/></svg>
+                <select id="flight-speed" aria-label="自由漫游飞行速度">
+                  <option value="0.5">慢速 · 0.5×</option><option value="1" selected>标准 · 1×</option>
+                  <option value="2">快速 · 2×</option><option value="4">极速 · 4×</option>
+                </select>
+                <svg class="ui-icon select-chevron" aria-hidden="true"><use href="#ic-chevron-down"/></svg>
+              </div>
+              <button id="flight-quick-stop" class="flight-quick-stop" type="button" hidden><svg class="ui-icon" aria-hidden="true"><use href="#ic-stop"/></svg>停止航行</button>
+            </div>
           </div>
         </div>
 
         <div class="planet-dock" id="planet-dock">
-          <div class="dock-title"><div><span class="caption-dot"></span> SOLAR SYSTEM <span class="section-meta">天体导航</span></div><span class="dock-hint">选择一颗星球，开始探索 <b>↗</b></span></div>
+          <div class="dock-title"><div><span class="caption-dot"></span> <span id="dock-heading">SOLAR SYSTEM</span> <span class="section-meta" id="dock-subtitle">天体导航</span></div><span class="dock-hint" id="dock-hint">选择一颗星球，开始探索 <svg class="ui-icon" aria-hidden="true"><use href="#ic-arrow-up-right"/></svg></span></div>
+          <div class="free-flight-dock" id="free-flight-dock" hidden>
+            <div id="flight-pickers" class="flight-pickers">
+              <div class="free-target-picker">
+                <label for="free-target-select">锁定目标</label>
+                <div class="flight-select-shell">
+                  <svg class="ui-icon select-leading" aria-hidden="true"><use href="#ic-target"/></svg>
+                  <select id="free-target-select" aria-label="自由航行锁定目标">
+                    <option value="">选择天体</option>
+                  </select>
+                  <svg class="ui-icon select-chevron" aria-hidden="true"><use href="#ic-chevron-down"/></svg>
+                </div>
+              </div>
+              <div id="flight-speed-slot"></div>
+            </div>
+            <div class="flight-actions">
+              <button id="free-flight-go" type="button" disabled><svg class="ui-icon" aria-hidden="true"><use href="#ic-navigation"/></svg><span id="free-flight-go-label">飞往目标</span></button>
+              <button id="free-flight-unlock" type="button" disabled><svg class="ui-icon" aria-hidden="true"><use href="#ic-unlock"/></svg><span>解锁</span></button>
+            </div>
+            <span id="free-flight-status" class="free-flight-status" role="status" aria-live="polite">选择一个天体作为航行目标</span>
+          </div>
           <div id="planet-list" class="planet-list" aria-label="太阳系天体列表"></div>
         </div>
       </footer>
 
+      <section id="workspace-panel" class="workspace-panel" aria-label="探索控制工作区">
+        <div id="objects-workspace-slot" class="workspace-slot" aria-label="天体与航行导航"></div>
+        <div id="time-workspace-slot" class="workspace-slot" aria-label="天体运动控制"></div>
+        <div id="settings-workspace-slot" class="workspace-slot" aria-label="画质与显示设置"></div>
+      </section>
+      <div id="flight-safety" class="flight-safety" aria-label="航行安全控制"></div>
+
       <div class="corner-note">SCIENTIFICALLY INSPIRED <span>·</span> VISUALLY RESCALED <span>·</span> <a href="./textures/ATTRIBUTION.md" target="_blank" rel="noopener noreferrer">贴图来源</a></div>
       <div id="toast" class="toast" role="status" aria-live="polite"></div>
+      <div id="scene-announcement" class="visually-hidden" role="status"
+        aria-live="polite" aria-atomic="true"></div>
 
       <div id="search-overlay" class="modal-overlay" aria-hidden="true">
-        <div class="search-modal" role="dialog" aria-modal="true" aria-labelledby="search-title">
-          <div class="modal-heading"><div><small>DISCOVER</small><h2 id="search-title">寻找一颗星球</h2></div><button id="search-close" class="modal-close" aria-label="关闭搜索">×</button></div>
-          <div class="search-field"><span>⌕</span><input id="search-input" type="search" placeholder="搜索太阳、地球、木星..." autocomplete="off" /><kbd>ESC</kbd></div>
-          <div id="search-results" class="search-results"></div>
-          <p class="modal-footnote">选择天体后，镜头会自动飞往目标。</p>
+        <div class="search-modal" role="dialog" aria-modal="true" aria-labelledby="search-title"
+          aria-describedby="search-footnote" tabindex="-1">
+          <div class="modal-heading"><div><small>DISCOVER · CELESTIAL ATLAS</small><h2 id="search-title">寻找一颗星球</h2><p>从太阳与行星出发，探索它们的卫星</p></div><button id="search-close" class="modal-close" type="button" aria-label="关闭搜索"><svg class="ui-icon" aria-hidden="true"><use href="#ic-x"/></svg></button></div>
+          <div class="search-field"><svg class="ui-icon" aria-hidden="true"><use href="#ic-search"/></svg><input id="search-input" type="search"
+            aria-label="搜索天体名称" placeholder="搜索天体名称或特征..." autocomplete="off" /><kbd>ESC</kbd></div>
+          <div class="search-results-heading" aria-hidden="true"><span>天体目录 <small>CELESTIAL OBJECTS</small></span><strong id="search-visible-count">全部天体</strong></div>
+          <div id="search-result-count" class="visually-hidden" role="status" aria-live="polite"></div>
+          <div id="search-results" class="search-results" role="region" aria-label="天体搜索结果"></div>
+          <p id="search-footnote" class="modal-footnote"><svg class="ui-icon" aria-hidden="true"><use href="#ic-info"/></svg><span id="search-footnote-copy">选择一颗天体，开始你的探索。</span></p>
         </div>
       </div>
 
       <div id="help-overlay" class="modal-overlay" aria-hidden="true">
-        <div class="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-title">
-          <div class="modal-heading"><div><small>FLIGHT MANUAL</small><h2 id="help-title">探索指南</h2></div><button id="help-close" class="modal-close" aria-label="关闭帮助">×</button></div>
-          <p id="mobile-intro" class="mobile-intro"></p>
-          <div class="help-grid">
-            <div><span>拖动鼠标</span><strong>旋转视角</strong></div>
-            <div><span>滚动滚轮</span><strong>放大 / 缩小</strong></div>
-            <div><span>右键拖动</span><strong>平移场景</strong></div>
-            <div><span>点击星球</span><strong>飞向天体</strong></div>
-            <div><span>点击卫星资料</span><strong>探索月球 / 木卫 / 土卫</strong></div>
-            <div><span>点击银河标记</span><strong>进入太阳系</strong></div>
-            <div><span>W / A / S / D</span><strong>自由漫游移动</strong></div>
-            <div><span>Shift / 空格</span><strong>下降 / 上升</strong></div>
-            <div><span>/</span><strong>搜索天体</strong></div>
-            <div><span>ESC</span><strong>退出详情 / 对话框</strong></div>
-            <div><span>手机双指操作</span><strong>缩放、平移</strong></div>
-            <div><span>手机资料面板</span><strong>上划展开，下划收起</strong></div>
+        <div class="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-title"
+          aria-describedby="help-footnote" tabindex="-1">
+          <div class="modal-heading"><div><small>FLIGHT MANUAL · FIELD GUIDE</small><h2 id="help-title">探索指南</h2><p>掌握视角、天体导航与自由航行</p></div><button id="help-close" class="modal-close" type="button" aria-label="关闭帮助"><svg class="ui-icon" aria-hidden="true"><use href="#ic-x"/></svg></button></div>
+          <div class="help-body">
+            <div class="help-intro"><svg class="ui-icon" aria-hidden="true"><use href="#ic-orbit"/></svg><div><strong>从这里开始探索</strong><p id="mobile-intro" class="mobile-intro"></p></div></div>
+            <section class="help-topic" aria-labelledby="help-view-title">
+              <div class="help-topic-heading"><span class="help-topic-icon"><svg class="ui-icon" aria-hidden="true"><use href="#ic-eye"/></svg></span><div><small>01 / VIEW CONTROLS</small><h3 id="help-view-title">视角与探索</h3></div></div>
+              <div class="help-grid">
+                <div><span>拖动鼠标</span><strong>旋转视角</strong></div>
+                <div><span>滚动滚轮</span><strong>放大 / 缩小</strong></div>
+                <div><span>右键拖动</span><strong>平移场景</strong></div>
+                <div><span>点击星球</span><strong>飞向天体</strong></div>
+                <div><span>点击银河标记</span><strong>进入太阳系</strong></div>
+                <div><span>点击卫星资料</span><strong>探索月球 / 木卫 / 土卫</strong></div>
+              </div>
+            </section>
+            <section class="help-topic" aria-labelledby="help-flight-title">
+              <div class="help-topic-heading"><span class="help-topic-icon"><svg class="ui-icon" aria-hidden="true"><use href="#ic-navigation"/></svg></span><div><small>02 / FREE FLIGHT</small><h3 id="help-flight-title">自由航行</h3></div></div>
+              <div class="help-grid">
+                <div><span>W / A / S / D</span><strong>自由漫游移动</strong></div>
+                <div><span>Shift / 空格</span><strong>下降 / 上升</strong></div>
+                <div><span>自由漫游 · 航行导航</span><strong>选目标 → 锁定 → 飞往 / 停止 / 解锁</strong></div>
+                <div><span>锁定后按 W</span><strong>靠近目标时自动减速；其他方向可手动移动</strong></div>
+              </div>
+            </section>
+            <section class="help-topic" aria-labelledby="help-shortcuts-title">
+              <div class="help-topic-heading"><span class="help-topic-icon"><svg class="ui-icon" aria-hidden="true"><use href="#ic-list"/></svg></span><div><small>03 / SHORTCUTS</small><h3 id="help-shortcuts-title">快捷键与触控</h3></div></div>
+              <div class="help-grid">
+                <div><span>/</span><strong>搜索天体</strong></div>
+                <div><span>ESC</span><strong>退出详情 / 对话框</strong></div>
+                <div><span>R / 复位按钮</span><strong>恢复当前场景或天体的默认视角</strong></div>
+                <div><span>手机双指操作</span><strong>缩放、平移</strong></div>
+                <div><span>手机资料面板</span><strong>上划展开，下划收起</strong></div>
+              </div>
+            </section>
           </div>
-          <p class="modal-footnote">为了兼顾视觉与探索体验，天体尺寸、轨道距离与运行速度进行了展示性缩放。</p>
+          <p id="help-footnote" class="modal-footnote"><svg class="ui-icon" aria-hidden="true"><use href="#ic-info"/></svg><span>天体尺寸、轨道距离和运行速度采用展示性缩放，仅供探索演示。</span></p>
         </div>
       </div>
 
       <div id="compare-overlay" class="modal-overlay" aria-hidden="true">
-        <div class="compare-modal" role="dialog" aria-modal="true" aria-labelledby="compare-title">
+        <div class="compare-modal" role="dialog" aria-modal="true" aria-labelledby="compare-title"
+          aria-describedby="compare-reference-note" tabindex="-1">
           <div class="modal-heading">
             <div><small>CELESTIAL COMPARISON</small><h2 id="compare-title">探索两颗天体</h2></div>
-            <button id="compare-close" class="modal-close" aria-label="关闭天体对比">×</button>
+            <button id="compare-close" class="modal-close" aria-label="关闭天体对比"><svg class="ui-icon" aria-hidden="true"><use href="#ic-x"/></svg></button>
           </div>
           <div class="compare-selects">
             <label>天体 A<select id="compare-left" aria-label="对比天体 A"></select></label>
             <span>VS</span>
             <label>天体 B<select id="compare-right" aria-label="对比天体 B"></select></label>
           </div>
-          <div id="compare-table" class="compare-table" aria-live="polite"></div>
-          <p class="modal-footnote">天体参数为近似科普数据。场景尺寸和公转速度采用展示性缩放。</p>
+          <p id="compare-reference-note" class="compare-reference-note" aria-live="polite"></p>
+          <div id="compare-table" class="compare-table" role="table"
+            aria-label="天体参数对比表"></div>
+          <p class="modal-footnote">直径和轨道距离统一按 km，自转周期按小时、公转周期按天展示；由原有近似数据换算。场景尺寸和运动速度另作展示缩放。</p>
         </div>
       </div>
 
@@ -223,7 +366,14 @@
         <div class="loading-line"><i></i></div>
         <p>正在点亮星辰 · INITIALIZING UNIVERSE</p>
       </div>
-      <div id="fallback-message" class="fallback-message" hidden>当前浏览器无法启用 WebGL 3D 渲染。请更新浏览器或启用硬件加速后重试。</div>
+      <div id="fallback-message" class="fallback-message" role="alert" hidden>当前浏览器无法启用 WebGL 3D 渲染。请更新浏览器或启用硬件加速后重试。</div>
+      <section id="webgl-context-recovery" class="context-recovery" role="alertdialog"
+        aria-modal="true" aria-labelledby="webgl-recovery-title"
+        aria-describedby="webgl-recovery-description" hidden>
+        <h2 id="webgl-recovery-title">3D 画面暂时中断</h2>
+        <p id="webgl-recovery-description">图形设备连接已中断，正在等待浏览器恢复。无法自动恢复时，可以重新加载场景。</p>
+        <button id="webgl-reload" type="button">重新加载场景</button>
+      </section>
     </div>
     <script type="module" src="/src/main.js"></script>
   </body>

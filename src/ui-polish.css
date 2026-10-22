@@ -1,0 +1,869 @@
+/* COSMOS interface icon system: one 24px outline family, one stroke and one
+   accent. The native select elements remain keyboard and touch accessible. */
+.ui-icon-defs {
+  position: absolute; width: 0; height: 0; overflow: hidden;
+  pointer-events: none;
+}
+.ui-icon {
+  width: 19px; height: 19px; flex: 0 0 auto; display: inline-block;
+  fill: none; stroke: currentColor; stroke-width: 1.8;
+  stroke-linecap: round; stroke-linejoin: round;
+  vertical-align: middle; pointer-events: none;
+}
+#app[data-layout="t15"] button:focus-visible,
+#app[data-layout="t15"] .flight-select-shell:focus-within {
+  outline: 2px solid #9bd9f2;
+  outline-offset: 3px;
+}
+#app[data-layout="t15"] .topbar .top-actions .icon-button {
+  display: inline-flex; align-items: center; justify-content: center;
+}
+#app[data-layout="t15"] .topbar .top-actions .ui-icon { width: 20px; height: 20px; }
+#app[data-layout="t15"] .topbar .top-actions .icon-button:hover .ui-icon,
+#app[data-layout="t15"] .topbar .top-actions .icon-button[aria-expanded="true"] .ui-icon {
+  filter: drop-shadow(0 0 5px rgba(143, 217, 247, .24));
+}
+
+/* Context dock: remove font-dependent symbols and display the same icons
+   used in menus and controls. */
+#app[data-layout="t15"] .detail-peek-trigger::before,
+#app[data-layout="t15"] .time-open-trigger::before,
+#app[data-layout="t15"] #planet-dock-toggle::before {
+  display: none !important; content: none !important;
+}
+#app[data-layout="t15"] .detail-peek-trigger .ui-icon,
+#app[data-layout="t15"] .time-open-trigger .ui-icon,
+#app[data-layout="t15"] #planet-dock-toggle .ui-icon {
+  width: 18px; height: 18px; color: #cbb187;
+}
+#app[data-layout="t15"] .detail-peek-trigger,
+#app[data-layout="t15"] .time-open-trigger,
+#app[data-layout="t15"] #planet-dock-toggle {
+  gap: 7px; -webkit-tap-highlight-color: transparent;
+}
+#app[data-layout="t15"] .camera-zoom button {
+  display: flex; align-items: center; justify-content: center;
+}
+#app[data-layout="t15"] .camera-zoom .ui-icon { width: 21px; height: 21px; }
+#app[data-layout="t15"] .camera-reset-button .ui-icon { width: 23px; height: 23px; }
+#app[data-layout="t15"] .camera-reset-button {
+  transition: color .2s, border-color .2s, background .2s;
+}
+#app[data-layout="t15"] .play-button {
+  display: flex; align-items: center; justify-content: center;
+}
+#app[data-layout="t15"] .play-button .ui-icon { width: 19px; height: 19px; }
+
+/* Secondary actions share predictable icon alignment and tap targets. */
+.detail-close, .modal-close, .detail-next-prev button {
+  display: inline-flex; justify-content: center; align-items: center;
+}
+.detail-close .ui-icon, .modal-close .ui-icon { width: 22px; height: 22px; }
+.detail-next-prev button .ui-icon { width: 17px; height: 17px; }
+#app[data-layout="t15"] .detail-close,
+#app[data-layout="t15"] .modal-close {
+  min-width: 44px; min-height: 44px; border-radius: 9px;
+  transition: background .2s, color .2s;
+}
+#app[data-layout="t15"] .detail-close:hover,
+#app[data-layout="t15"] .modal-close:hover { background: rgba(116,175,204,.12); color: #fff; }
+.detail-parent, .detail-compare-trigger, .detail-back {
+  display: inline-flex; align-items: center; gap: 9px;
+}
+.detail-parent .ui-icon, .detail-compare-trigger .ui-icon,
+.detail-back .ui-icon { width: 17px; height: 17px; color: #a4d9ed; }
+.moon-chip { display: inline-flex; align-items: center; gap: 5px; }
+.moon-chip .ui-icon { width: 13px; height: 13px; color: #b2d5e8; }
+.search-field > .ui-icon { width: 21px; height: 21px; color: #91c8e2; }
+.rail-action .ui-icon { width: 18px; height: 18px; }
+.mobile-scene-trigger .ui-icon { width: 17px; height: 17px; }
+#app[data-layout="t15"] .detail-scene-actions .ui-icon { width: 16px; height: 16px; }
+.primary-button .ui-icon, .text-button .ui-icon { width: 17px; height: 17px; }
+.dock-hint .ui-icon { width: 13px; height: 13px; color: #9abdd0; }
+#mobile-help-trigger .ui-icon { width: 15px; height: 15px; }
+
+/* Free flight has two related, clearly labelled native selectors, grouped
+   above the actions and always visible in the mobile flight workspace. */
+#app[data-layout="t15"] #free-flight-dock[hidden],
+#app[data-layout="t15"] #flight-speed-control[hidden] { display: none !important; }
+/* The flight target select replaces the old planet-thumbnail list in free
+   mode; otherwise the list fills a mobile sheet and buries navigation. */
+#app[data-layout="t15"][data-view="free"] .planet-list { display: none !important; }
+#app[data-layout="t15"] #free-flight-dock:not([hidden]) {
+  display: flex; flex-direction: column; align-items: stretch;
+  gap: 12px; margin: 12px 0 0; padding: 14px;
+  border: 1px solid rgba(135, 185, 220, .22); border-radius: 13px;
+  background: linear-gradient(155deg, rgba(37, 63, 89, .38), rgba(12, 31, 50, .52));
+}
+#app[data-layout="t15"] #flight-pickers {
+  display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 10px; align-items: start;
+}
+#app[data-layout="t15"] #flight-speed-slot { min-width: 0; }
+#app[data-layout="t15"] .free-target-picker,
+#app[data-layout="t15"] #flight-speed-slot .flight-speed-control:not([hidden]) {
+  display: flex !important; flex-direction: column; align-items: stretch;
+  flex-wrap: nowrap; justify-content: flex-start;
+  min-width: 0; width: 100%; margin: 0; gap: 7px;
+  position: static; inset: auto; min-height: 0;
+  padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none;
+}
+#app[data-layout="t15"] .free-target-picker label,
+#app[data-layout="t15"] .flight-speed-control label {
+  color: #95b4c9; font: 600 10px/1.4 'DM Sans','Microsoft YaHei',sans-serif;
+  letter-spacing: .065em; white-space: nowrap;
+}
+#app[data-layout="t15"] .flight-select-shell {
+  --select-stroke: rgba(130, 185, 217, .31);
+  position: relative; display: flex; align-items: center;
+  width: 100%; height: 47px; min-width: 0; overflow: visible;
+  border: 1px solid var(--select-stroke); border-radius: 10px;
+  background: linear-gradient(140deg, rgba(24, 52, 76, .97), rgba(15, 35, 56, .98));
+  box-shadow: inset 0 1px 0 rgba(215, 239, 250, .06), 0 6px 16px rgba(0, 0, 0, .12);
+  transition: background .2s, border-color .2s, box-shadow .2s;
+}
+#app[data-layout="t15"] .flight-select-shell:hover {
+  --select-stroke: rgba(142, 209, 237, .65);
+  background: linear-gradient(140deg, rgba(29, 64, 93, .97), rgba(15, 41, 65, .98));
+}
+#app[data-layout="t15"] .flight-select-shell:focus-within {
+  --select-stroke: #91d9f6;
+  box-shadow: 0 0 0 3px rgba(117, 205, 240, .13);
+}
+#app[data-layout="t15"] .flight-select-shell select {
+  appearance: none; -webkit-appearance: none;
+  display: block; width: 100%; max-width: none; min-width: 0;
+  height: 100%; min-height: 46px;
+  padding: 0 30px 0 39px; margin: 0; outline: 0; border: 0; border-radius: inherit;
+  background: transparent; color: #e3f3fc; color-scheme: dark;
+  font: 500 12px/1.4 'DM Sans','Microsoft YaHei',sans-serif;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  cursor: pointer;
+}
+#app[data-layout="t15"] #flight-speed-slot select { padding-left: 34px; padding-right: 25px; }
+#app[data-layout="t15"] .flight-select-shell select option,
+#app[data-layout="t15"] .flight-select-shell select optgroup {
+  background: #112940; color: #e3f3fc; font-size: 14px;
+}
+#app[data-layout="t15"] .flight-select-shell .select-leading {
+  position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+  width: 17px; height: 17px; color: #83c8e8;
+}
+#app[data-layout="t15"] #flight-speed-slot .select-leading { left: 9px; }
+#app[data-layout="t15"] .flight-select-shell .select-chevron {
+  position: absolute; right: 9px; top: 50%; transform: translateY(-50%);
+  width: 15px; height: 15px; color: #9ab7c9;
+  transition: color .2s, transform .2s;
+}
+#app[data-layout="t15"] .flight-select-shell:focus-within .select-chevron {
+  color: #e2f5ff;
+}
+#app[data-layout="t15"] .flight-actions {
+  display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+  gap: 8px; width: 100%;
+}
+#app[data-layout="t15"] .flight-actions button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 45px; border-radius: 10px; font-size: 12px;
+  transition: background .2s, border-color .2s, color .2s;
+}
+#app[data-layout="t15"] .flight-actions .ui-icon { width: 16px; height: 16px; }
+#app[data-layout="t15"] #free-flight-go {
+  background: linear-gradient(115deg, rgba(58, 139, 185, .35), rgba(34, 87, 126, .4));
+  border-color: rgba(125, 202, 239, .4); color: #e9f8ff;
+}
+#app[data-layout="t15"] #free-flight-unlock {
+  background: rgba(19, 43, 65, .67);
+}
+#app[data-layout="t15"] .free-flight-status {
+  display: block; width: 100%; min-height: 20px; grid-column: auto;
+  margin: 0; padding: 6px 8px;
+  border-left: 2px solid rgba(121, 201, 237, .52);
+  border-radius: 0 5px 5px 0; background: rgba(15, 39, 59, .51);
+  font-size: 11px; line-height: 1.55; color: #a7cbdc;
+}
+#app[data-layout="t15"] .flight-quick-stop {
+  display: inline-flex; align-items: center; gap: 6px;
+}
+#app[data-layout="t15"] .flight-quick-stop[hidden] { display: none !important; }
+#app[data-layout="t15"] .flight-quick-stop .ui-icon { width: 17px; height: 17px; }
+
+/* Give other select controls the same corner radius and focus treatment. */
+#app[data-layout="t15"] .compare-selects select,
+#app[data-layout="t15"] #settings-workspace-slot select,
+#app[data-layout="t15"] #mobile-quality-select {
+  border-radius: 9px; min-height: 42px; accent-color: #90cfe9;
+}
+@media (max-width: 640px) {
+  #app[data-layout="t15"] #flight-pickers { grid-template-columns: minmax(0, 1fr); gap: 11px; }
+  #app[data-layout="t15"] .flight-select-shell select {
+    font-size: 15px; min-height: 47px;
+  }
+  #app[data-layout="t15"] #free-flight-dock:not([hidden]) { padding: 12px; gap: 10px; }
+  #app[data-layout="t15"] .flight-actions button { min-height: 46px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #app[data-layout="t15"] .flight-select-shell,
+  #app[data-layout="t15"] .flight-actions button,
+  #app[data-layout="t15"] .camera-reset-button { transition: none; }
+}
+
+/* The browser owns native <select> popups and ignores most option styling.
+   Once enhanced, display an accessible custom combobox/listbox while keeping
+   the original select as the authoritative value and change-event source. */
+#app[data-layout="t15"] .flight-select-shell[data-enhanced="true"] select {
+  position: absolute; top: 0; left: 0;
+  width: 1px !important; min-width: 0; max-width: 1px;
+  height: 1px !important; min-height: 0 !important;
+  margin: 0; padding: 0 !important; border: 0;
+  opacity: 0; pointer-events: none; clip-path: inset(50%);
+}
+#app[data-layout="t15"] .flight-select-trigger {
+  position: absolute; inset: 0; z-index: 1;
+  display: flex; align-items: center;
+  width: 100%; height: 100%;
+  min-width: 0; padding: 0 29px 0 39px;
+  background: transparent; border: 0; border-radius: inherit;
+  color: #e3f3fc; cursor: pointer; text-align: left;
+  font: 500 12px/1.4 'DM Sans','Microsoft YaHei',sans-serif;
+}
+#app[data-layout="t15"] #flight-speed-slot .flight-select-trigger {
+  padding-left: 34px; padding-right: 27px;
+}
+#app[data-layout="t15"] .flight-select-trigger:focus-visible {
+  outline: 0; box-shadow: none;
+}
+#app[data-layout="t15"] .flight-select-trigger.is-placeholder { color: #87a9bf; }
+#app[data-layout="t15"] .flight-select-value {
+  display: block; min-width: 0; max-width: 100%;
+  overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+}
+#app[data-layout="t15"] .flight-select-shell.is-open {
+  border-color: #82d4f2; background: linear-gradient(140deg, #1b4969, #122e49);
+  box-shadow: 0 0 0 3px rgba(100, 190, 233, .13), 0 8px 22px rgba(0,0,0,.16);
+}
+#app[data-layout="t15"] .flight-select-shell.is-open .select-chevron {
+  color: #d9f5ff; transform: translateY(-50%) rotate(180deg);
+}
+#app[data-layout="t15"] .flight-select-shell .select-leading,
+#app[data-layout="t15"] .flight-select-shell .select-chevron {
+  pointer-events: none; z-index: 2;
+}
+#app[data-layout="t15"] .flight-option-popover {
+  position: fixed; z-index: 43;
+  display: flex; flex-direction: column;
+  padding: 6px; border: 1px solid rgba(128, 194, 229, .43);
+  border-radius: 13px; box-sizing: border-box;
+  background: linear-gradient(150deg, rgba(18, 44, 69, .99), rgba(9, 26, 44, .995));
+  color: #dbf1ff; box-shadow: 0 18px 48px rgba(0, 3, 11, .68),
+    inset 0 1px 0 rgba(224, 242, 255, .07);
+  backdrop-filter: blur(18px); overflow: hidden;
+  isolation: isolate;
+}
+#app[data-layout="t15"] .flight-option-popover[hidden] { display: none !important; }
+#app[data-layout="t15"] .flight-option-heading {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 14px; flex: 0 0 auto; padding: 10px 12px 11px;
+  border-bottom: 1px solid rgba(124, 179, 209, .18);
+}
+#app[data-layout="t15"] .flight-option-heading strong {
+  color: #d6f1ff; font: 600 12px/1.4 'Microsoft YaHei','DM Sans',sans-serif;
+  letter-spacing: .035em;
+}
+#app[data-layout="t15"] .flight-option-heading small {
+  color: #779cb5; font: 500 10px/1.4 'Microsoft YaHei',sans-serif;
+  white-space: nowrap;
+}
+#app[data-layout="t15"] .flight-option-list {
+  position: relative; display: block; flex: 1 1 auto;
+  min-height: 0; padding: 4px 2px 3px; overflow-y: auto; overflow-x: hidden;
+  overscroll-behavior: contain; scrollbar-gutter: stable;
+  scrollbar-width: thin; scrollbar-color: #486b87 rgba(9, 24, 41, .45);
+  touch-action: pan-y;
+}
+#app[data-layout="t15"] .flight-option-list::-webkit-scrollbar { width: 6px; }
+#app[data-layout="t15"] .flight-option-list::-webkit-scrollbar-track {
+  background: rgba(9, 24, 41, .42); border-radius: 99px;
+}
+#app[data-layout="t15"] .flight-option-list::-webkit-scrollbar-thumb {
+  background: #486b87; border-radius: 99px;
+}
+#app[data-layout="t15"] .flight-option-group { padding-top: 1px; }
+#app[data-layout="t15"] .flight-option-group-title {
+  position: sticky; top: -4px; z-index: 1;
+  padding: 9px 11px 6px; margin-top: 3px;
+  background: #122c45; border-bottom: 1px solid rgba(117, 178, 212, .1);
+  color: #84a9c0; font: 700 10px/1.4 'Microsoft YaHei',sans-serif;
+  letter-spacing: .07em;
+}
+#app[data-layout="t15"] .flight-option {
+  display: flex; align-items: center; gap: 10px;
+  box-sizing: border-box; min-height: 43px; width: 100%;
+  margin: 2px 0; padding: 8px 10px;
+  border: 1px solid transparent; border-radius: 8px;
+  color: #bed7e9; font: 500 12px/1.5 'Microsoft YaHei','DM Sans',sans-serif;
+  cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent;
+  transition: background .13s, border-color .13s, color .13s;
+}
+#app[data-layout="t15"] .flight-option:hover,
+#app[data-layout="t15"] .flight-option.is-active {
+  background: rgba(93, 159, 197, .16);
+  border-color: rgba(129, 197, 233, .20);
+  color: #f1faff;
+}
+#app[data-layout="t15"] .flight-option.is-selected {
+  background: rgba(69, 156, 206, .22);
+  border-color: rgba(126, 205, 241, .47);
+  color: #f5fcff;
+}
+#app[data-layout="t15"] .flight-option[aria-disabled="true"] {
+  opacity: .4; cursor: not-allowed;
+}
+#app[data-layout="t15"] .flight-option-orb {
+  flex: 0 0 17px; width: 17px; height: 17px;
+  border-radius: 50%; border: 1px solid rgba(207, 233, 244, .26);
+  background: radial-gradient(circle at 28% 25%, #d6edf8, var(--option-color, #547b99) 57%, #0c2337);
+  box-shadow: inset -3px -2px 5px rgba(0,0,0,.42);
+}
+#app[data-layout="t15"] .flight-option-symbol {
+  flex: 0 0 19px; display: grid; place-items: center;
+  width: 19px; height: 19px; color: #80b8d6;
+}
+#app[data-layout="t15"] .flight-option-symbol .ui-icon { width: 17px; height: 17px; }
+#app[data-layout="t15"] .flight-option-text {
+  min-width: 0; flex: 1 1 auto; overflow: hidden;
+  white-space: nowrap; text-overflow: ellipsis;
+}
+#app[data-layout="t15"] .flight-option-multiplier {
+  padding: 3px 6px; border-radius: 5px; flex: 0 0 auto;
+  background: rgba(123, 181, 214, .12);
+  color: #a4cee4; font: 600 11px/1.2 'Space Grotesk',sans-serif;
+}
+#app[data-layout="t15"] .flight-option-check {
+  flex: 0 0 17px; width: 17px; height: 17px;
+  margin-left: 1px; color: #8bd6f6; opacity: 0;
+}
+#app[data-layout="t15"] .flight-option.is-selected .flight-option-check { opacity: 1; }
+@media (max-width: 640px) {
+  #app[data-layout="t15"] .flight-select-trigger { font-size: 15px; }
+  #app[data-layout="t15"] .flight-option { min-height: 46px; font-size: 14px; }
+  #app[data-layout="t15"] .flight-option-group-title { font-size: 11px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #app[data-layout="t15"] .flight-option,
+  #app[data-layout="t15"] .flight-select-shell .select-chevron { transition: none; }
+}
+
+/* T15: a single visual language for discovery, preferences and the manual. */
+#app[data-layout="t15"] .search-modal,
+#app[data-layout="t15"] .help-modal {
+  box-sizing: border-box;
+  border: 1px solid rgba(132, 190, 222, .3);
+  border-radius: 19px;
+  color: #e6f3fb;
+  background: linear-gradient(145deg, #10253b, #081625 84%);
+  box-shadow: 0 28px 85px rgba(0, 4, 16, .65),
+    inset 0 1px 0 rgba(213, 237, 250, .08);
+}
+#app[data-layout="t15"] .search-modal .modal-heading,
+#app[data-layout="t15"] .help-modal .modal-heading {
+  margin: 0;
+  align-items: flex-start;
+  gap: 15px;
+}
+#app[data-layout="t15"] .search-modal .modal-heading small,
+#app[data-layout="t15"] .help-modal .modal-heading small {
+  display: block;
+  color: #74b8d7;
+  font: 700 10px/1.5 'Space Grotesk','Microsoft YaHei',sans-serif;
+  letter-spacing: .22em;
+}
+#app[data-layout="t15"] .search-modal .modal-heading h2,
+#app[data-layout="t15"] .help-modal .modal-heading h2 {
+  margin: 7px 0 0;
+  color: #f0f8ff;
+  font: 500 clamp(24px, 4vw, 30px)/1.2 'Microsoft YaHei','DM Sans',sans-serif;
+  letter-spacing: -.035em;
+}
+#app[data-layout="t15"] .search-modal .modal-heading p,
+#app[data-layout="t15"] .help-modal .modal-heading p {
+  margin: 9px 0 0;
+  color: #91b0c5;
+  font: 400 12px/1.6 'Microsoft YaHei',sans-serif;
+}
+#app[data-layout="t15"] .search-modal .modal-close,
+#app[data-layout="t15"] .help-modal .modal-close {
+  flex: 0 0 42px; width: 42px; height: 42px;
+  border-radius: 11px;
+  color: #9dbbd0;
+  border: 1px solid rgba(124, 184, 219, .2);
+  background: rgba(97, 159, 198, .07);
+}
+#app[data-layout="t15"] .search-modal .modal-close:hover,
+#app[data-layout="t15"] .help-modal .modal-close:hover {
+  background: rgba(101, 174, 216, .19);
+  border-color: rgba(137, 215, 248, .45);
+  color: #f0faff;
+}
+#app[data-layout="t15"] .search-modal .modal-close:focus-visible,
+#app[data-layout="t15"] .help-modal .modal-close:focus-visible {
+  outline: 2px solid #99dcf6;
+  outline-offset: 3px;
+}
+#app[data-layout="t15"] .search-modal .modal-footnote,
+#app[data-layout="t15"] .help-modal .modal-footnote {
+  display: flex; align-items: flex-start; gap: 9px;
+  margin: 0; color: #89a8bf;
+  font: 400 11px/1.65 'Microsoft YaHei',sans-serif;
+}
+#app[data-layout="t15"] .search-modal .modal-footnote .ui-icon,
+#app[data-layout="t15"] .help-modal .modal-footnote .ui-icon {
+  flex: 0 0 16px; width: 16px; height: 16px;
+  margin-top: 1px; color: #77bad8;
+}
+#app[data-layout="t15"] .search-results,
+#app[data-layout="t15"] .help-modal,
+#app[data-layout="t15"][data-active-drawer="settings"] .workspace-panel {
+  scrollbar-width: thin;
+  scrollbar-color: #486a87 rgba(13, 31, 50, .3);
+}
+#app[data-layout="t15"] .search-results::-webkit-scrollbar,
+#app[data-layout="t15"] .help-modal::-webkit-scrollbar,
+#app[data-layout="t15"][data-active-drawer="settings"] .workspace-panel::-webkit-scrollbar {
+  width: 6px;
+}
+#app[data-layout="t15"] .search-results::-webkit-scrollbar-track,
+#app[data-layout="t15"] .help-modal::-webkit-scrollbar-track,
+#app[data-layout="t15"][data-active-drawer="settings"] .workspace-panel::-webkit-scrollbar-track {
+  background: rgba(17, 41, 63, .45);
+}
+#app[data-layout="t15"] .search-results::-webkit-scrollbar-thumb,
+#app[data-layout="t15"] .help-modal::-webkit-scrollbar-thumb,
+#app[data-layout="t15"][data-active-drawer="settings"] .workspace-panel::-webkit-scrollbar-thumb {
+  background: #486a87; border-radius: 20px;
+}
+
+/* Search: compact grouping and a scrolling list, with the search field fixed. */
+#app[data-layout="t15"] .search-modal {
+  display: flex; flex-direction: column;
+  width: min(670px, 100%);
+  min-width: 0; max-height: min(750px, calc(100dvh - 32px));
+  overflow: hidden; padding: 26px;
+}
+#app[data-layout="t15"] .search-modal .modal-heading { margin-bottom: 21px; }
+#app[data-layout="t15"] .search-modal .search-field {
+  display: flex; flex: 0 0 auto;
+  min-height: 52px; margin: 0; padding: 0 13px;
+  border: 1px solid rgba(117, 177, 211, .28);
+  border-radius: 11px; background: rgba(17, 42, 65, .85);
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+#app[data-layout="t15"] .search-modal .search-field:hover {
+  background: rgba(20, 51, 77, .94);
+  border-color: rgba(128, 200, 237, .47);
+}
+#app[data-layout="t15"] .search-modal .search-field:focus-within {
+  border-color: #85d7f5;
+  box-shadow: 0 0 0 3px rgba(123, 212, 247, .12);
+}
+#app[data-layout="t15"] .search-modal .search-field > .ui-icon {
+  flex: 0 0 21px; width: 21px; height: 21px; color: #8bc9e6;
+}
+#app[data-layout="t15"] .search-modal .search-field input {
+  min-height: 50px;
+  padding: 0; font-size: 14px; color: #e5f6ff;
+}
+#app[data-layout="t15"] .search-modal .search-field input::placeholder {
+  color: #789aaf;
+}
+#app[data-layout="t15"] .search-modal .search-field kbd {
+  flex: 0 0 auto; border: 1px solid rgba(128, 175, 203, .24);
+  border-radius: 5px; padding: 4px 7px;
+  background: rgba(6, 22, 36, .7); color: #92b2c6;
+}
+#app[data-layout="t15"] .search-modal .search-results-heading {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin-top: 22px; padding-bottom: 10px;
+  border-bottom: 1px solid rgba(119, 176, 211, .16);
+}
+#app[data-layout="t15"] .search-modal .search-results-heading > span {
+  font: 600 12px/1.4 'Microsoft YaHei',sans-serif; color: #d1e7f6;
+}
+#app[data-layout="t15"] .search-modal .search-results-heading small {
+  display: inline; padding-left: 8px;
+  color: #5f8ca8; font: 600 9px/1.4 'Space Grotesk',sans-serif;
+  letter-spacing: .11em;
+}
+#app[data-layout="t15"] .search-modal .search-results-heading strong {
+  color: #93cde8; background: rgba(98, 161, 194, .12);
+  border: 1px solid rgba(121, 194, 233, .15);
+  padding: 5px 9px; border-radius: 30px;
+  font: 600 10px/1.2 'Microsoft YaHei',sans-serif; white-space: nowrap;
+}
+#app[data-layout="t15"] .search-modal .search-results {
+  display: block; min-height: 76px; flex: 1 1 auto;
+  max-height: min(410px, 48dvh);
+  margin: 7px 0 16px; padding-right: 5px;
+  overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+#app[data-layout="t15"] .search-result-group { padding: 0 0 5px; }
+#app[data-layout="t15"] .search-result-group-title {
+  position: sticky; top: 0; z-index: 1;
+  margin: 0 0 5px; padding: 11px 6px 7px;
+  background: #10243a; border-bottom: 1px solid rgba(113, 178, 217, .11);
+  color: #85b4ce; font: 600 11px/1.4 'Microsoft YaHei',sans-serif;
+  letter-spacing: .025em;
+}
+#app[data-layout="t15"] .search-result-group-list {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px;
+}
+#app[data-layout="t15"] .search-modal .search-result {
+  position: relative; display: flex; align-items: center; gap: 11px;
+  box-sizing: border-box; min-width: 0; min-height: 69px;
+  padding: 11px 12px; border-radius: 10px;
+  border: 1px solid rgba(114, 170, 207, .12);
+  background: rgba(19, 45, 69, .55);
+  transition: background .18s, border-color .18s, transform .18s;
+  cursor: pointer; font-family: 'Microsoft YaHei','DM Sans',sans-serif;
+}
+#app[data-layout="t15"] .search-modal .search-result:hover,
+#app[data-layout="t15"] .search-modal .search-result:focus-visible {
+  background: rgba(36, 81, 109, .65);
+  border-color: rgba(137, 209, 242, .48);
+  transform: translateY(-1px); outline: 0;
+}
+#app[data-layout="t15"] .search-modal .search-result:focus-visible {
+  box-shadow: 0 0 0 2px rgba(126, 204, 242, .18);
+}
+#app[data-layout="t15"] .search-modal .result-dot {
+  flex: 0 0 29px; width: 29px; height: 29px;
+  border: 1px solid rgba(220, 240, 252, .16);
+  box-shadow: inset -6px -4px 9px rgba(0,0,0,.44);
+}
+#app[data-layout="t15"] .search-result-copy {
+  display: flex; flex-direction: column; gap: 4px; flex: 1 1 auto; min-width: 0;
+}
+#app[data-layout="t15"] .search-result-copy strong {
+  color: #eaf6fd; font: 600 13px/1.25 'Microsoft YaHei',sans-serif;
+}
+#app[data-layout="t15"] .search-result-copy > span {
+  min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+  color: #90aec5; font: 400 10px/1.3 'Microsoft YaHei',sans-serif;
+}
+#app[data-layout="t15"] .search-modal .search-result small {
+  flex: 0 1 auto; overflow: hidden; max-width: 84px;
+  white-space: nowrap; text-overflow: ellipsis;
+  color: #7198b2; font: 500 9px/1.4 'Space Grotesk','Microsoft YaHei',sans-serif;
+  letter-spacing: .05em;
+}
+#app[data-layout="t15"] .search-result-arrow {
+  flex: 0 0 16px; width: 16px; height: 16px;
+  color: #79b9d9; opacity: .55;
+}
+#app[data-layout="t15"] .search-result:hover .search-result-arrow,
+#app[data-layout="t15"] .search-result:focus-visible .search-result-arrow { opacity: 1; }
+#app[data-layout="t15"] .search-empty {
+  display: flex; align-items: center; gap: 13px;
+  padding: 27px 18px; color: #a3bfd0;
+  background: rgba(14, 37, 59, .65); border: 1px dashed rgba(127, 187, 223, .25);
+  border-radius: 11px;
+}
+#app[data-layout="t15"] .search-empty .ui-icon {
+  flex: 0 0 28px; width: 28px; height: 28px; color: #7bb8d6;
+}
+#app[data-layout="t15"] .search-empty div { display: flex; flex-direction: column; gap: 5px; }
+#app[data-layout="t15"] .search-empty strong { font-size: 13px; font-weight: 600; }
+#app[data-layout="t15"] .search-empty span { color: #7799ad; font-size: 11px; }
+#app[data-layout="t15"] .search-modal .modal-footnote {
+  padding: 13px 0 0; border-top: 1px solid rgba(120, 173, 206, .15);
+}
+
+/* Settings: restore hierarchy to reparented controls and show switch state. */
+#app[data-layout="t15"][data-active-drawer="settings"] .workspace-panel {
+  background: linear-gradient(150deg, rgba(14, 35, 55, .985), rgba(6, 19, 34, .985));
+  border-color: rgba(125, 191, 224, .28);
+}
+#app[data-layout="t15"] #settings-workspace-slot > * { margin: 0; }
+#app[data-layout="t15"] #settings-workspace-slot { min-width: 0; }
+#app[data-layout="t15"] .settings-heading {
+  padding: 2px 1px 17px;
+  border-bottom: 1px solid rgba(132, 184, 217, .16);
+}
+#app[data-layout="t15"] .settings-heading > span {
+  color: #7cbad6; font: 700 10px/1.4 'Space Grotesk',sans-serif;
+  letter-spacing: .2em;
+}
+#app[data-layout="t15"] .settings-heading h2 {
+  color: #ecf8ff; font: 500 23px/1.25 'Microsoft YaHei',sans-serif;
+  margin: 6px 0;
+}
+#app[data-layout="t15"] .settings-heading p {
+  margin: 0; color: #88a9bf; font: 400 11px/1.6 'Microsoft YaHei',sans-serif;
+}
+#app[data-layout="t15"] .settings-group { padding-top: 14px; }
+#app[data-layout="t15"] .settings-group-title {
+  padding: 0 2px 10px; color: #8eb5cc;
+  font: 600 11px/1.4 'Microsoft YaHei',sans-serif;
+}
+#app[data-layout="t15"] .settings-rows { display: flex; flex-direction: column; gap: 8px; }
+#app[data-layout="t15"] #settings-workspace-slot .quality-control,
+#app[data-layout="t15"] #settings-workspace-slot .option-toggle {
+  display: flex !important; align-items: center; justify-content: space-between;
+  gap: 12px; box-sizing: border-box; width: 100%; min-height: 65px;
+  padding: 11px 13px; margin: 0; text-align: left;
+  border: 1px solid rgba(117, 172, 204, .19); border-radius: 11px;
+  background: rgba(28, 57, 81, .47); color: #d7eaf8;
+  box-shadow: inset 0 1px 0 rgba(214, 237, 249, .03);
+  transition: background .18s, border-color .18s;
+  cursor: pointer;
+}
+#app[data-layout="t15"] #settings-workspace-slot .quality-control:hover,
+#app[data-layout="t15"] #settings-workspace-slot .option-toggle:hover {
+  background: rgba(34, 74, 102, .58);
+  border-color: rgba(144, 209, 240, .42);
+}
+#app[data-layout="t15"] #settings-workspace-slot .option-toggle:focus-visible {
+  outline: 2px solid #88d6f4; outline-offset: 2px;
+}
+#app[data-layout="t15"] .settings-row-copy {
+  display: flex; flex: 1 1 auto; flex-direction: column;
+  gap: 5px; min-width: 0;
+}
+#app[data-layout="t15"] .settings-row-copy strong {
+  color: #e4f1fb; font: 600 12px/1.3 'Microsoft YaHei',sans-serif;
+}
+#app[data-layout="t15"] .settings-row-copy small {
+  color: #82a6bb; font: 400 10px/1.45 'Microsoft YaHei',sans-serif;
+  white-space: normal;
+}
+#app[data-layout="t15"] #settings-workspace-slot .quality-control select {
+  flex: 0 0 auto; min-width: 92px; width: 92px; height: 38px;
+  max-width: none; margin: 0; padding: 0 8px;
+  border: 1px solid rgba(131, 196, 233, .3); border-radius: 8px;
+  outline-offset: 2px;
+  background: #152f49; color: #e4f4fc;
+  font: 600 12px/1.4 'Microsoft YaHei',sans-serif; cursor: pointer;
+  color-scheme: dark;
+}
+
+/* Settings quality: reuse the accessible flight dropdown surface. */
+#app[data-layout="t15"] #settings-workspace-slot .quality-select-shell {
+  flex: 0 0 96px; width: 96px; min-width: 0;
+  height: 38px; min-height: 38px; margin-left: auto;
+  border-color: rgba(131, 196, 233, .36); border-radius: 9px;
+  background: linear-gradient(140deg, #193650, #10283f);
+}
+#app[data-layout="t15"] #settings-workspace-slot .quality-select-shell .flight-select-trigger {
+  box-sizing: border-box; display: flex;
+  padding: 0 27px 0 11px;
+  color: #e7f6ff; font: 600 12px/1.4 'Microsoft YaHei',sans-serif;
+  white-space: nowrap;
+}
+#app[data-layout="t15"] #settings-workspace-slot .quality-select-shell .select-chevron {
+  right: 9px; width: 16px; height: 16px;
+}
+#app[data-layout="t15"] .flight-option-popover[data-kind="quality"] {
+  border-color: rgba(129, 208, 245, .46);
+  background: linear-gradient(155deg, #153752, #0c253e 94%);
+}
+#app[data-layout="t15"] .flight-option-popover[data-kind="quality"] .flight-option-heading {
+  padding: 11px 12px;
+}
+#app[data-layout="t15"] .flight-option-popover[data-kind="quality"] .quality-option {
+  min-height: 57px; padding: 9px 11px; gap: 12px;
+}
+#app[data-layout="t15"] .quality-option .flight-option-symbol {
+  width: 25px; height: 25px; flex-basis: 25px;
+  border-radius: 8px; background: rgba(99, 175, 213, .12);
+  color: #96cce6;
+}
+#app[data-layout="t15"] .quality-option .flight-option-symbol .ui-icon {
+  width: 17px; height: 17px;
+}
+#app[data-layout="t15"] .quality-option-copy {
+  display: flex; flex-direction: column; gap: 4px;
+  min-width: 0; flex: 1 1 auto;
+}
+#app[data-layout="t15"] .quality-option-copy .flight-option-text {
+  color: inherit; font: 600 13px/1.25 'Microsoft YaHei',sans-serif;
+}
+#app[data-layout="t15"] .quality-option-hint {
+  color: #83a9bf; font: 400 10px/1.3 'Microsoft YaHei',sans-serif;
+  white-space: normal;
+}
+#app[data-layout="t15"] .quality-option.is-selected .quality-option-hint {
+  color: #abd4e8;
+}
+#app[data-layout="t15"] .quality-option .flight-option-check {
+  width: 18px; height: 18px; flex-basis: 18px;
+}
+#app[data-layout="t15"] #settings-workspace-slot .option-toggle i {
+  position: relative; display: block !important; flex: 0 0 37px;
+  width: 37px; height: 21px; margin: 0;
+  border: 1px solid rgba(116, 159, 186, .46); border-radius: 20px;
+  background: rgba(37, 61, 78, .76);
+}
+#app[data-layout="t15"] #settings-workspace-slot .option-toggle i::after {
+  content: ''; position: absolute; top: 3px; left: 3px;
+  width: 13px; height: 13px; border-radius: 50%;
+  background: #90a9ba; box-shadow: 0 1px 4px rgba(0,0,0,.32);
+  transform: none; transition: transform .18s, background .18s;
+}
+#app[data-layout="t15"] #settings-workspace-slot .option-toggle.is-on i {
+  border-color: rgba(126, 218, 242, .65); background: rgba(68, 156, 194, .42);
+}
+#app[data-layout="t15"] #settings-workspace-slot .option-toggle.is-on i::after {
+  transform: translateX(16px); background: #d4f7ff;
+}
+#app[data-layout="t15"] #settings-workspace-slot .option-toggle[aria-pressed="true"]::after,
+#app[data-layout="t15"] #settings-workspace-slot .option-toggle[aria-pressed="false"]::after {
+  content: none;
+}
+#app[data-layout="t15"] #settings-workspace-slot .settings-guide-link {
+  display: flex !important; justify-content: flex-start; align-items: center;
+  gap: 12px; width: 100%; min-height: 69px; height: auto;
+  margin: 16px 0 0; padding: 12px 14px;
+  border: 1px solid rgba(137, 204, 234, .3);
+  border-radius: 11px;
+  background: linear-gradient(120deg, rgba(45, 112, 149, .28), rgba(31, 77, 108, .2));
+  color: #dff4ff; text-align: left;
+}
+#app[data-layout="t15"] #settings-workspace-slot .settings-guide-link:hover {
+  border-color: rgba(141, 215, 244, .66);
+  background: linear-gradient(120deg, rgba(48, 127, 173, .38), rgba(31, 77, 108, .28));
+}
+#app[data-layout="t15"] .settings-guide-link > .ui-icon:first-child {
+  flex: 0 0 24px; width: 24px; height: 24px; color: #a2d8ed;
+}
+#app[data-layout="t15"] .settings-guide-link > .settings-guide-arrow {
+  flex: 0 0 16px; width: 16px; height: 16px; margin-left: auto; color: #9bcde5;
+}
+#app[data-layout="t15"] .settings-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 10px;
+  padding: 14px 3px 2px; margin-top: 15px;
+  border-top: 1px solid rgba(128, 184, 215, .17);
+}
+#app[data-layout="t15"] .settings-footer > span {
+  color: #7596ae; font: 500 10px 'Microsoft YaHei',sans-serif;
+}
+#app[data-layout="t15"] .settings-footer .render-status {
+  display: flex !important; align-items: center; gap: 4px;
+  margin: 0; color: #92bdd4; font-size: 10px;
+}
+#app[data-layout="t15"] .settings-footer .render-status i {
+  flex: 0 0 7px; width: 7px; height: 7px; margin: 0 5px 0 0;
+}
+#app[data-layout="t15"] .settings-footer .render-status b {
+  display: inline !important; color: #b6dcee;
+  font-weight: 600; letter-spacing: .04em; margin-left: 5px;
+}
+
+/* Manual: introduce clearly named groups and lighter instruction cards. */
+#app[data-layout="t15"] .help-modal {
+  width: min(700px, 100%); max-height: min(800px, calc(100dvh - 32px));
+  min-width: 0; padding: 0; overflow-y: auto; overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+#app[data-layout="t15"] .help-modal .modal-heading {
+  position: sticky; top: 0; z-index: 3;
+  padding: 24px 26px 19px;
+  background: rgba(13, 34, 54, .98);
+  border-bottom: 1px solid rgba(139, 194, 222, .16);
+}
+#app[data-layout="t15"] .help-body { padding: 20px 25px 10px; }
+#app[data-layout="t15"] .help-intro {
+  display: flex; gap: 13px; align-items: flex-start;
+  margin-bottom: 23px; padding: 15px;
+  border-radius: 12px; border: 1px solid rgba(113, 185, 223, .25);
+  background: linear-gradient(105deg, rgba(37, 89, 124, .35), rgba(28, 58, 87, .17));
+}
+#app[data-layout="t15"] .help-intro > .ui-icon {
+  flex: 0 0 25px; width: 25px; height: 25px;
+  margin-top: 1px; color: #9cdbf4;
+}
+#app[data-layout="t15"] .help-intro strong {
+  color: #d9f3ff; font: 600 13px/1.5 'Microsoft YaHei',sans-serif;
+}
+#app[data-layout="t15"] .help-intro .mobile-intro {
+  display: block; margin: 5px 0 0; padding: 0; border: 0;
+  color: #a2c3d8; font: 400 11px/1.65 'Microsoft YaHei',sans-serif;
+}
+#app[data-layout="t15"] .help-topic { margin-bottom: 22px; }
+#app[data-layout="t15"] .help-topic-heading {
+  display: flex; align-items: center; gap: 10px; margin: 0 0 11px;
+}
+#app[data-layout="t15"] .help-topic-icon {
+  display: grid; place-items: center;
+  flex: 0 0 34px; width: 34px; height: 34px;
+  border: 1px solid rgba(123, 192, 227, .26); border-radius: 10px;
+  background: rgba(72, 138, 179, .12); color: #8ad0ef;
+}
+#app[data-layout="t15"] .help-topic-icon .ui-icon { width: 18px; height: 18px; }
+#app[data-layout="t15"] .help-topic-heading small {
+  display: block; color: #6298b7;
+  font: 700 9px/1.3 'Space Grotesk',sans-serif; letter-spacing: .13em;
+}
+#app[data-layout="t15"] .help-topic-heading h3 {
+  margin: 4px 0 0; color: #e3f2fc;
+  font: 600 14px/1.4 'Microsoft YaHei',sans-serif;
+}
+#app[data-layout="t15"] .help-modal .help-grid {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+#app[data-layout="t15"] .help-modal .help-grid > div {
+  display: flex; flex-direction: column; justify-content: center;
+  min-width: 0; min-height: 73px;
+  padding: 12px 14px; gap: 6px;
+  border: 1px solid rgba(128, 185, 216, .15);
+  border-radius: 10px; background: rgba(20, 47, 70, .53);
+  transition: background .18s, border-color .18s;
+}
+#app[data-layout="t15"] .help-modal .help-grid > div:hover {
+  background: rgba(28, 67, 94, .67);
+  border-color: rgba(137, 201, 231, .3);
+}
+#app[data-layout="t15"] .help-modal .help-grid span {
+  color: #7eaac4; font: 500 10px/1.4 'Microsoft YaHei',sans-serif;
+}
+#app[data-layout="t15"] .help-modal .help-grid strong {
+  color: #d9ebf7; font: 500 12px/1.55 'Microsoft YaHei',sans-serif;
+  white-space: normal; overflow-wrap: anywhere;
+}
+#app[data-layout="t15"] .help-modal > .modal-footnote {
+  margin: 0 25px 23px; padding: 14px 0 0;
+  border-top: 1px solid rgba(138, 183, 211, .16);
+}
+
+@media (max-width: 640px) {
+  #app[data-layout="t15"] .search-modal {
+    width: 100%; max-height: calc(100dvh - 22px); padding: 18px 15px;
+    border-radius: 16px;
+  }
+  #app[data-layout="t15"] .search-modal .modal-heading { margin-bottom: 15px; }
+  #app[data-layout="t15"] .search-modal .modal-heading h2,
+  #app[data-layout="t15"] .help-modal .modal-heading h2 { font-size: 24px; }
+  #app[data-layout="t15"] .search-result-group-list { grid-template-columns: minmax(0, 1fr); }
+  #app[data-layout="t15"] .search-modal .search-result { min-height: 59px; }
+  #app[data-layout="t15"] .search-modal .search-results {
+    max-height: min(52dvh, 480px); margin-bottom: 13px;
+  }
+  #app[data-layout="t15"] .search-modal .search-results-heading small { display: none; }
+  #app[data-layout="t15"] .help-modal {
+    max-height: calc(100dvh - 22px); border-radius: 16px;
+  }
+  #app[data-layout="t15"] .help-modal .modal-heading { padding: 18px 16px 15px; }
+  #app[data-layout="t15"] .help-body { padding: 16px 14px 4px; }
+  #app[data-layout="t15"] .help-modal .help-grid { grid-template-columns: minmax(0, 1fr); gap: 7px; }
+  #app[data-layout="t15"] .help-modal .help-grid > div { min-height: 60px; }
+  #app[data-layout="t15"] .help-topic { margin-bottom: 18px; }
+  #app[data-layout="t15"] .help-modal > .modal-footnote { margin: 0 15px 17px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #app[data-layout="t15"] .search-modal .search-result,
+  #app[data-layout="t15"] #settings-workspace-slot .quality-control,
+  #app[data-layout="t15"] #settings-workspace-slot .option-toggle,
+  #app[data-layout="t15"] .help-modal .help-grid > div { transition: none; }
+}

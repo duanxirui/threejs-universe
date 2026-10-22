@@ -108,10 +108,61 @@ export const SATELLITES = [
   },
   {
     id: 'titan', parentId: 'saturn', name: '土卫六', en: 'TITAN', index: '14', type: '天然卫星', category: 'SATURNIAN MOON',
-    accent: '#dfb982', secondary: '#846342', radius: .24, orbitRadius: 3.8, orbitSpeed: .42,
+    accent: '#dfb982', secondary: '#846342', radius: .24, orbitRadius: 6.25, orbitSpeed: .42,
     rotationSpeed: .03, phase: 2.0, inclination: .05, eccentricity: .0288,
     distance: '距土星约 122 万 km', diameter: '5,150 km', massKg: 1.346e23, day: '15.95 天', year: '15.95 天',
     short: '拥有甲烷湖泊', description: '土卫六拥有浓厚的氮气大气，表面有由液态甲烷和乙烷组成的湖泊与海洋。'
+  },
+  // Display-only orbital spacing keeps these inner moons visible outside the
+  // illustrated rings. Physical periods/masses below are approximate data;
+  // orbitRadius, orbitSpeed and rendered radius are rescaled for exploration.
+  {
+    id: 'mimas', parentId: 'saturn', name: '土卫一', en: 'MIMAS', index: '16', type: '天然卫星', category: 'SATURNIAN MOON',
+    accent: '#c2c5c7', secondary: '#626e77', radius: .115, orbitRadius: 3.55, orbitSpeed: .95,
+    rotationSpeed: .035, phase: .15, inclination: .027, eccentricity: .0196, node: .31,
+    textureSource: 'procedural',
+    distance: '距土星约 18.6 万 km', diameter: '396 km', massKg: 3.75e19, day: '0.94 天', year: '0.94 天',
+    short: '赫歇尔巨型撞击坑', description: '土卫一是一颗遍布撞击坑的冰质小卫星，著名的赫歇尔撞击坑占据其直径很大一部分，让它具有鲜明的外观。'
+  },
+  {
+    id: 'enceladus', parentId: 'saturn', name: '土卫二', en: 'ENCELADUS', index: '17', type: '天然卫星', category: 'SATURNIAN MOON',
+    accent: '#e1eff5', secondary: '#849ba8', radius: .14, orbitRadius: 3.95, orbitSpeed: .83,
+    rotationSpeed: .034, phase: 1.17, inclination: .019, eccentricity: .0047, node: .53,
+    textureSource: 'procedural',
+    distance: '距土星约 23.8 万 km', diameter: '504 km', massKg: 1.08e20, day: '1.37 天', year: '1.37 天',
+    short: '冰羽喷流与地下海洋', description: '土卫二拥有明亮的冰质表面，南极地区的裂隙向太空喷出水冰颗粒和水汽。观测证据支持其冰壳下存在全球性液态海洋。'
+  },
+  {
+    id: 'tethys', parentId: 'saturn', name: '土卫三', en: 'TETHYS', index: '18', type: '天然卫星', category: 'SATURNIAN MOON',
+    accent: '#d7d2c9', secondary: '#858b8d', radius: .153, orbitRadius: 4.38, orbitSpeed: .70,
+    rotationSpeed: .033, phase: 2.53, inclination: .021, eccentricity: .0001, node: 1.02,
+    textureSource: 'procedural',
+    distance: '距土星约 29.5 万 km', diameter: '1,062 km', massKg: 6.17e20, day: '1.89 天', year: '1.89 天',
+    short: '奥德修斯撞击坑', description: '土卫三是一颗以水冰为主的卫星，其表面存在巨大的奥德修斯撞击坑与长距离峡谷，记录了早期强烈的地质活动。'
+  },
+  {
+    id: 'dione', parentId: 'saturn', name: '土卫四', en: 'DIONE', index: '19', type: '天然卫星', category: 'SATURNIAN MOON',
+    accent: '#c7cac9', secondary: '#697985', radius: .165, orbitRadius: 4.84, orbitSpeed: .59,
+    rotationSpeed: .031, phase: 3.48, inclination: .035, eccentricity: .0022, node: .21,
+    textureSource: 'procedural',
+    distance: '距土星约 37.7 万 km', diameter: '1,123 km', massKg: 1.10e21, day: '2.74 天', year: '2.74 天',
+    short: '冰崖与断裂地形', description: '土卫四的表面既有密布的古老撞击坑，也有明亮的冰崖和构造断裂，呈现出不同年代的地质痕迹。'
+  },
+  {
+    id: 'rhea', parentId: 'saturn', name: '土卫五', en: 'RHEA', index: '20', type: '天然卫星', category: 'SATURNIAN MOON',
+    accent: '#bebdbb', secondary: '#69727b', radius: .195, orbitRadius: 5.36, orbitSpeed: .49,
+    rotationSpeed: .029, phase: 4.25, inclination: .026, eccentricity: .001, node: 1.31,
+    textureSource: 'procedural',
+    distance: '距土星约 52.7 万 km', diameter: '1,528 km', massKg: 2.31e21, day: '4.52 天', year: '4.52 天',
+    short: '土星第二大卫星', description: '土卫五是土星第二大的卫星。它以水冰和岩石构成，表面有大量撞击坑及细长的明亮条纹。'
+  },
+  {
+    id: 'iapetus', parentId: 'saturn', name: '土卫八', en: 'IAPETUS', index: '21', type: '天然卫星', category: 'SATURNIAN MOON',
+    accent: '#d8cbb6', secondary: '#494642', radius: .18, orbitRadius: 7.95, orbitSpeed: .145,
+    rotationSpeed: .018, phase: 5.4, inclination: .19, eccentricity: .0283, node: 2.09,
+    textureSource: 'procedural',
+    distance: '距土星约 356 万 km', diameter: '1,469 km', massKg: 1.81e21, day: '79.32 天', year: '79.32 天',
+    short: '明暗分明的双面卫星', description: '土卫八具有强烈的半球明暗差异：一面覆盖深色物质，另一面较明亮。其赤道附近还存在引人注目的山脊。'
   },
   {
     id: 'triton', parentId: 'neptune', name: '海卫一', en: 'TRITON', index: '15', type: '天然卫星', category: 'NEPTUNIAN MOON',
@@ -125,6 +176,44 @@ export const SATELLITES = [
 export const ALL_BODIES = [...CELESTIALS, ...SATELLITES];
 export const ALL_BY_ID = Object.fromEntries(ALL_BODIES.map(body => [body.id, body]));
 
+// T11: Physical values for consistent cross-body comparison. These numbers
+// reflect the existing rounded educational descriptions, not the visually
+// rescaled orbitRadius/orbitSpeed/radius used to draw the scene.
+// Distances are mean distances to the actual orbit centre (Sun or parent).
+// The displayed AU figures are converted with the IAU astronomical unit.
+const KM_PER_AU = 149597870.7;
+const HOURS_PER_DAY = 24;
+const DAYS_PER_YEAR = 365.25;
+export const COMPARISON_FACTS = Object.freeze({
+  sun:       { diameterKm: 1392000, rotationHours: 25 * HOURS_PER_DAY, orbitalPeriodDays: null, distanceKm: null },
+  mercury:   { diameterKm: 4879, rotationHours: 58.6 * HOURS_PER_DAY, orbitalPeriodDays: 88, distanceKm: .39 * KM_PER_AU },
+  venus:     { diameterKm: 12104, rotationHours: 243 * HOURS_PER_DAY, orbitalPeriodDays: 225, distanceKm: .72 * KM_PER_AU },
+  earth:     { diameterKm: 12742, rotationHours: 23.9, orbitalPeriodDays: 365.25, distanceKm: KM_PER_AU },
+  mars:      { diameterKm: 6779, rotationHours: 24.6, orbitalPeriodDays: 687, distanceKm: 1.52 * KM_PER_AU },
+  jupiter:   { diameterKm: 139820, rotationHours: 9.9, orbitalPeriodDays: 11.86 * DAYS_PER_YEAR, distanceKm: 5.20 * KM_PER_AU },
+  saturn:    { diameterKm: 116460, rotationHours: 10.7, orbitalPeriodDays: 29.45 * DAYS_PER_YEAR, distanceKm: 9.58 * KM_PER_AU },
+  uranus:    { diameterKm: 50724, rotationHours: 17.2, orbitalPeriodDays: 84 * DAYS_PER_YEAR, distanceKm: 19.2 * KM_PER_AU },
+  neptune:   { diameterKm: 49244, rotationHours: 16.1, orbitalPeriodDays: 164.8 * DAYS_PER_YEAR, distanceKm: 30.1 * KM_PER_AU },
+  moon:      { diameterKm: 3475, rotationHours: 27.3 * HOURS_PER_DAY, orbitalPeriodDays: 27.3, distanceKm: 384000 },
+  io:        { diameterKm: 3643, rotationHours: 1.77 * HOURS_PER_DAY, orbitalPeriodDays: 1.77, distanceKm: 422000 },
+  europa:    { diameterKm: 3122, rotationHours: 3.55 * HOURS_PER_DAY, orbitalPeriodDays: 3.55, distanceKm: 671000 },
+  ganymede:  { diameterKm: 5268, rotationHours: 7.15 * HOURS_PER_DAY, orbitalPeriodDays: 7.15, distanceKm: 1070000 },
+  callisto:   { diameterKm: 4821, rotationHours: 16.69 * HOURS_PER_DAY, orbitalPeriodDays: 16.69, distanceKm: 1880000 },
+  titan:     { diameterKm: 5150, rotationHours: 15.95 * HOURS_PER_DAY, orbitalPeriodDays: 15.95, distanceKm: 1220000 },
+  mimas:     { diameterKm: 396, rotationHours: .94 * HOURS_PER_DAY, orbitalPeriodDays: .94, distanceKm: 186000 },
+  enceladus: { diameterKm: 504, rotationHours: 1.37 * HOURS_PER_DAY, orbitalPeriodDays: 1.37, distanceKm: 238000 },
+  tethys:    { diameterKm: 1062, rotationHours: 1.89 * HOURS_PER_DAY, orbitalPeriodDays: 1.89, distanceKm: 295000 },
+  dione:     { diameterKm: 1123, rotationHours: 2.74 * HOURS_PER_DAY, orbitalPeriodDays: 2.74, distanceKm: 377000 },
+  rhea:      { diameterKm: 1528, rotationHours: 4.52 * HOURS_PER_DAY, orbitalPeriodDays: 4.52, distanceKm: 527000 },
+  iapetus:   { diameterKm: 1469, rotationHours: 79.32 * HOURS_PER_DAY, orbitalPeriodDays: 79.32, distanceKm: 3560000 },
+  triton:    { diameterKm: 2707, rotationHours: 5.88 * HOURS_PER_DAY, orbitalPeriodDays: 5.88, distanceKm: 355000 }
+});
+
+/** Sun has no orbit centre in the solar-system comparison. */
+export function getOrbitReferenceId(body) {
+  return body.id === 'sun' ? null : (body.parentId || 'sun');
+}
+
 /** Format physical mass consistently for detail and comparison views. */
 export function formatMassKg(massKg) {
   if (!Number.isFinite(massKg) || massKg <= 0) return '—';
@@ -135,5 +224,9 @@ export function formatMassKg(massKg) {
 }
 
 export const SATELLITES_BY_PARENT = Object.fromEntries(
-  CELESTIALS.map(body => [body.id, SATELLITES.filter(moon => moon.parentId === body.id)])
+  CELESTIALS.map(body => [
+    body.id,
+    SATELLITES.filter(moon => moon.parentId === body.id)
+      .sort((left, right) => left.orbitRadius - right.orbitRadius)
+  ])
 );

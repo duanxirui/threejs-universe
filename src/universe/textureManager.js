@@ -6,8 +6,11 @@ export function createTextureManager(renderer) {
   const loader = new THREE.TextureLoader();
   const promises = new Map();
   const prefix = `${import.meta.env.BASE_URL}textures/`;
-  const supported = Boolean(renderer?.capabilities.isWebGL2 ||
-    renderer?.extensions.has('WEBGL_compressed_texture_etc'));
+  // Three.js r180 resolves RGB_ETC2_Format through this extension in
+  // WebGLUtils.convert(), including on WebGL2. WebGL2 alone is not sufficient:
+  // without the extension the renderer logs "unsupported compressed texture"
+  // during GPU upload *after* KTX2Loader successfully parses the file.
+  const supported = Boolean(renderer?.extensions.has('WEBGL_compressed_texture_etc'));
   const enabled = new Set(compressedTextures.enabled);
   // Pre-encoded vkFormat ETC2 containers use KTX2Loader's direct/raw path.
   // The BasisU transcoder worker is not loaded for these native ETC2 assets.

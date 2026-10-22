@@ -14,6 +14,7 @@ import {
 import { createOrbitLine, pointOnOrbit } from './orbitalMechanics.js';
 import { createSurfaceDetailMaps } from './surfaceDetail.js';
 import { createTextureManager } from './textureManager.js';
+import { addEclipseShading, addJupiterBandDrift, createEclipseUpdater } from './celestialLighting.js';
 
 const TAU = Math.PI * 2;
 const sphereGeometry = new THREE.SphereGeometry(1, 64, 48);
@@ -77,6 +78,8 @@ function makePlanet(body, glowTexture) {
     material.emissiveMap = createNightLightsTexture();
     addNightSideLighting(material);
   }
+  const bandUniforms = body.id === 'jupiter' ? addJupiterBandDrift(material) : null;
+  const eclipseUniforms = [addEclipseShading(material)];
   const mesh = new THREE.Mesh(sphereGeometry, material);
   mesh.scale.setScalar(radius);
   mesh.rotation.z = body.id === 'uranus' ? 1.71 : body.id === 'earth' ? .41 : .06;
@@ -84,6 +87,7 @@ function makePlanet(body, glowTexture) {
   root.add(mesh);
 
   let clouds = null;
+  let atmosphere = null;
   if (body.id === 'earth') {
     clouds = new THREE.Mesh(
       sphereGeometry,
@@ -97,8 +101,10 @@ function makePlanet(body, glowTexture) {
     );
     clouds.scale.setScalar(radius * 1.017);
     clouds.rotation.z = .41;
+    // The moving translucent cloud shell already receives solar lighting.
+    // Applying a second eclipse mask to it produced overlapping gray rings.
     root.add(clouds);
-    const atmosphere = new THREE.Mesh(
+    atmosphere = new THREE.Mesh(
       sphereGeometry,
       createAtmosphereMaterial(0x55a8f1)
     );
@@ -108,7 +114,7 @@ function makePlanet(body, glowTexture) {
 
   if (['venus', 'uranus', 'neptune'].includes(body.id)) {
     const tint = body.id === 'venus' ? 0xe0af76 : body.id === 'uranus' ? 0x9bdbdd : 0x4165d5;
-    const atmosphere = new THREE.Mesh(sphereGeometry, createAtmosphereMaterial(tint));
+    atmosphere = new THREE.Mesh(sphereGeometry, createAtmosphereMaterial(tint));
     atmosphere.scale.setScalar(radius * 1.09);
     root.add(atmosphere);
   }
@@ -139,30 +145,35 @@ function makePlanet(body, glowTexture) {
     root.add(ring);
   }
 
-  return { root, mesh, clouds };
+  return { root, mesh, clouds, atmosphere, eclipseUniforms, bandUniforms };
 }
 
 function makeSatellite(body) {
   const root = new THREE.Group();
   root.name = body.en;
   const material = new THREE.MeshStandardMaterial({
-    map: createPlanetTexture(body.id === 'titan' ? 'venus' : 'mercury', 256, 128),
+    map: createPlanetTexture(
+      body.textureSource === 'procedural' ? body.id : body.id === 'titan' ? 'venus' : 'mercury',
+      256, 128
+    ),
     roughness: 1,
     metalness: 0
   });
+  const eclipseUniforms = [addEclipseShading(material)];
   const mesh = new THREE.Mesh(mediumSphereGeometry, material);
   mesh.scale.setScalar(body.radius);
   mesh.userData.bodyId = body.id;
   root.add(mesh);
+  let atmosphere = null;
   if (body.id === 'titan') {
-    const atmosphere = new THREE.Mesh(
+    atmosphere = new THREE.Mesh(
       mediumSphereGeometry,
       createAtmosphereMaterial(0xdba95c)
     );
     atmosphere.scale.setScalar(body.radius * 1.16);
     root.add(atmosphere);
   }
-  return { root, mesh };
+  return { root, mesh, atmosphere, eclipseUniforms };
 }
 
 function createSolarFlares(glowTexture) {
@@ -252,6 +263,9 @@ export function createSolarSystem(glowTexture, renderer) {
     }
     const body = bodies[id];
     if (!body) return false;
+    // These six Saturnian moons are deliberately illustrated at runtime.
+    // Avoid probing non-existent JPG files (and clogging the texture queue).
+    if (body.data.textureSource === 'procedural') return true;
     const satellite = Boolean(body.data.parentId);
     if (['earth', 'moon', 'mars'].includes(id)) {
       return applyTexturedRelief(id, body.mesh, satellite);
@@ -340,6 +354,7 @@ export function createSolarSystem(glowTexture, renderer) {
 
   function requestTexture(id, priority = 'focus') {
     if (!bodies[id]) return Promise.resolve(false);
+    if (bodies[id].data.textureSource === 'procedural') return Promise.resolve(true);
     const level = texturePriorities[priority] ?? texturePriorities.focus;
     let job = textureJobs.get(id);
     if (job) {
@@ -418,27 +433,36 @@ export function createSolarSystem(glowTexture, renderer) {
 
   const belt = createAsteroidBelt();
   group.add(belt);
+  const updateEclipses = createEclipseUpdater(bodies);
+  let qualityTier = 0;
 
   let elapsedSimulation = 0;
   const update = (delta, speed) => {
     if (speed > 0) elapsedSimulation += delta * speed;
     sunMaterial.uniforms.uTime.value = elapsedSimulation;
-    sunMesh.rotation.y += delta * speed * sun.rotationSpeed;
-    flares.rotation.y += delta * speed * .07;
-    belt.rotation.y += delta * speed * .004;
+    // T14: derive every spin from the simulation clock. A date seek or a
+    // backwards scrub must place both orbital centres and rotations on the
+    // chosen frame, regardless of the previous playback history.
+    sunMesh.rotation.y = elapsedSimulation * sun.rotationSpeed;
+    flares.rotation.y = elapsedSimulation * .07;
+    belt.rotation.y = elapsedSimulation * .004;
 
     for (const body of CELESTIALS.slice(1)) {
       const planet = bodies[body.id];
       const angle = body.phase + elapsedSimulation * body.orbitSpeed;
       pointOnOrbit(body, angle, planet.root.position);
-      planet.mesh.rotation.y += delta * speed * body.rotationSpeed;
-      if (planet.clouds) planet.clouds.rotation.y += delta * speed * .038;
+      planet.mesh.rotation.y = elapsedSimulation * body.rotationSpeed;
+      if (planet.clouds) planet.clouds.rotation.y = elapsedSimulation * .038;
     }
     for (const moon of SATELLITES) {
       const satellite = bodies[moon.id];
       pointOnOrbit(moon, moon.phase + elapsedSimulation * moon.orbitSpeed, satellite.root.position);
-      satellite.mesh.rotation.y += delta * speed * moon.rotationSpeed;
+      satellite.mesh.rotation.y = elapsedSimulation * moon.rotationSpeed;
     }
+    bodies.jupiter.bandUniforms.uJupiterBandTime.value = elapsedSimulation;
+    // The galaxy landing view keeps the solar group hidden. Skip the analytic
+    // eclipse CPU work until the user actually enters the solar scene.
+    if (group.visible) updateEclipses(qualityTier);
   };
 
   update(0, 1);
@@ -453,10 +477,33 @@ export function createSolarSystem(glowTexture, renderer) {
     loadOverviewTextures,
     requestTexture,
     requestNearbyTextures,
+    setSimulationDays(days) {
+      if (!Number.isFinite(days)) return false;
+      // The date selector uses an arbitrary educational calendar epoch;
+      // the existing solar model runs in units of five displayed days.
+      elapsedSimulation = days / 5;
+      update(0, 0);
+      return true;
+    },
     setQualityTier(tier) {
+      qualityTier = THREE.MathUtils.clamp(tier, 0, 2);
       // InstancedMesh.count and drawRange avoid reallocating GPU buffers.
-      belt.count = [500, 1050, 1750][tier];
-      flares.geometry.setDrawRange(0, [280, 620, 950][tier]);
+      belt.count = [500, 1050, 1750][qualityTier];
+      flares.geometry.setDrawRange(0, [280, 620, 950][qualityTier]);
+      for (const entry of Object.values(bodies)) {
+        for (const uniforms of entry.eclipseUniforms || []) {
+          uniforms.uEclipseStrength.value = qualityTier === 0 ? 0 :
+            qualityTier === 1 ? .34 : .55;
+          if (qualityTier < 2) uniforms.uEclipseCasterB.value.set(0, 0, 0, 0);
+        }
+        if (entry.atmosphere) {
+          entry.atmosphere.material.uniforms.uQualityTier.value = qualityTier;
+        }
+      }
+      bodies.jupiter.bandUniforms.uJupiterBandStrength.value =
+        qualityTier === 0 ? 0 : qualityTier === 1 ? .45 : 1;
+      // A quality switch must not briefly display the previous caster pose.
+      if (group.visible) updateEclipses(qualityTier);
     },
     setOrbitsVisible(visible) {
       orbitsGroup.visible = visible;
@@ -468,8 +515,22 @@ export function createSolarSystem(glowTexture, renderer) {
         const planet = bodies[body.id];
         planet.root.getWorldPosition(world);
         const projectedRadius = body.radius / Math.max(1, world.distanceTo(camera.position));
-        planet.mesh.geometry = projectedRadius > .045 ? sphereGeometry :
-          projectedRadius > .009 ? mediumSphereGeometry : lowSphereGeometry;
+        // Separate entry/exit thresholds prevent camera damping and tiny
+        // orbital movements from toggling the sphere tessellation repeatedly.
+        const current = planet.mesh.geometry;
+        let next = current;
+        if (current === sphereGeometry) {
+          if (projectedRadius < .007) next = lowSphereGeometry;
+          else if (projectedRadius < .038) next = mediumSphereGeometry;
+        } else if (current === mediumSphereGeometry) {
+          if (projectedRadius > .052) next = sphereGeometry;
+          else if (projectedRadius < .007) next = lowSphereGeometry;
+        } else if (projectedRadius > .052) {
+          next = sphereGeometry;
+        } else if (projectedRadius > .012) {
+          next = mediumSphereGeometry;
+        }
+        if (next !== current) planet.mesh.geometry = next;
       }
     },
     getSimulationDays() { return elapsedSimulation * 5; }
