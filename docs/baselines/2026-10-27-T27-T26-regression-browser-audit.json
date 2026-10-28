@@ -1,0 +1,206 @@
+{
+  "started": "2026-10-27T09:42:00.794Z",
+  "environment": "Local Vite dist / isolated headless Chrome with SwiftShader / viewport emulation",
+  "limitations": [
+    "Viewport emulation is not a physical Android/iOS touch or GPU benchmark.",
+    "Software/browser testing checks navigation and source-data integration, not independent scientific certification."
+  ],
+  "checks": [
+    {
+      "name": "page starts in demonstration mode",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "single global state and working demo orbit controls",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "no Horizons files fetched before date activation",
+      "pass": true,
+      "actual": {
+        "requests": 0
+      }
+    },
+    {
+      "name": "desktop UTC date control present in T31 workspace",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "invalid calendar entry is rejected before loading data",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "invalid date caused no file requests",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "valid UTC date loads JPL vectors and opens solar system",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "four bodies mapped into ecliptic scene, old demo orbits hidden",
+      "pass": true,
+      "actual": {
+        "enabled": true,
+        "utcMs": 1793102400000,
+        "startMs": 1767225600000,
+        "endMs": 1830297600000,
+        "sourceVersion": "DE441",
+        "source": "NASA/JPL Horizons API",
+        "lastSample": false,
+        "mode": "solar",
+        "paused": true,
+        "timeScale": 1,
+        "orbitsVisible": false,
+        "cameraDistance": 108.46197490364999,
+        "displayPositions": {
+          "sun": [
+            0,
+            0,
+            0
+          ],
+          "earth": [
+            11.656804326741762,
+            -0.0005841682901517609,
+            -7.777610103746334
+          ],
+          "moon": [
+            1.1165003148208175,
+            0.15784453453064057,
+            -1.4111664924358716
+          ],
+          "mars": [
+            -3.2226376707787967,
+            0.543645538722715,
+            -22.171172389172494
+          ]
+        }
+      }
+    },
+    {
+      "name": "date data files were fetched on demand",
+      "pass": true,
+      "actual": {
+        "requests": 3
+      }
+    },
+    {
+      "name": "date mode disables demo orbit switch and explains time progression",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "date jump changes Earth and Mars positions without changing mode",
+      "pass": true,
+      "actual": 1793707200000
+    },
+    {
+      "name": "existing play and speed controls advance UTC date",
+      "pass": true,
+      "actual": {
+        "beforePlay": 1793707200000,
+        "afterPlay": 1793750400000
+      }
+    },
+    {
+      "name": "pause stops UTC date playback",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "playback stops at last sample without extrapolating",
+      "pass": true,
+      "actual": {
+        "enabled": true,
+        "utcMs": 1830297600000,
+        "startMs": 1767225600000,
+        "endMs": 1830297600000,
+        "sourceVersion": "DE441",
+        "source": "NASA/JPL Horizons API",
+        "lastSample": false,
+        "mode": "solar",
+        "paused": true,
+        "timeScale": 1,
+        "orbitsVisible": false,
+        "cameraDistance": 108.46197490364999,
+        "displayPositions": {
+          "sun": [
+            0,
+            0,
+            0
+          ],
+          "earth": [
+            -2.3332048950451743,
+            -0.0008784046091093241,
+            -13.667610956679193
+          ],
+          "moon": [
+            1.6461533701477093,
+            0.07291405533916052,
+            1.1421047702441058
+          ],
+          "mars": [
+            12.62720837493091,
+            -0.6248054281666466,
+            15.038969497220831
+          ]
+        }
+      }
+    },
+    {
+      "name": "returning to educational mode restores demonstration orbits",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "returning to demo re-enables orbit control and demo speed label",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "unsupported date shows range error without switching scene data",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "mobile bottom UTC date panel remains visible and bounded",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "page reinitializes under blocked ephemeris requests",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "missing ephemeris data retains demonstration mode and error guidance",
+      "pass": true,
+      "actual": null
+    }
+  ],
+  "requests": [
+    "http://127.0.0.1:10663/data/science/v1/manifest.json",
+    "http://127.0.0.1:10663/data/science/v1/2026.json",
+    "http://127.0.0.1:10663/data/science/v1/2027.json",
+    "http://127.0.0.1:10663/data/science/v1/manifest.json"
+  ],
+  "screenshots": [
+    "docs/baselines/2026-10-27-T27-T26-regression-desktop-date-demo.png",
+    "docs/baselines/2026-10-27-T27-T26-regression-desktop-date-active.png",
+    "docs/baselines/2026-10-27-T27-T26-regression-mobile-date.png",
+    "docs/baselines/2026-10-27-T27-T26-regression-mobile-data-unavailable.png"
+  ],
+  "errors": [],
+  "finished": "2026-10-27T09:42:11.731Z",
+  "summary": {
+    "passed": 20,
+    "failed": 0,
+    "errors": 0
+  }
+}

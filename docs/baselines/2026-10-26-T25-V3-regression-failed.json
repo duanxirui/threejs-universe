@@ -1,0 +1,570 @@
+{
+  "started": "2026-10-26T10:03:49.455Z",
+  "previewUrl": "http://127.0.0.1:5173/",
+  "environment": "Isolated Headless Chrome/SwiftShader and CSS mobile emulation",
+  "limitations": [
+    "Not physical Android/iOS touch, GPU memory or FPS evidence."
+  ],
+  "checks": [
+    {
+      "name": "V3 page initialized",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "all five dialogs share surface, heading and close styles",
+      "passed": true,
+      "actual": {
+        "count": 5,
+        "radii": [
+          "18px"
+        ],
+        "backgrounds": [
+          "linear-gradient(145deg, rgb(16, 38, 60) 0%, rgb(8, 22, 37) 100%)"
+        ],
+        "headers": [
+          "linear-gradient(110deg, rgb(23, 57, 84) 0%, rgb(12, 35, 56) 100%)"
+        ],
+        "closeHeights": [
+          "44px"
+        ]
+      }
+    },
+    {
+      "name": "search dialog fits desktop viewport",
+      "passed": true,
+      "actual": {
+        "left": 337,
+        "right": 1007,
+        "top": 20,
+        "bottom": 650,
+        "width": 670,
+        "height": 630,
+        "viewport": 1344,
+        "viewportHeight": 670
+      }
+    },
+    {
+      "name": "help dialog fits desktop viewport",
+      "passed": true,
+      "actual": {
+        "left": 322,
+        "right": 1022,
+        "top": 20,
+        "bottom": 650,
+        "width": 700,
+        "height": 630,
+        "viewport": 1344,
+        "viewportHeight": 670
+      }
+    },
+    {
+      "name": "compare dialog fits desktop viewport",
+      "passed": true,
+      "actual": {
+        "left": 292,
+        "right": 1052,
+        "top": 20,
+        "bottom": 650,
+        "width": 760,
+        "height": 630,
+        "viewport": 1344,
+        "viewportHeight": 670
+      }
+    },
+    {
+      "name": "atlas dialog fits desktop viewport",
+      "passed": true,
+      "actual": {
+        "left": 322,
+        "right": 1022,
+        "top": 47.328125,
+        "bottom": 622.65625,
+        "width": 700,
+        "height": 575.328125,
+        "viewport": 1344,
+        "viewportHeight": 670
+      }
+    },
+    {
+      "name": "clipboard denied opens shared link dialog",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "link can be selected without a native prompt",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "link dialog closes and restores focus",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "V3 hub opens and isolates background",
+      "passed": true,
+      "actual": {
+        "open": true,
+        "inert": true,
+        "routeCount": 3
+      }
+    },
+    {
+      "name": "guided route starts",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "guided arrival at Sun",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "guided next step",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "guided previous step",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "guided skip step",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "guided tour exits",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "celestial source and scale disclosure",
+      "passed": true,
+      "actual": {
+        "href": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/",
+        "note": "最靠近太阳 · 当前页面是近似科普数据；球体大小、轨道间距和运行速度另作视觉缩放。"
+      }
+    },
+    {
+      "name": "T25 per-body provenance exists with scientific release warning",
+      "passed": true,
+      "actual": {
+        "present": true,
+        "open": false,
+        "body": "mercury",
+        "items": 5,
+        "caution": "以上为官方页面数值的独立转录对照；页面显示值仍属近似，尚未完成逐值科学发布审批。自转方向、半径定义与同步旋转口径必须结合来源说明理解。"
+      }
+    },
+    {
+      "name": "T25 official table rows and URLs are individually accessible",
+      "passed": true,
+      "actual": {
+        "open": true,
+        "links": 5,
+        "httpsOnly": true,
+        "sourceRows": 5,
+        "mentionsEvidence": true
+      }
+    },
+    {
+      "name": "favorite toggles",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "orbit explanation layer",
+      "passed": true,
+      "actual": {
+        "visible": true,
+        "reference": "太阳",
+        "period": "约 88 天"
+      }
+    },
+    {
+      "name": "PNG snapshot exported",
+      "passed": true,
+      "actual": {
+        "blob": {
+          "size": 87970,
+          "type": "image/png"
+        },
+        "errors": [],
+        "toast": "场景图片已生成",
+        "buttonDisabled": false,
+        "shareAvailable": "function"
+      }
+    },
+    {
+      "name": "favorites and recent history visible",
+      "passed": true,
+      "actual": {
+        "favorites": 1,
+        "recents": 2
+      }
+    },
+    {
+      "name": "compare trigger reachable through scrolling",
+      "passed": true,
+      "actual": {
+        "target": {
+          "top": 314.5625,
+          "bottom": 357.5625
+        },
+        "panel": {
+          "top": 85,
+          "bottom": 588,
+          "scrollTop": 593,
+          "scrollHeight": 1334,
+          "clientHeight": 501
+        },
+        "hitNode": "<button id=\"detail-compare-trigger\" class=\"detail-compare-trigger\" type=\"button\"><svg class=\"ui-icon\" aria-hidden=\"true\"><use href=\"#ic-swap\"></use></svg><span>对比其他天体</span></button>",
+        "visibility": "visible",
+        "pointerEvents": "auto",
+        "hit": true
+      }
+    },
+    {
+      "name": "same scale diameter comparison",
+      "passed": true,
+      "actual": {
+        "circles": 2,
+        "caption": "火星直径约为水星的 1.389 倍。"
+      }
+    },
+    {
+      "name": "extreme diameter ratio remains proportional",
+      "passed": true,
+      "actual": {
+        "radii": [
+          68,
+          0.1697557471264368
+        ],
+        "caption": "太阳直径约为月球的 400.6 倍。较小圆可能几乎不可见，圆形半径未被人为放大。"
+      }
+    },
+    {
+      "name": "planet deep link restores scene",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "favorites persist across reload",
+      "passed": true,
+      "actual": {
+        "favorites": [
+          "mercury"
+        ],
+        "recents": [
+          "earth",
+          "mercury",
+          "sun"
+        ]
+      }
+    },
+    {
+      "name": "invalid deep link safely falls back",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "prototype-key deep link is rejected",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "second theme route navigates to Moon",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "manual camera interaction ends guide",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "third theme route starts",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "third route advances to station 2",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "third route advances to station 3",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "third route advances to station 4",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "third route advances to station 5",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "third route advances to station 6",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "third route completes",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "mobile atlas dialog fits viewport",
+      "passed": true,
+      "actual": {
+        "left": 12,
+        "right": 378,
+        "viewport": 390,
+        "scrollWidth": 390,
+        "open": true
+      }
+    },
+    {
+      "name": "all dialogs share mobile radius and close size",
+      "passed": true,
+      "actual": {
+        "radii": [
+          "15px"
+        ],
+        "closeHeights": [
+          "44px"
+        ]
+      }
+    },
+    {
+      "name": "search dialog fits mobile viewport",
+      "passed": true,
+      "actual": {
+        "left": 12,
+        "right": 378,
+        "top": 49.390625,
+        "bottom": 794.59375,
+        "width": 366,
+        "height": 745.203125
+      }
+    },
+    {
+      "name": "help dialog fits mobile viewport",
+      "passed": true,
+      "actual": {
+        "left": 12,
+        "right": 378,
+        "top": 12,
+        "bottom": 832,
+        "width": 366,
+        "height": 820
+      }
+    },
+    {
+      "name": "compare dialog fits mobile viewport",
+      "passed": true,
+      "actual": {
+        "left": 12,
+        "right": 378,
+        "top": 12,
+        "bottom": 832,
+        "width": 366,
+        "height": 820
+      }
+    },
+    {
+      "name": "atlas dialog fits mobile viewport",
+      "passed": true,
+      "actual": {
+        "left": 12,
+        "right": 378,
+        "top": 12,
+        "bottom": 832,
+        "width": 366,
+        "height": 820
+      }
+    },
+    {
+      "name": "copy dialog fits mobile viewport",
+      "passed": true,
+      "actual": {
+        "left": 12,
+        "right": 378,
+        "top": 258.328125,
+        "bottom": 585.65625,
+        "width": 366
+      }
+    },
+    {
+      "name": "search popup fits 360x740",
+      "passed": true,
+      "actual": {
+        "open": true,
+        "left": 12,
+        "right": 348,
+        "top": 24.4375,
+        "bottom": 715.5625,
+        "width": 336,
+        "height": 691.125,
+        "overflowY": "hidden"
+      }
+    },
+    {
+      "name": "help popup fits 360x740",
+      "passed": true,
+      "actual": {
+        "open": true,
+        "left": 12,
+        "right": 348,
+        "top": 12,
+        "bottom": 728,
+        "width": 336,
+        "height": 716,
+        "overflowY": "auto"
+      }
+    },
+    {
+      "name": "compare popup fits 360x740",
+      "passed": true,
+      "actual": {
+        "open": true,
+        "left": 12,
+        "right": 348,
+        "top": 12,
+        "bottom": 728,
+        "width": 336,
+        "height": 716,
+        "overflowY": "auto"
+      }
+    },
+    {
+      "name": "atlas popup fits 360x740",
+      "passed": true,
+      "actual": {
+        "open": true,
+        "left": 12,
+        "right": 348,
+        "top": 12,
+        "bottom": 728,
+        "width": 336,
+        "height": 716,
+        "overflowY": "auto"
+      }
+    },
+    {
+      "name": "copy popup opens 360x740",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "copy popup fits 360x740",
+      "passed": true,
+      "actual": {
+        "open": true,
+        "left": 12,
+        "right": 348,
+        "top": 197.265625,
+        "bottom": 542.734375,
+        "width": 336,
+        "height": 345.46875,
+        "overflowY": "auto"
+      }
+    },
+    {
+      "name": "search popup fits 844x390",
+      "passed": true,
+      "actual": {
+        "open": true,
+        "left": 87,
+        "right": 757,
+        "top": 20,
+        "bottom": 370,
+        "width": 670,
+        "height": 350,
+        "overflowY": "hidden"
+      }
+    },
+    {
+      "name": "help popup fits 844x390",
+      "passed": true,
+      "actual": {
+        "open": true,
+        "left": 72,
+        "right": 772,
+        "top": 20,
+        "bottom": 370,
+        "width": 700,
+        "height": 350,
+        "overflowY": "auto"
+      }
+    },
+    {
+      "name": "compare popup fits 844x390",
+      "passed": true,
+      "actual": {
+        "open": true,
+        "left": 42,
+        "right": 802,
+        "top": 20,
+        "bottom": 370,
+        "width": 760,
+        "height": 350,
+        "overflowY": "auto"
+      }
+    },
+    {
+      "name": "atlas popup fits 844x390",
+      "passed": true,
+      "actual": {
+        "open": true,
+        "left": 72,
+        "right": 772,
+        "top": 20,
+        "bottom": 370,
+        "width": 700,
+        "height": 350,
+        "overflowY": "auto"
+      }
+    },
+    {
+      "name": "copy popup opens 844x390",
+      "passed": false,
+      "actual": {
+        "atlasOpen": true,
+        "message": "已完成「行星差异」主题路线",
+        "clipboard": "()=>Promise.reject(Error(\"denied\"))",
+        "url": "http://127.0.0.1:5173/"
+      }
+    },
+    {
+      "name": "copy popup fits 844x390",
+      "passed": false,
+      "actual": {
+        "open": false,
+        "left": 152,
+        "right": 692,
+        "top": 20,
+        "bottom": 370,
+        "width": 540,
+        "height": 350,
+        "overflowY": "auto"
+      }
+    }
+  ],
+  "errors": [],
+  "desktopScreenshot": "docs/baselines/2026-10-26-T25-V3-atlas-desktop.png",
+  "mobileScreenshot": "docs/baselines/2026-10-26-T25-V3-atlas-mobile.png",
+  "finished": "2026-10-26T10:04:28.173Z",
+  "summary": {
+    "passed": 56,
+    "failed": 2,
+    "errors": 0
+  }
+}

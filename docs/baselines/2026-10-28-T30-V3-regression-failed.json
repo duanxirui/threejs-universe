@@ -1,0 +1,18 @@
+{
+  "started": "2026-10-28T05:18:04.757Z",
+  "previewUrl": "http://127.0.0.1:5188/",
+  "environment": "Isolated Headless Chrome/SwiftShader and CSS mobile emulation",
+  "limitations": [
+    "Not physical Android/iOS touch, GPU memory or FPS evidence."
+  ],
+  "checks": [],
+  "errors": [
+    "TypeError: fetch failed\n    at node:internal/deps/undici/undici:15157:13\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async file:///D:/codex%E9%A1%B9%E7%9B%AE/threejs-universe/scripts/v3-browser-audit.mjs:144:19"
+  ],
+  "finished": "2026-10-28T05:18:05.086Z",
+  "summary": {
+    "passed": 0,
+    "failed": 0,
+    "errors": 1
+  }
+}

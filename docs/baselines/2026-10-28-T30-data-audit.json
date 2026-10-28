@@ -1,0 +1,85 @@
+{
+  "task": "T30",
+  "generatedAt": "2026-10-28T04:36:49.631Z",
+  "environment": "Node.js deterministic catalog / local upstream OpenNGC CSV snapshot",
+  "limitations": [
+    "A curated Messier classroom subset, not a whole-sky census.",
+    "NASA object distances are published approximations, not precise 3D coordinates.",
+    "No external image files distributed: NASA pages provide observed images and per-image credits.",
+    "No independent scientific review required."
+  ],
+  "checks": [
+    {
+      "name": "OpenNGC CC BY-SA 4.0 and J2000 provenance explicitly recorded",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "upstream raw NGC.csv matches SHA-256 and bytes",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "upstream raw addendum.csv matches SHA-256 and bytes",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "derived static file objects.json matches checksum",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "derived static file routes.json matches checksum",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "15 distinct Messier objects across three classes",
+      "pass": true,
+      "detail": {
+        "nebula": 6,
+        "cluster": 3,
+        "galaxy": 6
+      }
+    },
+    {
+      "name": "J2000 celestial directions normalized; common virtual radius does not encode depth",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "OpenNGC original string coordinates map to converted J2000 degrees",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "15 published distance links and observed-image credits are traceable",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "exact ID, NGC cross-ID and Chinese text search work",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "three routes contain valid stops and meaningful educational prompts",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "invalid catalog frame or missing provenance is rejected",
+      "pass": true,
+      "detail": null
+    }
+  ],
+  "errors": [],
+  "summary": {
+    "passed": 12,
+    "failed": 0,
+    "errors": 0,
+    "objects": 15,
+    "routes": 3
+  }
+}

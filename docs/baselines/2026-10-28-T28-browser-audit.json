@@ -1,0 +1,93 @@
+{
+  "task": "T28",
+  "generatedAt": "2026-10-28T03:22:16.930Z",
+  "environment": "Local dist, isolated headless Chrome/SwiftShader, desktop and emulated mobile viewport",
+  "limitations": [
+    "No Android/iOS hardware, native GPU or screen reader verification.",
+    "Simplified spin poles and geometry; eclipse predictions are not provided."
+  ],
+  "checks": [
+    {
+      "name": "page initializes without a fatal WebGL error",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "one T28 panel is mounted inside the existing time workspace",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "demonstration mode does not fabricate Moon phase",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "UTC date opens from the existing time rail",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "UTC observation activates after loading data",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Earth solar declination shows northern summer direction",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Moon illumination and axial pose are numeric",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "new Moon UTC time produces a narrow illuminated disk",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "full Moon UTC time produces a bright disk",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "phase and painted canvas respond to date change",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "physical Earth focus uses floating origin with matching solar light",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "physical mode does not change Moon phase or its UTC timestamp",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "mobile time panel exposes the same Moon and Earth readout",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "returning to demo clears phase values",
+      "pass": true,
+      "detail": null
+    }
+  ],
+  "screenshots": [
+    "docs/baselines/2026-10-28-T28-june-observation-desktop.png",
+    "docs/baselines/2026-10-28-T28-earth-physical-lighting.png",
+    "docs/baselines/2026-10-28-T28-mobile-observations.png"
+  ],
+  "errors": [],
+  "finished": "2026-10-28T03:22:24.562Z",
+  "summary": {
+    "passed": 14,
+    "failed": 0,
+    "errors": 0
+  }
+}

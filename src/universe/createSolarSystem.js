@@ -15,11 +15,11 @@ import { createOrbitLine, pointOnOrbit } from './orbitalMechanics.js';
 import { createSurfaceDetailMaps } from './surfaceDetail.js';
 import { createTextureManager } from './textureManager.js';
 import { addEclipseShading, addJupiterBandDrift, createEclipseUpdater } from './celestialLighting.js';
+import { createPhysicalFrame, renderRelativeKm, chooseFloatingOrigin,
+  getPhysicalRadiusScene, SCALE_MODES, SCENE_UNITS_PER_AU } from '../data/science/scaleModel.js';
+import { orientationAtUtc, calculateDateObservations } from '../data/science/orientationModel.js';
 
 const TAU = Math.PI * 2;
-const sphereGeometry = new THREE.SphereGeometry(1, 64, 48);
-const mediumSphereGeometry = new THREE.SphereGeometry(1, 32, 24);
-const lowSphereGeometry = new THREE.SphereGeometry(1, 16, 12);
 
 function createOrbit(body) {
   return createOrbitLine(body, 0x6c93b4, .23);
@@ -58,7 +58,7 @@ function createAsteroidBelt() {
   return belt;
 }
 
-function makePlanet(body, glowTexture) {
+function makePlanet(body, glowTexture, sphereGeometry, sunWorld) {
   const root = new THREE.Group();
   root.name = body.en;
 
@@ -76,13 +76,12 @@ function makePlanet(body, glowTexture) {
     material.emissive = new THREE.Color(0xffc68b);
     material.emissiveIntensity = .8;
     material.emissiveMap = createNightLightsTexture();
-    addNightSideLighting(material);
+    addNightSideLighting(material, sunWorld);
   }
   const bandUniforms = body.id === 'jupiter' ? addJupiterBandDrift(material) : null;
-  const eclipseUniforms = [addEclipseShading(material)];
+  const eclipseUniforms = [addEclipseShading(material, sunWorld)];
   const mesh = new THREE.Mesh(sphereGeometry, material);
   mesh.scale.setScalar(radius);
-  mesh.rotation.z = body.id === 'uranus' ? 1.71 : body.id === 'earth' ? .41 : .06;
   mesh.userData.bodyId = body.id;
   root.add(mesh);
 
@@ -100,7 +99,6 @@ function makePlanet(body, glowTexture) {
       })
     );
     clouds.scale.setScalar(radius * 1.017);
-    clouds.rotation.z = .41;
     // The moving translucent cloud shell already receives solar lighting.
     // Applying a second eclipse mask to it produced overlapping gray rings.
     root.add(clouds);
@@ -124,8 +122,7 @@ function makePlanet(body, glowTexture) {
       new THREE.RingGeometry(radius * 1.28, radius * 2.34, 256),
       createRingMaterial()
     );
-    ring.rotation.x = -Math.PI / 2 + .26;
-    ring.rotation.y = .16;
+    ring.rotation.x = -Math.PI / 2;
     root.add(ring);
   }
 
@@ -141,14 +138,27 @@ function makePlanet(body, glowTexture) {
         depthWrite: false
       })
     );
-    ring.rotation.z = Math.PI / 2.12;
+    ring.rotation.x = -Math.PI / 2;
     root.add(ring);
   }
 
-  return { root, mesh, clouds, atmosphere, eclipseUniforms, bandUniforms };
+  // Separate the planet's visual surface from its root: moon orbit offsets
+  // attach to the root later and must NOT inherit a planetary size scale.
+  const visual = new THREE.Group();
+  const axis = new THREE.Group();
+  axis.name = body.en + ' spin axis';
+  visual.add(axis);
+  for (const child of [...root.children]) {
+    // The translucent atmosphere does not need longitude rotation. Rings,
+    // clouds and the painted surface share the same planetary axial pole.
+    if (child === atmosphere) visual.add(child);
+    else axis.add(child);
+  }
+  root.add(visual);
+  return { root, visual, axis, mesh, clouds, atmosphere, eclipseUniforms, bandUniforms };
 }
 
-function makeSatellite(body) {
+function makeSatellite(body, mediumSphereGeometry, sunWorld) {
   const root = new THREE.Group();
   root.name = body.en;
   const material = new THREE.MeshStandardMaterial({
@@ -159,11 +169,13 @@ function makeSatellite(body) {
     roughness: 1,
     metalness: 0
   });
-  const eclipseUniforms = [addEclipseShading(material)];
+  const eclipseUniforms = [addEclipseShading(material, sunWorld)];
   const mesh = new THREE.Mesh(mediumSphereGeometry, material);
   mesh.scale.setScalar(body.radius);
   mesh.userData.bodyId = body.id;
-  root.add(mesh);
+  const axis = new THREE.Group();
+  axis.add(mesh);
+  root.add(axis);
   let atmosphere = null;
   if (body.id === 'titan') {
     atmosphere = new THREE.Mesh(
@@ -173,7 +185,7 @@ function makeSatellite(body) {
     atmosphere.scale.setScalar(body.radius * 1.16);
     root.add(atmosphere);
   }
-  return { root, mesh, atmosphere, eclipseUniforms };
+  return { root, axis, mesh, atmosphere, eclipseUniforms };
 }
 
 function createSolarFlares(glowTexture) {
@@ -202,9 +214,17 @@ function createSolarFlares(glowTexture) {
 }
 
 export function createSolarSystem(glowTexture, renderer) {
+  // Per-instance LOD geometries also need disposal when a different tier is
+  // active at shutdown, so keep ownership within this solar system.
+  const sphereGeometry = new THREE.SphereGeometry(1, 64, 48);
+  const mediumSphereGeometry = new THREE.SphereGeometry(1, 32, 24);
+  const lowSphereGeometry = new THREE.SphereGeometry(1, 16, 12);
   const group = new THREE.Group();
   group.name = 'Solar System';
   group.visible = false;
+  // Shared world-space Sun location for night-side and eclipse shaders.
+  // Under T27 floating origin this is not necessarily world (0,0,0).
+  const sunWorld = new THREE.Vector3();
   const orbitsGroup = new THREE.Group();
   group.add(orbitsGroup);
   const bodies = {};
@@ -220,10 +240,37 @@ export function createSolarSystem(glowTexture, renderer) {
   let pumpScheduled = false;
   let idleHandle = null;
   let jobSequence = 0;
+  let disposed = false;
+  const reliefTasks = new Map();
 
-  async function applyTexturedRelief(id, mesh, satellite = false) {
+  function scheduleReliefTask(task) {
+    if (disposed || !texturesEnabled || task.handle) return;
+    const run = () => {
+      task.handle = null;
+      if (disposed || !texturesEnabled || reliefTasks.get(task.id) !== task) return;
+      reliefTasks.delete(task.id);
+      task.apply();
+    };
+    if (typeof window.requestIdleCallback === 'function') {
+      task.handle = { type: 'idle', id: window.requestIdleCallback(run, { timeout: 1600 }) };
+    } else {
+      task.handle = { type: 'timeout', id: window.setTimeout(run, 0) };
+    }
+  }
+
+  function pauseReliefTasks() {
+    for (const task of reliefTasks.values()) {
+      if (!task.handle) continue;
+      if (task.handle.type === 'idle') window.cancelIdleCallback(task.handle.id);
+      else window.clearTimeout(task.handle.id);
+      task.handle = null;
+    }
+  }
+
+  async function applyTexturedRelief(id, mesh, satellite = false, signal = null) {
     // The albedo loader retains its existing fallback CanvasTexture on failure.
-    const loaded = await textures.applyMap(mesh, id, satellite);
+    const loaded = await textures.applyMap(mesh, id, satellite, signal);
+    if (disposed || signal?.aborted) return false;
     // Avoid doing three height-gradient conversions in the first render frame.
     // The colour texture is usable immediately; the queued JPG slot is freed
     // before generating the derived normal/roughness maps.
@@ -245,18 +292,16 @@ export function createSolarSystem(glowTexture, renderer) {
         console.warn(`Surface relief fallback for ${id}`, error);
       }
     };
-    if (typeof window.requestIdleCallback === 'function') {
-      window.requestIdleCallback(addDetail, { timeout: 1600 });
-    } else {
-      window.setTimeout(addDetail, 0);
-    }
+    const task = { id, apply: addDetail, handle: null };
+    reliefTasks.set(id, task);
+    scheduleReliefTask(task);
     return loaded;
   }
 
-  async function loadTextureForBody(id) {
+  async function loadTextureForBody(id, signal) {
     if (id === 'sun') {
-      const texture = await textures.get('sun');
-      if (!texture) return false;
+      const texture = await textures.get('sun', false, signal);
+      if (!texture || disposed || signal.aborted) return false;
       sunMaterial.uniforms.uSurface.value = texture;
       sunMaterial.uniforms.uUseSurface.value = 1;
       return true;
@@ -268,9 +313,9 @@ export function createSolarSystem(glowTexture, renderer) {
     if (body.data.textureSource === 'procedural') return true;
     const satellite = Boolean(body.data.parentId);
     if (['earth', 'moon', 'mars'].includes(id)) {
-      return applyTexturedRelief(id, body.mesh, satellite);
+      return applyTexturedRelief(id, body.mesh, satellite, signal);
     }
-    return textures.applyMap(body.mesh, id, satellite);
+    return textures.applyMap(body.mesh, id, satellite, signal);
   }
 
   function nextQueuedTexture() {
@@ -301,14 +346,16 @@ export function createSolarSystem(glowTexture, renderer) {
 
   function startTextureJob(job) {
     job.state = 'loading';
+    job.controller = new AbortController();
     activeTextureLoads++;
     Promise.resolve()
-      .then(() => loadTextureForBody(job.id))
+      .then(() => loadTextureForBody(job.id, job.controller.signal))
       .catch(error => {
         console.warn(`Texture job fallback for ${job.id}`, error);
         return false;
       })
       .then(success => {
+        if (job.state === 'cancelled' || disposed) return;
         job.state = 'complete';
         job.resolve(Boolean(success));
       })
@@ -353,6 +400,7 @@ export function createSolarSystem(glowTexture, renderer) {
   }
 
   function requestTexture(id, priority = 'focus') {
+    if (disposed) return Promise.resolve(false);
     if (!bodies[id]) return Promise.resolve(false);
     if (bodies[id].data.textureSource === 'procedural') return Promise.resolve(true);
     const level = texturePriorities[priority] ?? texturePriorities.focus;
@@ -385,10 +433,44 @@ export function createSolarSystem(glowTexture, renderer) {
     }
   }
 
+  function cancelPendingTextureJobs() {
+    for (const [id, job] of textureJobs) {
+      if (job.state === 'complete') continue;
+      job.state = 'cancelled';
+      job.controller?.abort();
+      job.resolve(false);
+      textureJobs.delete(id);
+    }
+  }
+
   function setTextureLoadingEnabled(enabled) {
-    texturesEnabled = enabled;
-    if (texturesEnabled) queueTexturePump();
-    else cancelIdleLoad();
+    if (disposed) return;
+    texturesEnabled = Boolean(enabled);
+    if (texturesEnabled) {
+      for (const task of reliefTasks.values()) scheduleReliefTask(task);
+      queueTexturePump();
+    } else {
+      cancelIdleLoad();
+      pauseReliefTasks();
+      cancelPendingTextureJobs();
+    }
+  }
+
+  function dispose() {
+    if (disposed) return { textures: new Set(), geometries: new Set() };
+    texturesEnabled = false;
+    cancelIdleLoad();
+    pauseReliefTasks();
+    reliefTasks.clear();
+    cancelPendingTextureJobs();
+    textureJobs.clear();
+    disposed = true;
+    const releasedTextures = textures.dispose();
+    const releasedGeometries = new Set([
+      sphereGeometry, mediumSphereGeometry, lowSphereGeometry
+    ]);
+    for (const geometry of releasedGeometries) geometry.dispose();
+    return { textures: releasedTextures, geometries: releasedGeometries };
   }
 
   const solarLight = new THREE.PointLight(0xffe4be, 1350, 0, 2);
@@ -401,7 +483,9 @@ export function createSolarSystem(glowTexture, renderer) {
   const sunMesh = new THREE.Mesh(sphereGeometry, sunMaterial);
   sunMesh.scale.setScalar(sun.radius);
   sunMesh.userData.bodyId = sun.id;
-  sunRoot.add(sunMesh);
+  const sunAxis = new THREE.Group();
+  sunAxis.add(sunMesh);
+  sunRoot.add(sunAxis);
 
   const innerGlow = createGlowSprite(glowTexture, '#ffb04f', 12, .34);
   const outerGlow = createGlowSprite(glowTexture, '#ff842e', 29, .12);
@@ -410,59 +494,126 @@ export function createSolarSystem(glowTexture, renderer) {
   const flares = createSolarFlares(glowTexture);
   sunRoot.add(flares);
   group.add(sunRoot);
-  bodies.sun = { data: sun, root: sunRoot, mesh: sunMesh };
+  bodies.sun = { data: sun, sourceData: sun, root: sunRoot, axis: sunAxis, mesh: sunMesh };
   raycastMeshes.push(sunMesh);
 
   for (const body of CELESTIALS.slice(1)) {
     orbitsGroup.add(createOrbit(body));
-    const planet = makePlanet(body, glowTexture);
+    const planet = makePlanet(body, glowTexture, sphereGeometry, sunWorld);
     group.add(planet.root);
-    bodies[body.id] = { data: body, ...planet };
+    bodies[body.id] = { data: body, sourceData: body, ...planet };
     raycastMeshes.push(planet.mesh);
   }
 
   for (const moon of SATELLITES) {
     const parent = bodies[moon.parentId];
-    const satellite = makeSatellite(moon);
+    const satellite = makeSatellite(moon, mediumSphereGeometry, sunWorld);
     const orbit = createOrbitLine(moon, 0x7c98b8, .18);
     parent.root.add(orbit, satellite.root);
     moonOrbitGroups.push(orbit);
-    bodies[moon.id] = { data: moon, ...satellite };
+    bodies[moon.id] = { data: moon, sourceData: moon, ...satellite };
     raycastMeshes.push(satellite.mesh);
   }
 
   const belt = createAsteroidBelt();
   group.add(belt);
-  const updateEclipses = createEclipseUpdater(bodies);
+  const updateEclipses = createEclipseUpdater(bodies, sunRoot);
   let qualityTier = 0;
 
   let elapsedSimulation = 0;
+  let ephemerisStore = null;
+  let ephemerisUtcMs = null;
+  let orbitsRequested = true;
+  let ephemerisReachedEnd = false;
+  let scaleMode = 'enhanced';
+  let originAnchorId = 'sun';
+  let physicalFrame = Object.create(null);
+  let observationInfo = { enabled: false, utcMs: null };
+  const poseUp = new THREE.Vector3(0, 1, 0);
+  const posePole = new THREE.Vector3();
+  const EPHEMERIS_DAY_MS = 86400000;
+  function updateOrbitVisibility() {
+    const visible = orbitsRequested && !ephemerisStore && scaleMode === 'enhanced';
+    orbitsGroup.visible = visible;
+    for (const orbit of moonOrbitGroups) orbit.visible = visible;
+  }
+  function applyPose(id, entry, demoRate, demoTilt = 0) {
+    const datePose = ephemerisStore ? orientationAtUtc(id, ephemerisUtcMs) : null;
+    if (datePose) {
+      posePole.fromArray(datePose.poleScene);
+      entry.axis.quaternion.setFromUnitVectors(poseUp, posePole);
+      entry.mesh.rotation.set(0, datePose.spinRadians, 0);
+    } else {
+      // Without a supported pole model the legacy display spin is illustrative.
+      entry.axis.rotation.set(0, 0, demoTilt);
+      entry.mesh.rotation.set(0, elapsedSimulation * demoRate, 0);
+    }
+    return datePose;
+  }
   const update = (delta, speed) => {
     if (speed > 0) elapsedSimulation += delta * speed;
+    ephemerisReachedEnd = false;
+    if (ephemerisStore && speed > 0) {
+      // One UTC day per real second at 1x, scaled by the existing playback
+      // control. A time boundary clamps and pauses via the UniverseApp caller.
+      const next = ephemerisUtcMs + delta * speed * EPHEMERIS_DAY_MS;
+      if (next >= ephemerisStore.endMs) ephemerisReachedEnd = true;
+      ephemerisUtcMs = Math.min(next, ephemerisStore.endMs);
+    }
+    const positions = ephemerisStore
+      ? ephemerisStore.getDisplayPositions(ephemerisUtcMs) : null;
+    physicalFrame = createPhysicalFrame({
+      elapsed: elapsedSimulation,
+      store: ephemerisStore,
+      utcMs: ephemerisUtcMs
+    });
+    observationInfo = calculateDateObservations(
+      physicalFrame, ephemerisStore ? ephemerisUtcMs : null
+    );
+    if (scaleMode === 'physical') {
+      group.position.fromArray(chooseFloatingOrigin(physicalFrame, originAnchorId));
+    } else {
+      group.position.set(0, 0, 0);
+    }
+    sunWorld.copy(group.position);
     sunMaterial.uniforms.uTime.value = elapsedSimulation;
     // T14: derive every spin from the simulation clock. A date seek or a
     // backwards scrub must place both orbital centres and rotations on the
     // chosen frame, regardless of the previous playback history.
-    sunMesh.rotation.y = elapsedSimulation * sun.rotationSpeed;
+    applyPose('sun', bodies.sun, sun.rotationSpeed);
     flares.rotation.y = elapsedSimulation * .07;
     belt.rotation.y = elapsedSimulation * .004;
 
     for (const body of CELESTIALS.slice(1)) {
       const planet = bodies[body.id];
-      const angle = body.phase + elapsedSimulation * body.orbitSpeed;
-      pointOnOrbit(body, angle, planet.root.position);
-      planet.mesh.rotation.y = elapsedSimulation * body.rotationSpeed;
-      if (planet.clouds) planet.clouds.rotation.y = elapsedSimulation * .038;
+      if (scaleMode === 'physical') {
+        planet.root.position.fromArray(renderRelativeKm(physicalFrame[body.id].relativeKm));
+      } else if (positions?.[body.id]) {
+        planet.root.position.fromArray(positions[body.id]);
+      } else {
+        // Unsupported planets retain their old, clearly labelled demonstration
+        // orbit and do not acquire a fictitious ephemeris date.
+        const angle = body.phase + elapsedSimulation * body.orbitSpeed;
+        pointOnOrbit(body, angle, planet.root.position);
+      }
+      const datePose = applyPose(body.id, planet, body.rotationSpeed,
+        body.id === 'uranus' ? 1.71 : body.id === 'earth' ? .41 : .06);
+      if (planet.clouds) planet.clouds.rotation.y = datePose
+        ? datePose.spinRadians + .08 : elapsedSimulation * .038;
     }
     for (const moon of SATELLITES) {
       const satellite = bodies[moon.id];
-      pointOnOrbit(moon, moon.phase + elapsedSimulation * moon.orbitSpeed, satellite.root.position);
-      satellite.mesh.rotation.y = elapsedSimulation * moon.rotationSpeed;
+      if (scaleMode === 'physical') {
+        satellite.root.position.fromArray(renderRelativeKm(physicalFrame[moon.id].relativeKm));
+      } else if (positions?.[moon.id]) satellite.root.position.fromArray(positions[moon.id]);
+      else pointOnOrbit(moon, moon.phase + elapsedSimulation * moon.orbitSpeed, satellite.root.position);
+      applyPose(moon.id, satellite, moon.rotationSpeed);
     }
     bodies.jupiter.bandUniforms.uJupiterBandTime.value = elapsedSimulation;
     // The galaxy landing view keeps the solar group hidden. Skip the analytic
     // eclipse CPU work until the user actually enters the solar scene.
     if (group.visible) updateEclipses(qualityTier);
+    return ephemerisReachedEnd;
   };
 
   update(0, 1);
@@ -473,10 +624,103 @@ export function createSolarSystem(glowTexture, renderer) {
     raycastMeshes,
     orbitsGroup,
     update,
+    dispose,
     setTextureLoadingEnabled,
     loadOverviewTextures,
     requestTexture,
     requestNearbyTextures,
+    setScaleMode(nextMode, anchorId = 'sun') {
+      if (!SCALE_MODES.includes(nextMode)) return false;
+      scaleMode = nextMode;
+      originAnchorId = bodies[anchorId] ? anchorId : 'sun';
+      for (const [id, entry] of Object.entries(bodies)) {
+        const radius = getPhysicalRadiusScene(id);
+        if (!(radius > 0)) throw Error('Missing physical radius for ' + id);
+        const factor = nextMode === 'physical' ? radius / entry.sourceData.radius : 1;
+        // The Sun and individual satellites have no nested orbiting children;
+        // planets use a separate visual group to preserve child-moon offsets.
+        if (entry.visual) entry.visual.scale.setScalar(factor);
+        else entry.root.scale.setScalar(factor);
+        entry.data = nextMode === 'physical'
+          ? { ...entry.sourceData, radius, physicalScale: true }
+          : entry.sourceData;
+      }
+      belt.visible = nextMode === 'enhanced';
+      // Point-light inverse-square falloff needs the same distance conversion
+      // as the geometry; otherwise planets become almost unlit at 1 AU.
+      solarLight.intensity = nextMode === 'physical'
+        ? 1350 * (SCENE_UNITS_PER_AU / 14.1) ** 2 : 1350;
+      updateOrbitVisibility();
+      update(0, 0);
+      return true;
+    },
+    setFloatingOriginAnchor(bodyId = 'sun') {
+      if (scaleMode !== 'physical' || !bodies[bodyId]) return null;
+      const before = group.position.clone();
+      originAnchorId = bodyId;
+      group.position.fromArray(chooseFloatingOrigin(physicalFrame, originAnchorId));
+      return group.position.clone().sub(before);
+    },
+    getScaleInfo() {
+      return {
+        mode: scaleMode, anchorId: originAnchorId,
+        origin: group.position.toArray(),
+        unitsPerAu: SCENE_UNITS_PER_AU,
+        physicalRadiusKm: 'diameterKm / 2'
+      };
+    },
+    getPhysicalPositionKm(id) {
+      return physicalFrame[id]?.absoluteKm.slice() || null;
+    },
+    getPhysicalRelativeKm(id) {
+      return physicalFrame[id]?.relativeKm.slice() || null;
+    },
+    getObservationInfo() { return observationInfo; },
+    getOrientationInfo(id) {
+      const entry = bodies[id];
+      if (!entry) return null;
+      const datePose = ephemerisStore ? orientationAtUtc(id, ephemerisUtcMs) : null;
+      return {
+        bodyId: id, source: datePose?.source || 'demonstration-spin',
+        poleScene: datePose?.poleScene || null,
+        spinRadians: entry.mesh.rotation.y,
+        axisQuaternion: entry.axis.quaternion.toArray()
+      };
+    },
+    getSunWorldPosition() { return sunWorld.toArray(); },
+    enableEphemeris(store, utcMs) {
+      if (!store?.hasUtc(utcMs) || !store.getDisplayPositions(utcMs)) return false;
+      ephemerisStore = store;
+      ephemerisUtcMs = utcMs;
+      updateOrbitVisibility();
+      update(0, 0);
+      return true;
+    },
+    seekEphemerisUtc(utcMs) {
+      if (!ephemerisStore?.hasUtc(utcMs) || !ephemerisStore.getDisplayPositions(utcMs)) {
+        return false;
+      }
+      ephemerisUtcMs = utcMs;
+      update(0, 0);
+      return true;
+    },
+    disableEphemeris() {
+      if (!ephemerisStore) return false;
+      ephemerisStore = null;
+      ephemerisUtcMs = null;
+      updateOrbitVisibility();
+      update(0, 0);
+      return true;
+    },
+    getEphemerisInfo() {
+      return ephemerisStore ? {
+        enabled: true, utcMs: ephemerisUtcMs,
+        startMs: ephemerisStore.startMs, endMs: ephemerisStore.endMs,
+        sourceVersion: ephemerisStore.manifest.sourceVersion,
+        source: ephemerisStore.manifest.source,
+        lastSample: ephemerisReachedEnd
+      } : { enabled: false, utcMs: null };
+    },
     setSimulationDays(days) {
       if (!Number.isFinite(days)) return false;
       // The date selector uses an arbitrary educational calendar epoch;
@@ -506,15 +750,16 @@ export function createSolarSystem(glowTexture, renderer) {
       if (group.visible) updateEclipses(qualityTier);
     },
     setOrbitsVisible(visible) {
-      orbitsGroup.visible = visible;
-      for (const orbit of moonOrbitGroups) orbit.visible = visible;
+      orbitsRequested = visible;
+      updateOrbitVisibility();
     },
     updateLevelOfDetail(camera) {
       const world = new THREE.Vector3();
       for (const body of CELESTIALS.slice(1)) {
         const planet = bodies[body.id];
         planet.root.getWorldPosition(world);
-        const projectedRadius = body.radius / Math.max(1, world.distanceTo(camera.position));
+        const projectedRadius = planet.data.radius /
+          Math.max(.0001, world.distanceTo(camera.position));
         // Separate entry/exit thresholds prevent camera damping and tiny
         // orbital movements from toggling the sphere tessellation repeatedly.
         const current = planet.mesh.geometry;

@@ -1,0 +1,87 @@
+{
+  "started": "2026-10-23T07:43:58.783Z",
+  "environment": "Local Pages-path HTTP server / Headless Chrome / SwiftShader",
+  "checks": [
+    {
+      "name": "versioned worker includes built shell and correct base",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "Pages site initializes online",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "offline feature is opt-in and initially disabled",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "opt-in downloads and activates application shell",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "registered versioned shell cache",
+      "passed": true,
+      "actual": {
+        "controller": true,
+        "registration": true,
+        "caches": [
+          "cosmos-atlas-shell-v3-ba2696b4c76929"
+        ]
+      }
+    },
+    {
+      "name": "new page is under worker control",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "a version upgrade activates new shell and removes old caches",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "visited texture downloads online",
+      "passed": true,
+      "actual": 200
+    },
+    {
+      "name": "visited texture is cached on demand",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "previously visited texture loads offline",
+      "passed": true,
+      "actual": 200
+    },
+    {
+      "name": "deep link and 3D page reopen offline",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "texture cache can be cleared without removing shell",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "opt-out unregisters worker and clears app caches",
+      "passed": true,
+      "actual": null
+    }
+  ],
+  "errors": [],
+  "limitations": [
+    "Not a physical Android/iOS device or a real GPU performance test."
+  ],
+  "finished": "2026-10-23T07:44:09.353Z",
+  "summary": {
+    "passed": 13,
+    "failed": 0,
+    "errors": 0
+  }
+}

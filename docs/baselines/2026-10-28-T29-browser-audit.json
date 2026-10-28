@@ -1,0 +1,199 @@
+{
+  "task": "T29",
+  "started": "2026-10-28T03:54:06.449Z",
+  "environment": "Local dist / isolated headless Chrome SwiftShader / desktop and emulated mobile",
+  "limitations": [
+    "No hardware GPU or actual Android/iOS touch verification.",
+    "A Gaia DR3 random-index subset is not a census of the Milky Way."
+  ],
+  "checks": [
+    {
+      "name": "application and WebGL initialize",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "Gaia has one explorer controller",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "initial view is procedural with no Gaia network requests",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "Gaia sample loads lazily and activates independently",
+      "pass": true,
+      "data": {
+        "mode": "galaxy",
+        "active": true,
+        "total": 2057,
+        "loaded": 383,
+        "visible": true,
+        "qualityTier": 2,
+        "distanceMaxPc": 400,
+        "gLimit": 16,
+        "loadedBands": [
+          "near",
+          "mid"
+        ],
+        "drawn": 383,
+        "selectedId": null,
+        "scene": "galaxy",
+        "illustrationVisible": false,
+        "backgroundStarsVisible": false,
+        "cameraDistance": 187.7471704180918,
+        "cameraTarget": [
+          0,
+          0,
+          0
+        ],
+        "referenceEpoch": 2016,
+        "sourcesSample": [
+          {
+            "sourceId": "187247281185703296",
+            "raDeg": 78.32188893,
+            "decDeg": 37.33670345,
+            "parallaxMas": 37.895269,
+            "distancePc": 26.388518313460185,
+            "gMag": 6.3506
+          },
+          {
+            "sourceId": "6196457933368101888",
+            "raDeg": 202.80436078,
+            "decDeg": -21.17899114,
+            "parallaxMas": 10.167137,
+            "distancePc": 98.35610555852645,
+            "gMag": 10.958
+          },
+          {
+            "sourceId": "3075955904089799552",
+            "raDeg": 132.10459271,
+            "decDeg": 2.2710516,
+            "parallaxMas": 12.599344,
+            "distancePc": 79.36921160339776,
+            "gMag": 11.1231
+          }
+        ]
+      }
+    },
+    {
+      "name": "Gaia source IDs and reference epoch remain exact",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "near and mid distance layers actually draw",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "far chunk loads on demand",
+      "pass": true,
+      "data": {
+        "mode": "galaxy",
+        "active": true,
+        "total": 2057,
+        "loaded": 2057,
+        "visible": true,
+        "qualityTier": 2,
+        "distanceMaxPc": 1000,
+        "gLimit": 16,
+        "loadedBands": [
+          "near",
+          "mid",
+          "far"
+        ],
+        "drawn": 2057,
+        "selectedId": null,
+        "scene": "galaxy",
+        "illustrationVisible": false,
+        "backgroundStarsVisible": false,
+        "cameraDistance": 187.7471704180918,
+        "cameraTarget": [
+          0,
+          0,
+          0
+        ],
+        "referenceEpoch": 2016,
+        "sourcesSample": [
+          {
+            "sourceId": "187247281185703296",
+            "raDeg": 78.32188893,
+            "decDeg": 37.33670345,
+            "parallaxMas": 37.895269,
+            "distancePc": 26.388518313460185,
+            "gMag": 6.3506
+          },
+          {
+            "sourceId": "6196457933368101888",
+            "raDeg": 202.80436078,
+            "decDeg": -21.17899114,
+            "parallaxMas": 10.167137,
+            "distancePc": 98.35610555852645,
+            "gMag": 10.958
+          },
+          {
+            "sourceId": "3075955904089799552",
+            "raDeg": 132.10459271,
+            "decDeg": 2.2710516,
+            "parallaxMas": 12.599344,
+            "distancePc": 79.36921160339776,
+            "gMag": 11.1231
+          }
+        ]
+      }
+    },
+    {
+      "name": "magnitude filter reduces rendered draw count",
+      "pass": true,
+      "data": {
+        "all": 2057,
+        "limited": 180
+      }
+    },
+    {
+      "name": "magnitude filter restores all available sources",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "full source ID search isolates correct result",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "selected Gaia source focuses camera and opens provenance",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "mobile Gaia explorer controls fit available width",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "returning to illustration hides all Gaia points",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "solar navigation remains independent of Gaia star map",
+      "pass": true,
+      "data": null
+    }
+  ],
+  "screenshots": [
+    "docs/baselines/2026-10-28-T29-desktop-near-mid.png",
+    "docs/baselines/2026-10-28-T29-desktop-source-focused.png",
+    "docs/baselines/2026-10-28-T29-mobile-gaia-panel.png"
+  ],
+  "errors": [],
+  "finished": "2026-10-28T03:54:13.200Z",
+  "summary": {
+    "passed": 14,
+    "failed": 0,
+    "errors": 0
+  }
+}

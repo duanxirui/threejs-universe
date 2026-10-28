@@ -1,0 +1,554 @@
+{
+  "task": "T27",
+  "started": "2026-10-27T09:26:52.158Z",
+  "environment": "Local dist / isolated headless Chrome SwiftShader / emulated viewports",
+  "limitations": [
+    "No physical Android/iOS touch or hardware GPU verification."
+  ],
+  "checks": [
+    {
+      "name": "default enhanced mode initializes",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "only one shared settings scale control exists",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "desktop buttons accessible in existing settings workspace",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "physical mode selected without changing scientific source",
+      "pass": true,
+      "actual": "physical"
+    },
+    {
+      "name": "physical diameter and mean orbit km ratios",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "solar overview scales to AU distances",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "solar transition settles before choosing another body",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "overview camera and positions remain finite",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "overview frustum tightens with camera distance",
+      "pass": true,
+      "actual": {
+        "near": 30,
+        "far": 130000
+      }
+    },
+    {
+      "name": "physical mode hides mismatched demonstration orbit lines",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "physical Earth focus and floating origin",
+      "pass": true,
+      "actual": {
+        "mode": "physical",
+        "anchorId": "earth",
+        "origin": [
+          -461.3100856404422,
+          0,
+          -878.2318558432204
+        ],
+        "unitsPerAu": 1000,
+        "physicalRadiusKm": "diameterKm / 2",
+        "transitioning": false,
+        "flying": true,
+        "cameraNear": 0.0006583134401313205,
+        "cameraFar": 250,
+        "cameraDistance": 0.3291567200656602,
+        "focusedBody": "earth",
+        "scene": "planet",
+        "floatingOrigin": [
+          -461.3100856404422,
+          0,
+          -878.2318558432204
+        ],
+        "bodies": {
+          "sun": {
+            "radiusScene": 4.652472637098838,
+            "absoluteKm": [
+              0,
+              0,
+              0
+            ],
+            "parentRelativeKm": [
+              0,
+              0,
+              0
+            ],
+            "worldPosition": [
+              -461.3100856404422,
+              0,
+              -878.2318558432204
+            ]
+          },
+          "mercury": {
+            "radiusScene": 0.016307050284773875,
+            "absoluteKm": [
+              -67285896.4635892,
+              2181977.492397088,
+              18095782.76726926
+            ],
+            "parentRelativeKm": [
+              -67285896.4635892,
+              2181977.492397088,
+              18095782.76726926
+            ],
+            "worldPosition": [
+              -911.0885226512386,
+              14.58561864675717,
+              -757.269019389765
+            ]
+          },
+          "venus": {
+            "radiusScene": 0.040455121263968635,
+            "absoluteKm": [
+              -20440805.460308123,
+              -6243862.1079457095,
+              -105705346.86002555
+            ],
+            "parentRelativeKm": [
+              -20440805.460308123,
+              -6243862.1079457095,
+              -105705346.86002555
+            ],
+            "worldPosition": [
+              -597.9484305892124,
+              -41.7376402399938,
+              -1584.8284562186664
+            ]
+          },
+          "earth": {
+            "radiusScene": 0.042587504555972266,
+            "absoluteKm": [
+              69011006.5442448,
+              0,
+              131381615.61505511
+            ],
+            "parentRelativeKm": [
+              69011006.5442448,
+              0,
+              131381615.61505511
+            ],
+            "worldPosition": [
+              0,
+              0,
+              0
+            ]
+          },
+          "mars": {
+            "radiusScene": 0.022657408050928897,
+            "absoluteKm": [
+              -229405065.33313686,
+              -2914689.073722641,
+              -91052941.41442733
+            ],
+            "parentRelativeKm": [
+              -229405065.33313686,
+              -2914689.073722641,
+              -91052941.41442733
+            ],
+            "worldPosition": [
+              -1994.7882311494802,
+              -19.48349304762291,
+              -1486.8831754667644
+            ]
+          },
+          "jupiter": {
+            "radiusScene": 0.46731948571778703,
+            "absoluteKm": [
+              372274737.04179406,
+              -15181098.578889968,
+              -659931371.7722872
+            ],
+            "parentRelativeKm": [
+              372274737.04179406,
+              -15181098.578889968,
+              -659931371.7722872
+            ],
+            "worldPosition": [
+              2027.1928275350065,
+              -101.47937606233569,
+              -5289.600605173202
+            ]
+          },
+          "saturn": {
+            "radiusScene": 0.3892435081296916,
+            "absoluteKm": [
+              -585049706.8421214,
+              58915911.47041235,
+              1338133776.3819392
+            ],
+            "parentRelativeKm": [
+              -585049706.8421214,
+              58915911.47041235,
+              1338133776.3819392
+            ],
+            "worldPosition": [
+              -4372.125821884217,
+              393.8285431118262,
+              8066.639953631934
+            ]
+          },
+          "uranus": {
+            "radiusScene": 0.16953449859497233,
+            "absoluteKm": [
+              -435963494.50931615,
+              -37089094.24652483,
+              -2852846528.513477
+            ],
+            "parentRelativeKm": [
+              -435963494.50931615,
+              -37089094.24652483,
+              -2852846528.513477
+            ],
+            "worldPosition": [
+              -3375.546046816567,
+              -247.9252817769206,
+              -19948.33302215265
+            ]
+          },
+          "neptune": {
+            "radiusScene": 0.16458790412449367,
+            "absoluteKm": [
+              4192509192.61864,
+              46692626.77657114,
+              1505731245.5950885
+            ],
+            "parentRelativeKm": [
+              4192509192.61864,
+              46692626.77657114,
+              1505731245.5950885
+            ],
+            "worldPosition": [
+              27563.8828733302,
+              312.1209316555543,
+              9186.959838058936
+            ]
+          },
+          "moon": {
+            "radiusScene": 0.011614470124941425,
+            "absoluteKm": [
+              68823316.32102749,
+              31048.68720350418,
+              131725669.06443422
+            ],
+            "parentRelativeKm": [
+              -187690.2232173069,
+              31048.68720350418,
+              344053.4493790965
+            ],
+            "worldPosition": [
+              -1.2546316490940996,
+              0.20754765464388514,
+              2.299855257091547
+            ]
+          },
+          "io": {
+            "radiusScene": 0.012175975443211974,
+            "absoluteKm": [
+              372116693.17432123,
+              -15177178.855264626,
+              -659539412.4755857
+            ],
+            "parentRelativeKm": [
+              -158043.86747280802,
+              3919.723625340731,
+              391959.2967015495
+            ],
+            "worldPosition": [
+              2026.1363695337443,
+              -101.45317432826688,
+              -5286.980519106018
+            ]
+          },
+          "europa": {
+            "radiusScene": 0.010434640497861044,
+            "absoluteKm": [
+              371603092.656707,
+              -15184494.115452431,
+              -660016214.907698
+            ],
+            "parentRelativeKm": [
+              -671644.3850870957,
+              -3395.536562462588,
+              -84843.13541078831
+            ],
+            "worldPosition": [
+              2022.7031621277094,
+              -101.50207382231432,
+              -5290.167746503582
+            ]
+          },
+          "ganymede": {
+            "radiusScene": 0.017607202480055085,
+            "absoluteKm": [
+              372429708.1448078,
+              -15212849.194857718,
+              -660989408.1126673
+            ],
+            "parentRelativeKm": [
+              154971.10301375744,
+              -31750.61596775141,
+              -1058036.3403800337
+            ],
+            "worldPosition": [
+              2028.228745374536,
+              -101.69161582095781,
+              -5296.673141268999
+            ]
+          },
+          "callisto": {
+            "radiusScene": 0.016113197258228087,
+            "absoluteKm": [
+              373814953.43570966,
+              -15223400.861926688,
+              -660988364.7575923
+            ],
+            "parentRelativeKm": [
+              1540216.3939155857,
+              -42302.2830367203,
+              -1056992.9853051016
+            ],
+            "worldPosition": [
+              2037.4885382072814,
+              -101.7621493587655,
+              -5296.6661668711
+            ]
+          },
+          "titan": {
+            "radiusScene": 0.017212811839841247,
+            "absoluteKm": [
+              -586102342.9318266,
+              58949539.60649135,
+              1338805778.5411508
+            ],
+            "parentRelativeKm": [
+              -1052636.0897052614,
+              33628.13607899925,
+              672002.1592115995
+            ],
+            "worldPosition": [
+              -4379.162259533896,
+              394.0533333172058,
+              8071.132010611536
+            ]
+          },
+          "mimas": {
+            "radiusScene": 0.0013235482502091524,
+            "absoluteKm": [
+              -585077768.7735107,
+              58920853.24745216,
+              1338316930.449051
+            ],
+            "parentRelativeKm": [
+              -28061.93138930617,
+              4941.777039807944,
+              183154.06711163744
+            ],
+            "worldPosition": [
+              -4372.313404309408,
+              393.8615768509876,
+              8067.864262950339
+            ]
+          },
+          "enceladus": {
+            "radiusScene": 0.0016845159548116483,
+            "absoluteKm": [
+              -585272694.2758834,
+              58919448.62504415,
+              1338218866.1439576
+            ],
+            "parentRelativeKm": [
+              -222987.43376210087,
+              3537.154631803071,
+              85089.7620183487
+            ],
+            "worldPosition": [
+              -4373.616400812371,
+              393.8521875301274,
+              8067.2087435593585
+            ]
+          },
+          "tethys": {
+            "radiusScene": 0.0035495157619245448,
+            "absoluteKm": [
+              -585125670.3141482,
+              58914137.344595514,
+              1337848700.8128455
+            ],
+            "parentRelativeKm": [
+              -75963.47202681671,
+              -1774.1258168351517,
+              -285075.5690938021
+            ],
+            "worldPosition": [
+              -4372.63360633109,
+              393.8166838132377,
+              8064.734341153896
+            ]
+          },
+          "dione": {
+            "radiusScene": 0.0037533956691537325,
+            "absoluteKm": [
+              -585148941.8019171,
+              58904173.73025082,
+              1337769868.0866587
+            ],
+            "parentRelativeKm": [
+              -99234.95979566443,
+              -11737.740161532687,
+              -363908.29528041335
+            ],
+            "worldPosition": [
+              -4372.789166618546,
+              393.75008116509787,
+              8064.207376927616
+            ]
+          },
+          "rhea": {
+            "radiusScene": 0.005107024561413093,
+            "absoluteKm": [
+              -584525275.7591416,
+              58902404.10930954,
+              1338084525.2771795
+            ],
+            "parentRelativeKm": [
+              524431.082979751,
+              -13507.361102814883,
+              -49251.10475970408
+            ],
+            "worldPosition": [
+              -4368.620216620413,
+              393.73825197974253,
+              8066.3107303313
+            ]
+          },
+          "iapetus": {
+            "radiusScene": 0.004909829241306174,
+            "absoluteKm": [
+              -584344821.5561379,
+              58475355.117940344,
+              1341517077.8464544
+            ],
+            "parentRelativeKm": [
+              704885.2859833994,
+              -440556.3524720079,
+              3383301.4645152534
+            ],
+            "worldPosition": [
+              -4367.413954778855,
+              390.88360579145825,
+              8089.2559270323845
+            ]
+          },
+          "triton": {
+            "radiusScene": 0.009047588669990341,
+            "absoluteKm": [
+              4192175753.3641324,
+              46716835.103956364,
+              1505850669.0233586
+            ],
+            "parentRelativeKm": [
+              -333439.2545074177,
+              24208.32738522356,
+              119423.42827021933
+            ],
+            "worldPosition": [
+              27561.65396958346,
+              312.2827543290452,
+              9187.758134369647
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "focused Earth camera does not intersect surface",
+      "pass": true,
+      "actual": {
+        "distance": 0.3291567200656602,
+        "near": 0.0006583134401313205,
+        "far": 250
+      }
+    },
+    {
+      "name": "physical scale survives UTC ephemeris activation",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "date mode keeps physical radii and floating anchor",
+      "pass": true,
+      "actual": "earth"
+    },
+    {
+      "name": "switching to enhanced preserves km coordinates and UTC",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "ephemeris alone still disables demo orbit switch",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "Moon focus rebases parent-relative coordinates",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "free-flight scene remains operational at physical scale",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "mobile settings share the same scale control",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "mobile scale controls fit viewport and remain clickable",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "mobile mode switching restores physical state",
+      "pass": true,
+      "actual": null
+    }
+  ],
+  "screenshots": [
+    "docs/baselines/2026-10-27-T27-earth-physical-desktop.png",
+    "docs/baselines/2026-10-27-T27-date-physical-desktop.png",
+    "docs/baselines/2026-10-27-T27-mobile-settings-physical.png"
+  ],
+  "errors": [],
+  "finished": "2026-10-27T09:27:02.587Z",
+  "summary": {
+    "passed": 21,
+    "failed": 0,
+    "errors": 0
+  }
+}

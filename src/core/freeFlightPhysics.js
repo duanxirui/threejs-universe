@@ -3,10 +3,16 @@ import * as THREE from 'three';
 // These are scene units, not astronomical distances. Keep satellite clearances
 // small enough that the closest moons remain reachable beside their parent.
 export function getBodyClearance(body) {
+  if (body.physicalScale) {
+    return Math.max(body.radius * 1.4, body.radius + .002);
+  }
   return Math.max(body.radius * 1.16, body.radius + (body.parentId ? .12 : .18), body.parentId ? .3 : 0);
 }
 
 export function getArrivalDistance(body) {
+  if (body.physicalScale) {
+    return Math.max(getBodyClearance(body) + Math.max(.005, body.radius * .6), body.radius * 2.1);
+  }
   return Math.max(getBodyClearance(body) + .55, body.radius * 2.1);
 }
 

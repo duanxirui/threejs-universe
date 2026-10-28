@@ -1,0 +1,725 @@
+{
+  "schema": "cosmos-deepsky-objects-v1",
+  "objects": [
+    {
+      "id": "M1",
+      "catalogId": "NGC1952",
+      "aliases": [
+        "M 1",
+        "NGC1952"
+      ],
+      "nameZh": "蟹状星云",
+      "nameEn": "Crab Nebula",
+      "category": "nebula",
+      "subtype": "超新星遗迹",
+      "intro": "恒星爆发留下的膨胀气体与脉冲星，让我们观察恒星演化的剧烈终点。",
+      "openNgcType": "SNR",
+      "constellationCode": "Tau",
+      "position": {
+        "raDeg": 83.63320833,
+        "decDeg": 22.01447222,
+        "rawRa": "05:34:31.97",
+        "rawDec": "+22:00:52.1",
+        "frame": "ICRS J2000.0"
+      },
+      "angularSizeArcmin": {
+        "major": 8,
+        "minor": 4
+      },
+      "magnitude": {
+        "band": "V",
+        "value": 8.4
+      },
+      "distance": {
+        "approximateLightYears": 6500,
+        "qualifier": "approximate",
+        "source": "NASA / Hubble Messier Catalog",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-1/",
+        "warning": "Published estimates vary with data and method; not for precision position reconstruction."
+      },
+      "sources": {
+        "coordinates": "OpenNGC / Mattia Verga (CC BY-SA 4.0)",
+        "catalogUrl": "https://github.com/mattiaverga/OpenNGC",
+        "distanceAndDescriptionUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-1/"
+      },
+      "imagery": {
+        "display": "symbolic-marker",
+        "isObservedImage": false,
+        "observedPhotoGalleryUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-1/",
+        "credit": "In-app icon is original schematic artwork; NASA source page gives image-specific credits."
+      }
+    },
+    {
+      "id": "M8",
+      "catalogId": "NGC6523",
+      "aliases": [
+        "M 8",
+        "NGC6523"
+      ],
+      "nameZh": "礁湖星云",
+      "nameEn": "Lagoon Nebula",
+      "category": "nebula",
+      "subtype": "发射星云",
+      "intro": "气体与尘埃云中正在形成新恒星，紫外辐射使部分气体发光。",
+      "openNgcType": "Neb",
+      "constellationCode": "Sgr",
+      "position": {
+        "raDeg": 270.92195833,
+        "decDeg": -24.38016667,
+        "rawRa": "18:03:41.27",
+        "rawDec": "-24:22:48.6",
+        "frame": "ICRS J2000.0"
+      },
+      "angularSizeArcmin": {
+        "major": 45,
+        "minor": 30
+      },
+      "magnitude": {
+        "band": "V",
+        "value": 5.8
+      },
+      "distance": {
+        "approximateLightYears": 5200,
+        "qualifier": "approximate",
+        "source": "NASA / Hubble Messier Catalog",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-8/",
+        "warning": "Published estimates vary with data and method; not for precision position reconstruction."
+      },
+      "sources": {
+        "coordinates": "OpenNGC / Mattia Verga (CC BY-SA 4.0)",
+        "catalogUrl": "https://github.com/mattiaverga/OpenNGC",
+        "distanceAndDescriptionUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-8/"
+      },
+      "imagery": {
+        "display": "symbolic-marker",
+        "isObservedImage": false,
+        "observedPhotoGalleryUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-8/",
+        "credit": "In-app icon is original schematic artwork; NASA source page gives image-specific credits."
+      }
+    },
+    {
+      "id": "M16",
+      "catalogId": "NGC6611",
+      "aliases": [
+        "M 16",
+        "NGC6611"
+      ],
+      "nameZh": "鹰状星云",
+      "nameEn": "Eagle Nebula",
+      "category": "nebula",
+      "subtype": "发射星云与星团",
+      "intro": "M16 包含 NGC 6611 星团及邻近的 IC 4703 星云；创生之柱属于恒星形成区。",
+      "openNgcType": "Neb",
+      "constellationCode": "Se2",
+      "position": {
+        "raDeg": 274.70070833,
+        "decDeg": -13.80722222,
+        "rawRa": "18:18:48.17",
+        "rawDec": "-13:48:26.0",
+        "frame": "ICRS J2000.0"
+      },
+      "angularSizeArcmin": {
+        "major": 120,
+        "minor": 25
+      },
+      "magnitude": {
+        "band": "V",
+        "value": 6
+      },
+      "distance": {
+        "approximateLightYears": 7000,
+        "qualifier": "approximate",
+        "source": "NASA / Hubble Messier Catalog",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-16/",
+        "warning": "Published estimates vary with data and method; not for precision position reconstruction."
+      },
+      "sources": {
+        "coordinates": "OpenNGC / Mattia Verga (CC BY-SA 4.0)",
+        "catalogUrl": "https://github.com/mattiaverga/OpenNGC",
+        "distanceAndDescriptionUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-16/"
+      },
+      "imagery": {
+        "display": "symbolic-marker",
+        "isObservedImage": false,
+        "observedPhotoGalleryUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-16/",
+        "credit": "In-app icon is original schematic artwork; NASA source page gives image-specific credits."
+      }
+    },
+    {
+      "id": "M27",
+      "catalogId": "NGC6853",
+      "aliases": [
+        "M 27",
+        "NGC6853"
+      ],
+      "nameZh": "哑铃星云",
+      "nameEn": "Dumbbell Nebula",
+      "category": "nebula",
+      "subtype": "行星状星云",
+      "intro": "演化末期的恒星释放外层气体，与行星并无直接关系。",
+      "openNgcType": "PN",
+      "constellationCode": "Vul",
+      "position": {
+        "raDeg": 299.90158333,
+        "decDeg": 22.72102778,
+        "rawRa": "19:59:36.38",
+        "rawDec": "+22:43:15.7",
+        "frame": "ICRS J2000.0"
+      },
+      "angularSizeArcmin": {
+        "major": 6.7,
+        "minor": null
+      },
+      "magnitude": {
+        "band": "V",
+        "value": 7.4
+      },
+      "distance": {
+        "approximateLightYears": 1200,
+        "qualifier": "approximate",
+        "source": "NASA / Hubble Messier Catalog",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-27/",
+        "warning": "Published estimates vary with data and method; not for precision position reconstruction."
+      },
+      "sources": {
+        "coordinates": "OpenNGC / Mattia Verga (CC BY-SA 4.0)",
+        "catalogUrl": "https://github.com/mattiaverga/OpenNGC",
+        "distanceAndDescriptionUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-27/"
+      },
+      "imagery": {
+        "display": "symbolic-marker",
+        "isObservedImage": false,
+        "observedPhotoGalleryUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-27/",
+        "credit": "In-app icon is original schematic artwork; NASA source page gives image-specific credits."
+      }
+    },
+    {
+      "id": "M42",
+      "catalogId": "NGC1976",
+      "aliases": [
+        "M 42",
+        "NGC1976"
+      ],
+      "nameZh": "猎户座大星云",
+      "nameEn": "Orion Nebula",
+      "category": "nebula",
+      "subtype": "恒星形成区",
+      "intro": "年轻恒星照亮气体与尘埃，是观察恒星诞生过程的典型对象。",
+      "openNgcType": "Cl+N",
+      "constellationCode": "Ori",
+      "position": {
+        "raDeg": 83.81866667,
+        "decDeg": -5.38966667,
+        "rawRa": "05:35:16.48",
+        "rawDec": "-05:23:22.8",
+        "frame": "ICRS J2000.0"
+      },
+      "angularSizeArcmin": {
+        "major": 90,
+        "minor": 60
+      },
+      "magnitude": {
+        "band": "V",
+        "value": 4
+      },
+      "distance": {
+        "approximateLightYears": 1500,
+        "qualifier": "approximate",
+        "source": "NASA / Hubble Messier Catalog",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-42/",
+        "warning": "Published estimates vary with data and method; not for precision position reconstruction."
+      },
+      "sources": {
+        "coordinates": "OpenNGC / Mattia Verga (CC BY-SA 4.0)",
+        "catalogUrl": "https://github.com/mattiaverga/OpenNGC",
+        "distanceAndDescriptionUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-42/"
+      },
+      "imagery": {
+        "display": "symbolic-marker",
+        "isObservedImage": false,
+        "observedPhotoGalleryUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-42/",
+        "credit": "In-app icon is original schematic artwork; NASA source page gives image-specific credits."
+      }
+    },
+    {
+      "id": "M57",
+      "catalogId": "NGC6720",
+      "aliases": [
+        "M 57",
+        "NGC6720"
+      ],
+      "nameZh": "环状星云",
+      "nameEn": "Ring Nebula",
+      "category": "nebula",
+      "subtype": "行星状星云",
+      "intro": "环形外观只是三维气体结构的投影，真实形状更复杂。",
+      "openNgcType": "PN",
+      "constellationCode": "Lyr",
+      "position": {
+        "raDeg": 283.395875,
+        "decDeg": 33.02858333,
+        "rawRa": "18:53:35.01",
+        "rawDec": "+33:01:42.9",
+        "frame": "ICRS J2000.0"
+      },
+      "angularSizeArcmin": {
+        "major": 1.27,
+        "minor": null
+      },
+      "magnitude": {
+        "band": "V",
+        "value": 8.8
+      },
+      "distance": {
+        "approximateLightYears": 2000,
+        "qualifier": "approximate",
+        "source": "NASA / Hubble Messier Catalog",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-57/",
+        "warning": "Published estimates vary with data and method; not for precision position reconstruction."
+      },
+      "sources": {
+        "coordinates": "OpenNGC / Mattia Verga (CC BY-SA 4.0)",
+        "catalogUrl": "https://github.com/mattiaverga/OpenNGC",
+        "distanceAndDescriptionUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-57/"
+      },
+      "imagery": {
+        "display": "symbolic-marker",
+        "isObservedImage": false,
+        "observedPhotoGalleryUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-57/",
+        "credit": "In-app icon is original schematic artwork; NASA source page gives image-specific credits."
+      }
+    },
+    {
+      "id": "M3",
+      "catalogId": "NGC5272",
+      "aliases": [
+        "M 3",
+        "NGC5272"
+      ],
+      "nameZh": "M3 球状星团",
+      "nameEn": "Messier 3",
+      "category": "cluster",
+      "subtype": "球状星团",
+      "intro": "数十万颗恒星密集地受引力束缚，可比较老年恒星群与年轻疏散星团。",
+      "openNgcType": "GCl",
+      "constellationCode": "CVn",
+      "position": {
+        "raDeg": 205.54679167,
+        "decDeg": 28.37544444,
+        "rawRa": "13:42:11.23",
+        "rawDec": "+28:22:31.6",
+        "frame": "ICRS J2000.0"
+      },
+      "angularSizeArcmin": {
+        "major": 16.2,
+        "minor": null
+      },
+      "magnitude": {
+        "band": "V",
+        "value": 6.39
+      },
+      "distance": {
+        "approximateLightYears": 34000,
+        "qualifier": "approximate",
+        "source": "NASA / Hubble Messier Catalog",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-3/",
+        "warning": "Published estimates vary with data and method; not for precision position reconstruction."
+      },
+      "sources": {
+        "coordinates": "OpenNGC / Mattia Verga (CC BY-SA 4.0)",
+        "catalogUrl": "https://github.com/mattiaverga/OpenNGC",
+        "distanceAndDescriptionUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-3/"
+      },
+      "imagery": {
+        "display": "symbolic-marker",
+        "isObservedImage": false,
+        "observedPhotoGalleryUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-3/",
+        "credit": "In-app icon is original schematic artwork; NASA source page gives image-specific credits."
+      }
+    },
+    {
+      "id": "M13",
+      "catalogId": "NGC6205",
+      "aliases": [
+        "M 13",
+        "NGC6205"
+      ],
+      "nameZh": "武仙座球状星团",
+      "nameEn": "Hercules Globular Cluster",
+      "category": "cluster",
+      "subtype": "球状星团",
+      "intro": "大量恒星拥挤在球状分布中，典型球状星团拥有丰富的恒星族群。",
+      "openNgcType": "GCl",
+      "constellationCode": "Her",
+      "position": {
+        "raDeg": 250.42345833,
+        "decDeg": 36.46130556,
+        "rawRa": "16:41:41.63",
+        "rawDec": "+36:27:40.7",
+        "frame": "ICRS J2000.0"
+      },
+      "angularSizeArcmin": {
+        "major": 16.5,
+        "minor": null
+      },
+      "magnitude": {
+        "band": "V",
+        "value": 5.8
+      },
+      "distance": {
+        "approximateLightYears": 25000,
+        "qualifier": "approximate",
+        "source": "NASA / Hubble Messier Catalog",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-13/",
+        "warning": "Published estimates vary with data and method; not for precision position reconstruction."
+      },
+      "sources": {
+        "coordinates": "OpenNGC / Mattia Verga (CC BY-SA 4.0)",
+        "catalogUrl": "https://github.com/mattiaverga/OpenNGC",
+        "distanceAndDescriptionUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-13/"
+      },
+      "imagery": {
+        "display": "symbolic-marker",
+        "isObservedImage": false,
+        "observedPhotoGalleryUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-13/",
+        "credit": "In-app icon is original schematic artwork; NASA source page gives image-specific credits."
+      }
+    },
+    {
+      "id": "M44",
+      "catalogId": "NGC2632",
+      "aliases": [
+        "M 44",
+        "NGC2632"
+      ],
+      "nameZh": "蜂巢星团",
+      "nameEn": "Beehive Cluster",
+      "category": "cluster",
+      "subtype": "疏散星团",
+      "intro": "较年轻的恒星在疏散星团中形成后仍共享一定的空间运动。",
+      "openNgcType": "OCl",
+      "constellationCode": "Cnc",
+      "position": {
+        "raDeg": 130.0925,
+        "decDeg": 19.67205556,
+        "rawRa": "08:40:22.20",
+        "rawDec": "+19:40:19.4",
+        "frame": "ICRS J2000.0"
+      },
+      "angularSizeArcmin": {
+        "major": 108.6,
+        "minor": null
+      },
+      "magnitude": {
+        "band": "V",
+        "value": 3.1
+      },
+      "distance": {
+        "approximateLightYears": 600,
+        "qualifier": "approximate",
+        "source": "NASA / Hubble Messier Catalog",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-44/",
+        "warning": "Published estimates vary with data and method; not for precision position reconstruction."
+      },
+      "sources": {
+        "coordinates": "OpenNGC / Mattia Verga (CC BY-SA 4.0)",
+        "catalogUrl": "https://github.com/mattiaverga/OpenNGC",
+        "distanceAndDescriptionUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-44/"
+      },
+      "imagery": {
+        "display": "symbolic-marker",
+        "isObservedImage": false,
+        "observedPhotoGalleryUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-44/",
+        "credit": "In-app icon is original schematic artwork; NASA source page gives image-specific credits."
+      }
+    },
+    {
+      "id": "M31",
+      "catalogId": "NGC0224",
+      "aliases": [
+        "M 31",
+        "NGC0224"
+      ],
+      "nameZh": "仙女座星系",
+      "nameEn": "Andromeda Galaxy",
+      "category": "galaxy",
+      "subtype": "旋涡星系",
+      "intro": "距离银河系较近的大型星系，理解本星系群的尺度。",
+      "openNgcType": "G",
+      "constellationCode": "And",
+      "position": {
+        "raDeg": 10.68479167,
+        "decDeg": 41.26905556,
+        "rawRa": "00:42:44.35",
+        "rawDec": "+41:16:08.6",
+        "frame": "ICRS J2000.0"
+      },
+      "angularSizeArcmin": {
+        "major": 177.83,
+        "minor": 69.66
+      },
+      "magnitude": {
+        "band": "V",
+        "value": 3.44
+      },
+      "distance": {
+        "approximateLightYears": 2500000,
+        "qualifier": "approximate",
+        "source": "NASA / Hubble Messier Catalog",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-31/",
+        "warning": "Published estimates vary with data and method; not for precision position reconstruction."
+      },
+      "sources": {
+        "coordinates": "OpenNGC / Mattia Verga (CC BY-SA 4.0)",
+        "catalogUrl": "https://github.com/mattiaverga/OpenNGC",
+        "distanceAndDescriptionUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-31/"
+      },
+      "imagery": {
+        "display": "symbolic-marker",
+        "isObservedImage": false,
+        "observedPhotoGalleryUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-31/",
+        "credit": "In-app icon is original schematic artwork; NASA source page gives image-specific credits."
+      }
+    },
+    {
+      "id": "M51",
+      "catalogId": "NGC5194",
+      "aliases": [
+        "M 51",
+        "NGC5194"
+      ],
+      "nameZh": "涡状星系",
+      "nameEn": "Whirlpool Galaxy",
+      "category": "galaxy",
+      "subtype": "旋涡星系",
+      "intro": "明显的旋臂与邻近星系的相互作用展示星系结构和恒星形成。",
+      "openNgcType": "G",
+      "constellationCode": "CVn",
+      "position": {
+        "raDeg": 202.469625,
+        "decDeg": 47.19516667,
+        "rawRa": "13:29:52.71",
+        "rawDec": "+47:11:42.6",
+        "frame": "ICRS J2000.0"
+      },
+      "angularSizeArcmin": {
+        "major": 13.71,
+        "minor": 11.67
+      },
+      "magnitude": {
+        "band": "V",
+        "value": 8.36
+      },
+      "distance": {
+        "approximateLightYears": 31000000,
+        "qualifier": "approximate",
+        "source": "NASA / Hubble Messier Catalog",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-51/",
+        "warning": "Published estimates vary with data and method; not for precision position reconstruction."
+      },
+      "sources": {
+        "coordinates": "OpenNGC / Mattia Verga (CC BY-SA 4.0)",
+        "catalogUrl": "https://github.com/mattiaverga/OpenNGC",
+        "distanceAndDescriptionUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-51/"
+      },
+      "imagery": {
+        "display": "symbolic-marker",
+        "isObservedImage": false,
+        "observedPhotoGalleryUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-51/",
+        "credit": "In-app icon is original schematic artwork; NASA source page gives image-specific credits."
+      }
+    },
+    {
+      "id": "M81",
+      "catalogId": "NGC3031",
+      "aliases": [
+        "M 81",
+        "NGC3031"
+      ],
+      "nameZh": "波德星系",
+      "nameEn": "Bode's Galaxy",
+      "category": "galaxy",
+      "subtype": "旋涡星系",
+      "intro": "明显的旋臂让人认识盘状星系与中央核球。",
+      "openNgcType": "G",
+      "constellationCode": "UMa",
+      "position": {
+        "raDeg": 148.88820833,
+        "decDeg": 69.06530556,
+        "rawRa": "09:55:33.17",
+        "rawDec": "+69:03:55.1",
+        "frame": "ICRS J2000.0"
+      },
+      "angularSizeArcmin": {
+        "major": 21.63,
+        "minor": 11.25
+      },
+      "magnitude": {
+        "band": "V",
+        "value": 6.92
+      },
+      "distance": {
+        "approximateLightYears": 11600000,
+        "qualifier": "approximate",
+        "source": "NASA / Hubble Messier Catalog",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-81/",
+        "warning": "Published estimates vary with data and method; not for precision position reconstruction."
+      },
+      "sources": {
+        "coordinates": "OpenNGC / Mattia Verga (CC BY-SA 4.0)",
+        "catalogUrl": "https://github.com/mattiaverga/OpenNGC",
+        "distanceAndDescriptionUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-81/"
+      },
+      "imagery": {
+        "display": "symbolic-marker",
+        "isObservedImage": false,
+        "observedPhotoGalleryUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-81/",
+        "credit": "In-app icon is original schematic artwork; NASA source page gives image-specific credits."
+      }
+    },
+    {
+      "id": "M82",
+      "catalogId": "NGC3034",
+      "aliases": [
+        "M 82",
+        "NGC3034"
+      ],
+      "nameZh": "雪茄星系",
+      "nameEn": "Cigar Galaxy",
+      "category": "galaxy",
+      "subtype": "星暴星系",
+      "intro": "与 M81 的引力相互作用促进剧烈恒星形成，观测形态不同于典型旋涡星系。",
+      "openNgcType": "G",
+      "constellationCode": "UMa",
+      "position": {
+        "raDeg": 148.96970833,
+        "decDeg": 69.67938889,
+        "rawRa": "09:55:52.73",
+        "rawDec": "+69:40:45.8",
+        "frame": "ICRS J2000.0"
+      },
+      "angularSizeArcmin": {
+        "major": 10.99,
+        "minor": 5.11
+      },
+      "magnitude": {
+        "band": "V",
+        "value": 8.3
+      },
+      "distance": {
+        "approximateLightYears": 12000000,
+        "qualifier": "approximate",
+        "source": "NASA / Hubble Messier Catalog",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-82/",
+        "warning": "Published estimates vary with data and method; not for precision position reconstruction."
+      },
+      "sources": {
+        "coordinates": "OpenNGC / Mattia Verga (CC BY-SA 4.0)",
+        "catalogUrl": "https://github.com/mattiaverga/OpenNGC",
+        "distanceAndDescriptionUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-82/"
+      },
+      "imagery": {
+        "display": "symbolic-marker",
+        "isObservedImage": false,
+        "observedPhotoGalleryUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-82/",
+        "credit": "In-app icon is original schematic artwork; NASA source page gives image-specific credits."
+      }
+    },
+    {
+      "id": "M101",
+      "catalogId": "NGC5457",
+      "aliases": [
+        "M 101",
+        "NGC5457"
+      ],
+      "nameZh": "风车星系",
+      "nameEn": "Pinwheel Galaxy",
+      "category": "galaxy",
+      "subtype": "旋涡星系",
+      "intro": "面向我们的旋涡星系可以看到大范围旋臂和恒星形成区。",
+      "openNgcType": "G",
+      "constellationCode": "UMa",
+      "position": {
+        "raDeg": 210.80225,
+        "decDeg": 54.34894444,
+        "rawRa": "14:03:12.54",
+        "rawDec": "+54:20:56.2",
+        "frame": "ICRS J2000.0"
+      },
+      "angularSizeArcmin": {
+        "major": 23.99,
+        "minor": 23.07
+      },
+      "magnitude": {
+        "band": "V",
+        "value": 7.9
+      },
+      "distance": {
+        "approximateLightYears": 25000000,
+        "qualifier": "approximate",
+        "source": "NASA / Hubble Messier Catalog",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-101/",
+        "warning": "Published estimates vary with data and method; not for precision position reconstruction."
+      },
+      "sources": {
+        "coordinates": "OpenNGC / Mattia Verga (CC BY-SA 4.0)",
+        "catalogUrl": "https://github.com/mattiaverga/OpenNGC",
+        "distanceAndDescriptionUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-101/"
+      },
+      "imagery": {
+        "display": "symbolic-marker",
+        "isObservedImage": false,
+        "observedPhotoGalleryUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-101/",
+        "credit": "In-app icon is original schematic artwork; NASA source page gives image-specific credits."
+      }
+    },
+    {
+      "id": "M104",
+      "catalogId": "NGC4594",
+      "aliases": [
+        "M 104",
+        "NGC4594"
+      ],
+      "nameZh": "草帽星系",
+      "nameEn": "Sombrero Galaxy",
+      "category": "galaxy",
+      "subtype": "旋涡星系",
+      "intro": "几乎侧向观看的星系，暗尘埃带使其具有草帽般的轮廓。",
+      "openNgcType": "G",
+      "constellationCode": "Vir",
+      "position": {
+        "raDeg": 189.997625,
+        "decDeg": -11.62305556,
+        "rawRa": "12:39:59.43",
+        "rawDec": "-11:37:23.0",
+        "frame": "ICRS J2000.0"
+      },
+      "angularSizeArcmin": {
+        "major": 8.45,
+        "minor": 4.91
+      },
+      "magnitude": {
+        "band": "V",
+        "value": 8.59
+      },
+      "distance": {
+        "approximateLightYears": 28000000,
+        "qualifier": "approximate",
+        "source": "NASA / Hubble Messier Catalog",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-104/",
+        "warning": "Published estimates vary with data and method; not for precision position reconstruction."
+      },
+      "sources": {
+        "coordinates": "OpenNGC / Mattia Verga (CC BY-SA 4.0)",
+        "catalogUrl": "https://github.com/mattiaverga/OpenNGC",
+        "distanceAndDescriptionUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-104/"
+      },
+      "imagery": {
+        "display": "symbolic-marker",
+        "isObservedImage": false,
+        "observedPhotoGalleryUrl": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-104/",
+        "credit": "In-app icon is original schematic artwork; NASA source page gives image-specific credits."
+      }
+    }
+  ]
+}

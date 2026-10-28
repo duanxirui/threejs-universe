@@ -8,15 +8,58 @@ import { gsap } from 'gsap';
 import { CELESTIALS, SATELLITES, ALL_BODIES } from '../data/celestials.js';
 import { createGlowTexture } from '../universe/proceduralTextures.js';
 import { createGalaxy, createStarfield } from '../universe/createGalaxy.js';
+import { createGaiaLayer } from '../universe/createGaiaLayer.js';
+import { createDeepSkyLayer } from '../universe/createDeepSkyLayer.js';
 import { createSolarSystem } from '../universe/createSolarSystem.js';
 import { constrainCameraSegment, getArrivalDistance, getBodyClearance } from './freeFlightPhysics.js';
 
 const GALAXY_CAMERA = new THREE.Vector3(0, 15, 116);
+const GAIA_CAMERA = new THREE.Vector3(0, 32, 185);
+const DEEP_SKY_CAMERA = new THREE.Vector3(0, 0, 0);
+const DEEP_SKY_LOOK = new THREE.Vector3(0, 0, -160);
 const SOLAR_CAMERA = new THREE.Vector3(0, 42, 100);
 const ORIGIN = new THREE.Vector3(0, 0, 0);
 
+function disposeSceneResources(scene, released) {
+  const geometries = new Set();
+  const materials = new Set();
+  const textures = new Set();
+  const collectTexture = value => {
+    if (value?.isTexture) textures.add(value);
+    else if (Array.isArray(value)) value.forEach(item => {
+      if (item?.isTexture) textures.add(item);
+    });
+  };
+
+  scene.traverse(object => {
+    if (object.geometry?.isBufferGeometry) geometries.add(object.geometry);
+    const objectMaterials = Array.isArray(object.material) ? object.material : [object.material];
+    for (const material of objectMaterials) {
+      if (material?.isMaterial) materials.add(material);
+    }
+  });
+  collectTexture(scene.background);
+  collectTexture(scene.environment);
+  for (const material of materials) {
+    for (const value of Object.values(material)) collectTexture(value);
+    for (const uniform of Object.values(material.uniforms || {})) {
+      collectTexture(uniform?.value);
+    }
+  }
+  for (const texture of textures) {
+    if (released.textures.has(texture)) continue;
+    texture.dispose();
+    texture.image?.close?.();
+  }
+  for (const material of materials) material.dispose();
+  for (const geometry of geometries) {
+    if (!released.geometries.has(geometry)) geometry.dispose();
+  }
+}
+
 export class UniverseApp {
   constructor(canvas, options = {}) {
+    this.disposed = false;
     this.canvas = canvas;
     this.labelsLayer = options.labelsLayer;
     this.transitionElement = options.transitionElement;
@@ -25,6 +68,8 @@ export class UniverseApp {
     this.onToast = options.onToast || (() => {});
     this.onTelemetry = options.onTelemetry || (() => {});
     this.onSimulationTime = options.onSimulationTime || (() => {});
+    this.onEphemerisTime = options.onEphemerisTime || (() => {});
+    this.onScaleModeChange = options.onScaleModeChange || (() => {});
     this.onContextStatus = options.onContextStatus || (() => {});
     this.contextLost = false;
     this.recoverViewOnRestore = false;
@@ -115,6 +160,14 @@ export class UniverseApp {
     this.scene.add(this.starfield);
     this.galaxy = createGalaxy(glowTexture, this.pixelRatio, this.isCompact ? .68 : 1);
     this.scene.add(this.galaxy.group);
+    this.gaiaLayer = createGaiaLayer(this.pixelRatio);
+    this.gaiaActive = false;
+    this.gaiaCatalog = null;
+    this.scene.add(this.gaiaLayer.group);
+    this.deepSkyLayer = createDeepSkyLayer();
+    this.deepSkyActive = false;
+    this.deepSkyCatalog = null;
+    this.scene.add(this.deepSkyLayer.group);
     this.solar = createSolarSystem(glowTexture, this.renderer);
     this.scene.add(this.solar.group);
     this.applyVisualQuality();
@@ -132,6 +185,7 @@ export class UniverseApp {
     this.bindEvents();
     this.emitState();
     this.onSimulationTime(this.solar.getSimulationDays());
+    this.onEphemerisTime(this.solar.getEphemerisInfo());
     this.animate();
   }
 
@@ -177,6 +231,7 @@ export class UniverseApp {
     this.composer.setPixelRatio(ratio);
     this.composer.setSize(window.innerWidth, window.innerHeight);
     this.galaxy.resize(ratio);
+    this.gaiaLayer.resize(ratio);
     this.starfield.material.uniforms.uPixelRatio.value = ratio;
   }
 
@@ -185,6 +240,8 @@ export class UniverseApp {
       this.qualityMode === 'high' ? 2 : this.autoQualityTier;
     this.visualQualityTier = tier;
     this.galaxy.setQualityTier(tier);
+    this.gaiaLayer.setQualityTier(tier);
+    this.deepSkyLayer.setQualityTier(tier);
     this.starfield.geometry.setDrawRange(0, [2300, 3800, 5200][tier]);
     this.solar.setQualityTier(tier);
     this.useBloom = this.qualityMode === 'high' ||
@@ -351,7 +408,7 @@ export class UniverseApp {
       this.transitioning = false;
       this.flying = false;
       this.controls.enabled = true;
-      this.galaxy.group.visible = this.mode === 'galaxy';
+      this.syncGalaxyVisualLayers();
       this.solar.group.visible = this.mode !== 'galaxy';
       this.solar.setTextureLoadingEnabled(this.mode !== 'galaxy');
       this.lastTrackedPosition = this.mode === 'planet' && this.focusId
@@ -407,10 +464,17 @@ export class UniverseApp {
       this.renderer.setSize(window.innerWidth, window.innerHeight, false);
       this.composer.setSize(window.innerWidth, window.innerHeight);
       this.galaxy.resize(this.pixelRatio);
+      this.gaiaLayer.resize(this.pixelRatio);
       this.starfield.material.uniforms.uPixelRatio.value = this.pixelRatio;
     };
     window.addEventListener('resize', this.handleResize);
-    this.canvas.addEventListener('pointerdown', event => {
+    this.pointerEventsController = new AbortController();
+    const bindPointerEvent = (type, listener) => {
+      this.canvas.addEventListener(type, listener, {
+        signal: this.pointerEventsController.signal
+      });
+    };
+    bindPointerEvent('pointerdown', event => {
       this.reframeTween?.kill();
       this.activePointerIds.add(event.pointerId);
       if (this.activePointerIds.size > 1) this.multiTouchGesture = true;
@@ -418,7 +482,7 @@ export class UniverseApp {
         this.pointerStart = { id: event.pointerId, x: event.clientX, y: event.clientY };
       }
     });
-    this.canvas.addEventListener('pointerup', event => {
+    bindPointerEvent('pointerup', event => {
       this.activePointerIds.delete(event.pointerId);
       const canSelect = this.pointerStart?.id === event.pointerId &&
         !this.multiTouchGesture && !this.transitioning && !this.flying;
@@ -428,12 +492,12 @@ export class UniverseApp {
       if (travel < 6 && event.button === 0) this.selectFromPointer(event);
       if (this.activePointerIds.size === 0) this.multiTouchGesture = false;
     });
-    this.canvas.addEventListener('pointercancel', event => {
+    bindPointerEvent('pointercancel', event => {
       this.activePointerIds.delete(event.pointerId);
       this.pointerStart = null;
       if (this.activePointerIds.size === 0) this.multiTouchGesture = false;
     });
-    this.canvas.addEventListener('pointermove', event => {
+    bindPointerEvent('pointermove', event => {
       if (event.pointerType === 'touch') return;
       if (!this.solar.group.visible || this.transitioning) {
         this.canvas.style.cursor = 'grab';
@@ -441,7 +505,7 @@ export class UniverseApp {
       }
       this.canvas.style.cursor = this.pickBody(event) ? 'pointer' : 'grab';
     });
-    this.canvas.addEventListener('pointerleave', () => {
+    bindPointerEvent('pointerleave', () => {
       this.pointerStart = null;
       this.canvas.style.cursor = 'grab';
     });
@@ -524,11 +588,250 @@ export class UniverseApp {
       freeArrived: this.freeArrived,
       qualityMode: this.qualityMode,
       showOrbits: this.showOrbits,
-      showLabels: this.showLabels
+      showLabels: this.showLabels,
+      gaiaActive: this.gaiaActive,
+      deepSkyActive: this.deepSkyActive,
+      scaleMode: this.solar.getScaleInfo().mode
     });
   }
 
+  getScaleInfo() {
+    return this.solar.getScaleInfo();
+  }
+
+  syncGalaxyVisualLayers() {
+    const galaxy = this.mode === 'galaxy';
+    this.galaxy.group.visible = galaxy && !this.gaiaActive && !this.deepSkyActive;
+    this.starfield.visible = !this.gaiaActive && !this.deepSkyActive;
+    this.gaiaLayer.setVisible(galaxy && this.gaiaActive);
+    this.deepSkyLayer.setVisible(galaxy && this.deepSkyActive);
+  }
+
+  setGaiaCatalog(catalog) {
+    if (!catalog || typeof catalog.allRecords !== 'function' ||
+      this.disposed) return false;
+    this.gaiaCatalog = catalog;
+    this.gaiaLayer.syncCatalog(catalog);
+    return true;
+  }
+
+  setGaiaFilters({ distancePc = 1000, magnitude = 16 } = {}) {
+    if (!this.gaiaLayer.setFilters({ distancePc, magnitude })) return false;
+    this.emitState();
+    return true;
+  }
+
+  setGaiaActive(active) {
+    if (this.disposed || this.contextLost || this.transitioning ||
+      this.mode !== 'galaxy' || (active && !this.gaiaCatalog?.loadedCount())) {
+      return false;
+    }
+    this.gaiaActive = Boolean(active);
+    if (this.gaiaActive) this.deepSkyActive = false;
+    this.syncGalaxyVisualLayers();
+    this.controls.minDistance = this.gaiaActive ? 1 : 6;
+    this.controls.maxDistance = this.gaiaActive ? 400 : 290;
+    this.controls.autoRotate = !this.gaiaActive;
+    this.animateCamera(this.gaiaActive ? GAIA_CAMERA.clone() : GALAXY_CAMERA.clone(),
+      ORIGIN.clone(), window.matchMedia('(prefers-reduced-motion: reduce)').matches ? .01 : .8);
+    this.emitState();
+    return true;
+  }
+
+  focusGaiaSource(sourceId) {
+    if (!this.gaiaActive || this.transitioning || !this.gaiaCatalog) return false;
+    const source = this.gaiaCatalog.getSource(sourceId);
+    if (!source?.position) return false;
+    this.gaiaLayer.selectSource(source);
+    const target = new THREE.Vector3().fromArray(source.position);
+    const destination = target.clone().add(new THREE.Vector3(4, 6, 13));
+    this.controls.autoRotate = false;
+    this.animateCamera(destination, target,
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches ? .01 : 1.25);
+    this.emitState();
+    return true;
+  }
+
+  getGaiaInfo() {
+    return {
+      mode: this.mode, active: this.gaiaActive,
+      total: this.gaiaCatalog?.manifest.total || 0,
+      loaded: this.gaiaCatalog?.loadedCount() || 0,
+      ...this.gaiaLayer.getSnapshot()
+    };
+  }
+
+  setDeepSkyCatalog(catalog) {
+    if (this.disposed || !catalog || !Array.isArray(catalog.objects)) return false;
+    this.deepSkyCatalog = catalog;
+    this.deepSkyLayer.syncCatalog(catalog);
+    return true;
+  }
+
+  setDeepSkyCategory(category) {
+    if (!this.deepSkyLayer.setCategory(category)) return false;
+    this.emitState();
+    return true;
+  }
+
+  setDeepSkyActive(active) {
+    if (this.disposed || this.contextLost || this.transitioning ||
+      this.mode !== 'galaxy' || (active && !this.deepSkyCatalog?.objects?.length)) {
+      return false;
+    }
+    this.deepSkyActive = Boolean(active);
+    if (this.deepSkyActive) this.gaiaActive = false;
+    this.syncGalaxyVisualLayers();
+    this.controls.autoRotate = !this.deepSkyActive;
+    this.controls.minDistance = this.deepSkyActive ? 1 : 6;
+    this.controls.maxDistance = this.deepSkyActive ? 480 : 290;
+    const duration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? .01 : .8;
+    this.animateCamera(
+      this.deepSkyActive ? DEEP_SKY_CAMERA.clone() : GALAXY_CAMERA.clone(),
+      this.deepSkyActive ? DEEP_SKY_LOOK.clone() : ORIGIN.clone(),
+      duration
+    );
+    this.emitState();
+    return true;
+  }
+
+  focusDeepSkyObject(id) {
+    if (!this.deepSkyActive || !this.deepSkyCatalog || this.transitioning) return false;
+    const object = this.deepSkyCatalog.get(id);
+    if (!object?.markerPosition || !this.deepSkyLayer.select(id)) return false;
+    const target = new THREE.Vector3().fromArray(object.markerPosition);
+    // A closer viewing position is a purely visual camera distance from the
+    // sky marker; it does not encode the published light-year distance.
+    const observer = target.clone().multiplyScalar(.61);
+    this.controls.autoRotate = false;
+    this.animateCamera(observer, target,
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches ? .01 : 1.2);
+    this.emitState();
+    return true;
+  }
+
+  getDeepSkyInfo() {
+    return {
+      mode: this.mode, active: this.deepSkyActive,
+      loaded: this.deepSkyCatalog?.objects?.length || 0,
+      routes: this.deepSkyCatalog?.routes?.length || 0,
+      referenceFrame: this.deepSkyCatalog?.manifest?.coordinateFrame || null,
+      ...this.deepSkyLayer.getSnapshot()
+    };
+  }
+
+  updateCameraClipping() {
+    // A single 0.0003..130000 frustum loses most depth-buffer precision.
+    // Tighten it to the observer's local scale as the camera zooms or flies.
+    const physical = this.solar.group.visible &&
+      this.solar.getScaleInfo().mode === 'physical';
+    let near = .06;
+    let far = 1600;
+    if (physical) {
+      const distance = Math.max(.0001,
+        this.camera.position.distanceTo(this.controls.target));
+      const center = new THREE.Vector3();
+      let nearestSurface = Infinity;
+      for (const body of Object.values(this.solar.bodies)) {
+        body.root.getWorldPosition(center);
+        nearestSurface = Math.min(nearestSurface,
+          Math.max(0, center.distanceTo(this.camera.position) -
+            body.data.radius * 1.2));
+      }
+      near = THREE.MathUtils.clamp(
+        Math.min(distance * .002, nearestSurface * .2), .00002, 30
+      );
+      far = THREE.MathUtils.clamp(Math.max(250, distance * 5), 250, 130000);
+    }
+    if (Math.abs(this.camera.near - near) > near * .015 ||
+        Math.abs(this.camera.far - far) > far * .015) {
+      this.camera.near = near;
+      this.camera.far = far;
+      this.camera.updateProjectionMatrix();
+    }
+  }
+
+  rebaseScaleOrigin(bodyId = 'sun') {
+    if (this.solar.getScaleInfo().mode !== 'physical') return false;
+    const delta = this.solar.setFloatingOriginAnchor(bodyId);
+    if (!delta || delta.lengthSq() < 1e-20) return true;
+    // Move the observer and all active anchors by the *same* offset as the
+    // local solar scene. Absolute scientific kilometres remain untouched.
+    this.camera.position.add(delta);
+    this.controls.target.add(delta);
+    this.lastTrackedPosition?.add(delta);
+    this.freeLastTargetPosition?.add(delta);
+    if (this.focusFlight) {
+      this.focusFlight.startPos.add(delta);
+      this.focusFlight.startTarget.add(delta);
+      this.focusFlight.midpoint.add(delta);
+      this.focusFlight.now.add(delta);
+      this.focusFlight.destination.add(delta);
+      this.focusFlight.target.add(delta);
+    }
+    this.camera.updateMatrixWorld();
+    return true;
+  }
+
+  setScaleMode(nextMode) {
+    if (!['physical', 'enhanced'].includes(nextMode) ||
+        this.contextLost || this.disposed || this.transitioning) return false;
+    const oldMode = this.solar.getScaleInfo().mode;
+    if (nextMode === oldMode) return true;
+    this.interruptFocusCamera();
+    const focus = this.mode === 'planet' && this.focusId
+      ? this.solar.bodies[this.focusId] : null;
+    const before = focus?.root.getWorldPosition(new THREE.Vector3());
+    const oldRadius = focus?.data.radius ?? 1;
+    const relativeCamera = before ? this.camera.position.clone().sub(before) : null;
+    const relativeTarget = before ? this.controls.target.clone().sub(before) : null;
+    // A long free-flight leg is based on distances in the previous scene
+    // scale. Cancel it before switching ratios, preserving the free mode.
+    if (this.mode === 'free') {
+      this.clearFreeNavigation();
+      this.keys.clear();
+    }
+    const anchorId = nextMode === 'physical' && focus ? this.focusId : 'sun';
+    if (!this.solar.setScaleMode(nextMode, anchorId)) return false;
+    this.camera.near = nextMode === 'physical' ? .0003 : .06;
+    this.camera.far = nextMode === 'physical' ? 130000 : 1600;
+    this.camera.updateProjectionMatrix();
+    const physical = nextMode === 'physical';
+    this.controls.maxDistance = physical ? 125000 :
+      this.mode === 'planet' ? 160 : this.mode === 'free' ? 1400 : 220;
+    this.controls.minDistance = focus
+      ? physical ? Math.max(.0005, focus.data.radius * 1.5) :
+        Math.max(.65, focus.data.radius * 1.5)
+      : physical ? .002 : this.mode === 'free' ? .6 : 2;
+    if (focus && relativeCamera && relativeTarget) {
+      const target = focus.root.getWorldPosition(new THREE.Vector3());
+      const radiusFactor = focus.data.radius / oldRadius;
+      this.camera.position.copy(target).addScaledVector(relativeCamera, radiusFactor);
+      this.controls.target.copy(target).addScaledVector(relativeTarget, radiusFactor);
+      this.lastTrackedPosition = target.clone();
+    } else if (this.mode !== 'galaxy') {
+      // A physically scaled Sun and Neptune cannot fit into the old
+      // ~100-unit educational overview. Provide a genuinely wide overview.
+      const overview = this.getSolarOverview();
+      this.camera.position.copy(overview.camera);
+      this.controls.target.copy(overview.target);
+    }
+    this.clearCameraMomentum();
+    this.camera.lookAt(this.controls.target);
+    this.camera.updateMatrixWorld();
+    this.onCameraUpdate(this.camera.position.distanceTo(this.controls.target));
+    this.emitState();
+    this.onScaleModeChange(this.solar.getScaleInfo());
+    return true;
+  }
+
   getSolarOverview() {
+    if (this.solar.getScaleInfo().mode === 'physical') {
+      return {
+        camera: new THREE.Vector3(0, 16000, 37000),
+        target: ORIGIN.clone()
+      };
+    }
     // Give the solar system the right side of a portrait screen, where the
     // introductory copy does not cover it.
     if (window.innerWidth <= 640) {
@@ -555,13 +858,16 @@ export class UniverseApp {
     }
 
     if (this.mode === 'galaxy') {
-      this.controls.minDistance = 6;
-      this.controls.maxDistance = 290;
-      this.controls.autoRotate = true;
-      this.animateCamera(GALAXY_CAMERA.clone(), ORIGIN.clone(), duration);
+      this.controls.minDistance = this.deepSkyActive || this.gaiaActive ? 1 : 6;
+      this.controls.maxDistance = this.deepSkyActive ? 480 : this.gaiaActive ? 400 : 290;
+      this.controls.autoRotate = !this.deepSkyActive && !this.gaiaActive;
+      this.animateCamera(this.deepSkyActive ? DEEP_SKY_CAMERA.clone() :
+        this.gaiaActive ? GAIA_CAMERA.clone() : GALAXY_CAMERA.clone(),
+        this.deepSkyActive ? DEEP_SKY_LOOK.clone() : ORIGIN.clone(), duration);
     } else if (this.mode === 'solar') {
-      this.controls.minDistance = 2;
-      this.controls.maxDistance = 220;
+      const physical = this.solar.getScaleInfo().mode === 'physical';
+      this.controls.minDistance = physical ? .002 : 2;
+      this.controls.maxDistance = physical ? 125000 : 220;
       this.controls.autoRotate = false;
       const overview = this.getSolarOverview();
       this.animateCamera(overview.camera.clone(), overview.target.clone(), duration);
@@ -570,8 +876,9 @@ export class UniverseApp {
       // velocity and target lock, but keeps free flight as the active mode.
       this.clearFreeNavigation();
       this.keys.clear();
-      this.controls.minDistance = .6;
-      this.controls.maxDistance = 1400;
+      const physical = this.solar.getScaleInfo().mode === 'physical';
+      this.controls.minDistance = physical ? .002 : .6;
+      this.controls.maxDistance = physical ? 125000 : 1400;
       this.controls.autoRotate = false;
       const overview = this.getSolarOverview();
       this.animateCamera(overview.camera.clone(), overview.target.clone(), duration);
@@ -584,7 +891,19 @@ export class UniverseApp {
 
   changeScene(destination) {
     if (this.transitioning) return Promise.resolve(false);
+    if (destination !== 'galaxy' && (this.gaiaActive || this.deepSkyActive)) {
+      // The new scene is solar-centred; the Gaia local-volume map belongs
+      // only to the galaxy exploration mode.
+      this.gaiaActive = false;
+      this.deepSkyActive = false;
+      this.syncGalaxyVisualLayers();
+    }
     const toSolar = destination !== 'galaxy';
+    if (toSolar && this.solar.getScaleInfo().mode === 'physical') {
+      // The solar group is hidden when leaving the galaxy; establish the
+      // solar-centred floating origin without translating the galaxy camera.
+      this.solar.setFloatingOriginAnchor('sun');
+    }
     this.solar.setTextureLoadingEnabled(toSolar);
     if (toSolar) this.solar.loadOverviewTextures();
     this.transitioning = true;
@@ -631,14 +950,15 @@ export class UniverseApp {
           this.lastTrackedPosition = null;
           this.mode = destination;
           this.solar.group.visible = toSolar;
-          this.galaxy.group.visible = !toSolar;
+          this.syncGalaxyVisualLayers();
           const overview = this.getSolarOverview();
           const endPos = toSolar ? overview.camera : GALAXY_CAMERA;
           const endTarget = toSolar ? overview.target : ORIGIN;
           this.camera.position.copy(endPos).multiplyScalar(toSolar ? 1.14 : .76);
           this.controls.target.copy(endTarget);
-          this.controls.minDistance = toSolar ? 1.1 : 6;
-          this.controls.maxDistance = toSolar ? 220 : 290;
+          const physical = this.solar.getScaleInfo().mode === 'physical';
+          this.controls.minDistance = toSolar ? (physical ? .002 : 1.1) : 6;
+          this.controls.maxDistance = toSolar ? (physical ? 125000 : 220) : 290;
           this.controls.autoRotate = !toSolar;
           this.camera.lookAt(this.controls.target);
           this.emitState();
@@ -687,12 +1007,30 @@ export class UniverseApp {
     });
   }
 
+  interruptFocusCamera() {
+    if (this.transitioning || this.disposed) return false;
+    this.flightTween?.kill();
+    this.flightTween = null;
+    this.focusFlight = null;
+    this.reframeTween?.kill();
+    this.reframeTween = null;
+    this.flying = false;
+    this.controls.enabled = true;
+    this.clearCameraMomentum();
+    return true;
+  }
+
   async viewGalaxy() {
     if (this.transitioning) return;
     this.clearFreeNavigation();
     if (this.mode !== 'galaxy') {
       await this.changeScene('galaxy');
     } else {
+      if (this.deepSkyActive || this.gaiaActive) {
+        if (this.deepSkyActive) this.setDeepSkyActive(false);
+        else this.setGaiaActive(false);
+        return;
+      }
       this.focusId = null;
       this.controls.autoRotate = true;
       this.animateCamera(GALAXY_CAMERA, ORIGIN);
@@ -706,14 +1044,16 @@ export class UniverseApp {
     if (this.mode === 'galaxy') {
       await this.changeScene('solar');
     } else {
+      if (this.solar.getScaleInfo().mode === 'physical') this.rebaseScaleOrigin('sun');
       this.solar.setTextureLoadingEnabled(true);
       this.solar.loadOverviewTextures();
       this.mode = 'solar';
       this.focusId = null;
       this.lastTrackedPosition = null;
       this.controls.autoRotate = false;
-      this.controls.minDistance = 2;
-      this.controls.maxDistance = 220;
+      const physical = this.solar.getScaleInfo().mode === 'physical';
+      this.controls.minDistance = physical ? .002 : 2;
+      this.controls.maxDistance = physical ? 125000 : 220;
       const overview = this.getSolarOverview();
       this.animateCamera(overview.camera, overview.target);
       this.emitState();
@@ -738,13 +1078,14 @@ export class UniverseApp {
     this.flying = false;
     this.controls.enabled = true;
     this.controls.autoRotate = false;
-    this.controls.minDistance = .6;
-    this.controls.maxDistance = 1400;
+    const physical = this.solar.getScaleInfo().mode === 'physical';
+    this.controls.minDistance = physical ? .002 : .6;
+    this.controls.maxDistance = physical ? 125000 : 1400;
     this.emitState();
     this.onToast('自由漫游已开启 · 使用航行导航锁定目标，或按 W A S D 手动飞行');
   }
 
-  async focusBody(id, duration = 1.9) {
+  async focusBody(id, duration = 1.9, shouldContinue = () => true) {
     const body = this.solar.bodies[id];
     if (!body || this.transitioning) return;
     this.clearFreeNavigation();
@@ -753,8 +1094,10 @@ export class UniverseApp {
     this.solar.requestNearbyTextures(id);
     if (this.mode === 'galaxy') {
       const switched = await this.changeScene('solar');
-      if (!switched) return;
+      if (!switched || !shouldContinue()) return;
     }
+    if (!shouldContinue()) return;
+    if (this.solar.getScaleInfo().mode === 'physical') this.rebaseScaleOrigin(id);
     if (this.flightTween) this.flightTween.kill();
     this.focusFlight = null;
     // Scene transitions can leave a short camera-position tween alive.
@@ -768,13 +1111,17 @@ export class UniverseApp {
     this.mode = 'planet';
     this.focusId = id;
     this.lastTrackedPosition = null;
-    this.controls.minDistance = Math.max(.65, body.data.radius * 1.5);
-    this.controls.maxDistance = 160;
+    const physical = this.solar.getScaleInfo().mode === 'physical';
+    this.controls.minDistance = physical
+      ? Math.max(.0005, body.data.radius * 1.5) : Math.max(.65, body.data.radius * 1.5);
+    this.controls.maxDistance = physical ? 125000 : 160;
     this.emitState();
 
     const compact = this.isCompact;
     const scale = compact ? (id === 'saturn' ? 12.5 : 9.3) : (id === 'sun' ? 5.5 : 6.3);
-    const distance = Math.max(body.data.parentId ? (compact ? 2.7 : 1.35) : (compact ? 5 : 3.3), body.data.radius * scale);
+    const distance = physical
+      ? Math.max(.003, body.data.radius * (compact ? 10 : 6.5))
+      : Math.max(body.data.parentId ? (compact ? 2.7 : 1.35) : (compact ? 5 : 3.3), body.data.radius * scale);
     const offset = new THREE.Vector3(distance * .55, distance * .31, distance);
     const startPos = this.camera.position.clone();
     const startTarget = this.controls.target.clone();
@@ -886,6 +1233,79 @@ export class UniverseApp {
     return true;
   }
 
+  // The date-driven path deliberately does not route through T14's arbitrary
+  // five-day display epoch. Keep tracked cameras attached when date changes
+  // reposition a focused planet or an autopilot target.
+  applyEphemerisChange(operation) {
+    if (this.contextLost || this.disposed) return false;
+    const focusEntry = this.mode === 'planet' && this.focusId
+      ? this.solar.bodies[this.focusId] : null;
+    const lockedEntry = this.mode === 'free' && this.freeTargetId
+      ? this.solar.bodies[this.freeTargetId] : null;
+    const followFree = Boolean(lockedEntry && (this.freeAutopilot || this.freeFollowing));
+    const followed = focusEntry || (followFree ? lockedEntry : null);
+    const before = followed?.root.getWorldPosition(new THREE.Vector3());
+    if (!operation()) return false;
+    if (followed && before) {
+      const after = followed.root.getWorldPosition(new THREE.Vector3());
+      const shift = after.clone().sub(before);
+      this.camera.position.add(shift);
+      this.controls.target.add(shift);
+      if (focusEntry) {
+        if (this.focusFlight) {
+          this.focusFlight.startPos.add(shift);
+          this.focusFlight.startTarget.add(shift);
+          this.focusFlight.midpoint.add(shift);
+          this.updateFocusFlight();
+        } else this.lastTrackedPosition = after;
+      }
+      if (followFree) {
+        const clearance = constrainCameraSegment(
+          this.camera.position, this.camera.position, Object.values(this.solar.bodies)
+        );
+        this.camera.position.copy(clearance.position);
+        if (clearance.blockedBody) {
+          this.freeAutopilot = false;
+          this.freeFollowing = false;
+          this.freeArrived = false;
+          this.freeVelocity.set(0, 0, 0);
+          this.onToast('日期切换后镜头靠近天体，已停止自动航行');
+        }
+      }
+    }
+    if (lockedEntry) {
+      this.freeLastTargetPosition = lockedEntry.root.getWorldPosition(new THREE.Vector3());
+    }
+    this.onEphemerisTime(this.solar.getEphemerisInfo());
+    this.onCameraUpdate(this.camera.position.distanceTo(this.controls.target));
+    this.emitState();
+    return true;
+  }
+
+  enableEphemeris(store, utcMs) {
+    if (!store?.hasUtc(utcMs)) return false;
+    const changed = this.applyEphemerisChange(() => this.solar.enableEphemeris(store, utcMs));
+    if (changed) {
+      // Do not advance automatically while a user is reading a chosen date.
+      this.paused = true;
+      this.emitState();
+    }
+    return changed;
+  }
+
+  seekEphemerisUtc(utcMs) {
+    if (!Number.isFinite(utcMs)) return false;
+    return this.applyEphemerisChange(() => this.solar.seekEphemerisUtc(utcMs));
+  }
+
+  disableEphemeris() {
+    return this.applyEphemerisChange(() => this.solar.disableEphemeris());
+  }
+
+  getEphemerisInfo() {
+    return this.solar.getEphemerisInfo();
+  }
+
   setTimeScale(value) {
     this.timeScale = Math.max(0, Math.min(50, Number(value)));
     if (this.timeScale > 0 && this.paused) this.paused = false;
@@ -926,8 +1346,10 @@ export class UniverseApp {
     this.freeArrived = false;
     this.freeFollowing = false;
     this.freeVelocity.set(0, 0, 0);
+    if (this.solar.getScaleInfo().mode === 'physical') this.rebaseScaleOrigin(id);
     this.freeLastTargetPosition = body.root.getWorldPosition(new THREE.Vector3());
-    this.controls.minDistance = getBodyClearance(body.data) + .05;
+    this.controls.minDistance = getBodyClearance(body.data) +
+      (body.data.physicalScale ? .002 : .05);
     this.solar.requestTexture(id, 'focus');
     this.solar.requestNearbyTextures(id);
     this.emitState();
@@ -968,7 +1390,7 @@ export class UniverseApp {
       this.camera.position.distanceTo(this.controls.target), 10, 40
     );
     this.clearFreeNavigation();
-    this.controls.minDistance = .6;
+    this.controls.minDistance = this.solar.getScaleInfo().mode === 'physical' ? .002 : .6;
     this.controls.target.copy(this.camera.position).addScaledVector(direction, lookDistance);
     this.emitState();
     this.onToast('已解除目标锁定，可以自由操控镜头');
@@ -1065,8 +1487,9 @@ export class UniverseApp {
       if (wasAutopilot) this.onToast('已切换手动飞行，目标仍保持锁定');
     }
 
-    const speed = 17 * this.flightSpeed;
-    const braking = 20 * this.flightSpeed;
+    const physical = this.solar.getScaleInfo().mode === 'physical';
+    const speed = (physical ? 190 : 17) * this.flightSpeed;
+    const braking = (physical ? 220 : 20) * this.flightSpeed;
     const desiredVelocity = new THREE.Vector3();
     const remaining = target
       ? Math.max(0, from.distanceTo(target) - getArrivalDistance(body.data))
@@ -1173,7 +1596,7 @@ export class UniverseApp {
         continue;
       }
       this.solar.bodies[body.id].root.getWorldPosition(world);
-      world.y += body.radius * 1.55;
+      world.y += this.solar.bodies[body.id].data.radius * 1.55;
       world.project(this.camera);
       const x = (world.x * .5 + .5) * width;
       const y = (-world.y * .5 + .5) * height;
@@ -1198,7 +1621,9 @@ export class UniverseApp {
       }
     }
     if (this.galaxyLabel) {
-      const markerVisible = this.mode === 'galaxy' && !this.transitioning && this.showLabels;
+      const markerVisible = this.mode === 'galaxy' && !this.gaiaActive &&
+        !this.deepSkyActive &&
+        !this.transitioning && this.showLabels;
       if (markerVisible) {
         this.galaxy.beacon.getWorldPosition(world);
         world.project(this.camera);
@@ -1287,6 +1712,60 @@ export class UniverseApp {
     };
   }
 
+  async captureScene(title = 'COSMOS ATLAS') {
+    if (this.disposed || this.contextLost) throw new Error('WebGL scene is unavailable');
+    const widthCss = Math.max(1, this.canvas.clientWidth);
+    const heightCss = Math.max(1, this.canvas.clientHeight);
+    const scale = Math.min(1.7, 1280 / widthCss, 720 / heightCss);
+    const width = Math.max(1, Math.round(widthCss * scale));
+    const height = Math.max(1, Math.round(heightCss * scale));
+    const target = new THREE.WebGLRenderTarget(width, height, {
+      format: THREE.RGBAFormat,
+      type: THREE.UnsignedByteType,
+      depthBuffer: true
+    });
+    const pixels = new Uint8Array(width * height * 4);
+    const previousTarget = this.renderer.getRenderTarget();
+    try {
+      // Read a dedicated framebuffer: browser default buffers may be cleared
+      // after presentation when preserveDrawingBuffer is disabled.
+      this.renderer.setRenderTarget(target);
+      this.renderer.clear();
+      this.renderer.render(this.scene, this.camera);
+      this.renderer.readRenderTargetPixels(target, 0, 0, width, height, pixels);
+    } finally {
+      this.renderer.setRenderTarget(previousTarget);
+      target.dispose();
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const context = canvas.getContext('2d');
+    if (!context) throw new Error('Canvas2D unavailable');
+    const image = context.createImageData(width, height);
+    for (let y = 0; y < height; y++) {
+      const from = (height - y - 1) * width * 4;
+      image.data.set(pixels.subarray(from, from + width * 4), y * width * 4);
+    }
+    context.putImageData(image, 0, 0);
+    const footerHeight = Math.min(82, Math.max(48, Math.round(height * .11)));
+    context.fillStyle = 'rgba(2, 10, 21, 0.78)';
+    context.fillRect(0, height - footerHeight, width, footerHeight);
+    context.fillStyle = '#eef6ff';
+    context.font = '600 ' + Math.max(15, Math.round(footerHeight * .3)) + 'px sans-serif';
+    context.fillText(title + ' · COSMOS ATLAS', 18, height - footerHeight + 28);
+    context.fillStyle = '#9bb6c9';
+    context.font = Math.max(10, Math.round(footerHeight * .16)) + 'px sans-serif';
+    const scaleCaption = this.solar.getScaleInfo().mode === 'physical'
+      ? '统一公里尺度（未接入星历的天体角度为示意）'
+      : '科普增强缩放';
+    context.fillText(scaleCaption + ' · 图片及资料出处见站内资料和 textures/ATTRIBUTION.md',
+      18, height - 12, width - 36);
+    return new Promise((resolve, reject) => {
+      canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('PNG encoding failed')), 'image/png');
+    });
+  }
+
   animate = () => {
     if (!this.pageVisible || this.contextLost) return;
     this.animationId = requestAnimationFrame(this.animate);
@@ -1297,10 +1776,19 @@ export class UniverseApp {
     this.starfield.material.uniforms.uTime.value = this.elapsed;
     // Orbit playback speed belongs to solar/body viewing. Free flight uses a
     // predictable baseline orbital rate; the galaxy scene has no solar clock.
-    const orbitalRate = this.mode === 'free' ? 1 :
+    const dateMode = this.solar.getEphemerisInfo().enabled;
+    const orbitalRate = this.mode === 'free' && !dateMode ? 1 :
       this.mode === 'galaxy' || this.paused || this.timelineScrubbing ? 0 : this.timeScale;
-    this.solar.update(delta, orbitalRate);
+    const reachedDateEnd = this.solar.update(delta, orbitalRate);
+    if (reachedDateEnd && !this.paused) {
+      this.paused = true;
+      this.emitState();
+      this.onToast('已抵达当前星历数据的最后日期，播放已暂停');
+    }
     if (this.frame % 10 === 0) this.onSimulationTime(this.solar.getSimulationDays());
+    if (dateMode && this.frame % 10 === 0) {
+      this.onEphemerisTime(this.solar.getEphemerisInfo());
+    }
     this.updatePerformance(elapsedFrame);
     this.updateFreeMovement(delta);
 
@@ -1336,6 +1824,7 @@ export class UniverseApp {
         }
       }
     }
+    this.updateCameraClipping();
     if (this.useBloom) this.composer.render();
     else this.renderer.render(this.scene, this.camera);
     // Keep DOM labels in the same rendered frame as their 3D targets.
@@ -1350,7 +1839,10 @@ export class UniverseApp {
   };
 
   dispose() {
+    if (this.disposed) return;
+    this.disposed = true;
     cancelAnimationFrame(this.animationId);
+    this.clock.stop();
     this.sceneTransitionResolve?.(false);
     this.sceneTransitionResolve = null;
     this.canvas.removeEventListener('webglcontextlost', this.handleContextLost);
@@ -1362,12 +1854,18 @@ export class UniverseApp {
     gsap.killTweensOf(this.controls.target);
     this.focusFlight = null;
     this.labelResizeObserver?.disconnect();
+    this.pointerEventsController?.abort();
     window.removeEventListener('resize', this.handleResize);
     window.removeEventListener('keydown', this.handleKeyDown);
     window.removeEventListener('keyup', this.handleKeyUp);
     window.removeEventListener('blur', this.handleWindowBlur);
     document.removeEventListener('visibilitychange', this.handleVisibilityChange);
     this.controls.dispose();
+    const released = this.solar.dispose();
+    disposeSceneResources(this.scene, released);
+    for (const label of this.labels.values()) label.remove();
+    this.labels.clear();
+    this.galaxyLabel?.remove();
     this.composer.dispose();
     this.renderer.dispose();
   }

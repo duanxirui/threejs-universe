@@ -1,0 +1,1000 @@
+{
+  "previewUrl": "http://127.0.0.1:5173/",
+  "tool": "Headless Chrome via native CDP",
+  "started": "2026-10-27T09:46:26.804Z",
+  "limitations": [
+    "Headless software WebGL performance is not physical GPU/mobile performance."
+  ],
+  "checks": [
+    {
+      "name": "page initialized",
+      "pass": true,
+      "actual": "t15",
+      "detail": ""
+    },
+    {
+      "name": "WebGL initialized",
+      "pass": true,
+      "actual": {
+        "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+        "width": 1344,
+        "height": 670,
+        "fullscreenEnabled": true,
+        "hasPerf": true,
+        "webgl": true
+      },
+      "detail": ""
+    },
+    {
+      "name": "unified local SVG interface icons",
+      "pass": true,
+      "actual": {
+        "symbols": 32,
+        "headerIcons": 6,
+        "zoomIcon": "#ic-plus",
+        "dockIcon": "#ic-info",
+        "pseudo": "none"
+      },
+      "detail": ""
+    },
+    {
+      "name": "galaxy shows camera without orbital playback or date",
+      "pass": true,
+      "actual": {
+        "motionHidden": false,
+        "cameraVisible": true,
+        "dateRemoved": true
+      },
+      "detail": ""
+    },
+    {
+      "name": "fullscreen entry",
+      "pass": true,
+      "actual": {
+        "full": "app",
+        "pressed": "true",
+        "mode": "compact",
+        "toast": ""
+      },
+      "detail": "Fullscreen API entered"
+    },
+    {
+      "name": "pure mode preserves brand and labels",
+      "pass": true,
+      "actual": {
+        "full": "app",
+        "mode": "pure",
+        "brandVisible": true,
+        "labelsVisible": true,
+        "cameraHidden": true,
+        "readoutHidden": true
+      },
+      "detail": ""
+    },
+    {
+      "name": "fullscreen exit preserves pure mode",
+      "pass": true,
+      "actual": {},
+      "detail": ""
+    },
+    {
+      "name": "pure mode exit",
+      "pass": true,
+      "actual": {},
+      "detail": ""
+    },
+    {
+      "name": "F shortcut enters fullscreen",
+      "pass": true,
+      "actual": {
+        "full": "app",
+        "pressed": "true"
+      },
+      "detail": ""
+    },
+    {
+      "name": "H shortcut preserves fullscreen",
+      "pass": true,
+      "actual": {},
+      "detail": ""
+    },
+    {
+      "name": "Escape exits native fullscreen before pure mode",
+      "pass": true,
+      "actual": {
+        "full": null,
+        "mode": "pure"
+      },
+      "detail": ""
+    },
+    {
+      "name": "H shortcut exits pure mode",
+      "pass": true,
+      "actual": {},
+      "detail": ""
+    },
+    {
+      "name": "celestial drawer opens",
+      "pass": true,
+      "actual": {},
+      "detail": ""
+    },
+    {
+      "name": "solar scene navigation for contextual motion",
+      "pass": true,
+      "actual": {},
+      "detail": ""
+    },
+    {
+      "name": "solar motion is contextual and camera is global",
+      "pass": true,
+      "actual": {
+        "motionVisible": true,
+        "triggerLabel": "打开天体运动与 UTC 日期工作区",
+        "dateRemoved": true,
+        "cameraParent": "scene-rail"
+      },
+      "detail": ""
+    },
+    {
+      "name": "time drawer replaces celestial drawer",
+      "pass": true,
+      "actual": {},
+      "detail": ""
+    },
+    {
+      "name": "solar orbital rate adjusts independently",
+      "pass": true,
+      "actual": {
+        "speed": "25×",
+        "capsule": "25×"
+      },
+      "detail": ""
+    },
+    {
+      "name": "orbital playback can pause",
+      "pass": true,
+      "actual": {},
+      "detail": ""
+    },
+    {
+      "name": "settings drawer replaces time drawer",
+      "pass": true,
+      "actual": {},
+      "detail": ""
+    },
+    {
+      "name": "settings groups native controls and enhanced quality",
+      "pass": true,
+      "actual": {
+        "rows": 3,
+        "qualityRole": "combobox",
+        "native": "SELECT",
+        "guide": true,
+        "status": true
+      },
+      "detail": ""
+    },
+    {
+      "name": "quality dropdown options fit the desktop viewport",
+      "pass": true,
+      "actual": {
+        "shown": true,
+        "count": 3,
+        "selected": 1,
+        "fits": true
+      },
+      "detail": ""
+    },
+    {
+      "name": "quality popup selects high in renderer and native select",
+      "pass": true,
+      "actual": {
+        "value": "high",
+        "label": "极致",
+        "runtime": "high",
+        "closed": true
+      },
+      "detail": ""
+    },
+    {
+      "name": "quality Escape only closes its dropdown",
+      "pass": true,
+      "actual": {},
+      "detail": ""
+    },
+    {
+      "name": "quality returns to automatic",
+      "pass": true,
+      "actual": {},
+      "detail": ""
+    },
+    {
+      "name": "exploration guide has three accessible instruction groups",
+      "pass": true,
+      "actual": {
+        "open": true,
+        "sections": 3,
+        "entries": 15,
+        "backgroundInert": true
+      },
+      "detail": ""
+    },
+    {
+      "name": "guide close restores settings drawer",
+      "pass": true,
+      "actual": {},
+      "detail": ""
+    },
+    {
+      "name": "Escape closes workspace",
+      "pass": true,
+      "actual": {},
+      "detail": ""
+    },
+    {
+      "name": "quick zoom works with drawers closed",
+      "pass": true,
+      "actual": {
+        "before": 108.46,
+        "after": 82.43
+      },
+      "detail": ""
+    },
+    {
+      "name": "quick zoom-out works with drawers closed",
+      "pass": true,
+      "actual": {
+        "before": 82.43,
+        "after": 107.16
+      },
+      "detail": ""
+    },
+    {
+      "name": "quick reset is reachable",
+      "pass": true,
+      "actual": {},
+      "detail": ""
+    },
+    {
+      "name": "quick zoom takes over reset animation",
+      "pass": true,
+      "actual": {
+        "before": 107.16,
+        "after": 81.44
+      },
+      "detail": ""
+    },
+    {
+      "name": "search dialog isolates background",
+      "pass": true,
+      "actual": {
+        "open": true,
+        "focus": "",
+        "backgroundInert": true
+      },
+      "detail": ""
+    },
+    {
+      "name": "search results use grouped desktop cards",
+      "pass": true,
+      "actual": {
+        "groups": 5,
+        "cards": 22,
+        "columns": 2
+      },
+      "detail": ""
+    },
+    {
+      "name": "search filters grouped celestial results",
+      "pass": true,
+      "actual": {
+        "cards": 1,
+        "name": "土卫二",
+        "count": "1 个结果"
+      },
+      "detail": ""
+    },
+    {
+      "name": "Escape closes modal and returns focus",
+      "pass": true,
+      "actual": {
+        "immediate": {
+          "open": false,
+          "focus": "search-trigger",
+          "tag": "BUTTON",
+          "fullscreen": false
+        },
+        "settled": {
+          "open": false,
+          "focus": "search-trigger",
+          "tag": "BUTTON",
+          "searchRect": {
+            "x": 1177,
+            "y": 23.5,
+            "width": 43,
+            "height": 43,
+            "top": 23.5,
+            "right": 1220,
+            "bottom": 66.5,
+            "left": 1177
+          },
+          "searchInert": false,
+          "searchDisabled": false,
+          "activeDrawer": "none"
+        }
+      },
+      "detail": ""
+    },
+    {
+      "name": "responsive 1707x842",
+      "pass": true,
+      "actual": {
+        "width": 1707,
+        "height": 842,
+        "scrollWidth": 1707,
+        "topHeight": 46,
+        "footerHeight": 0,
+        "layout": "t15",
+        "ui": "compact"
+      },
+      "detail": ""
+    },
+    {
+      "name": "camera quick rail 1707x842",
+      "pass": true,
+      "actual": {
+        "rail": {
+          "left": 20,
+          "top": 505.5,
+          "right": 70,
+          "bottom": 658.5
+        },
+        "controls": [
+          {
+            "id": "zoom-in",
+            "w": 44,
+            "h": 44,
+            "visible": true
+          },
+          {
+            "id": "zoom-out",
+            "w": 44,
+            "h": 44,
+            "visible": true
+          },
+          {
+            "id": "reset-view",
+            "w": 50,
+            "h": 44,
+            "visible": true
+          }
+        ]
+      },
+      "detail": ""
+    },
+    {
+      "name": "responsive 1366x768",
+      "pass": true,
+      "actual": {
+        "width": 1366,
+        "height": 768,
+        "scrollWidth": 1366,
+        "topHeight": 46,
+        "footerHeight": 0,
+        "layout": "t15",
+        "ui": "compact"
+      },
+      "detail": ""
+    },
+    {
+      "name": "camera quick rail 1366x768",
+      "pass": true,
+      "actual": {
+        "rail": {
+          "left": 20,
+          "top": 468.5,
+          "right": 70,
+          "bottom": 621.5
+        },
+        "controls": [
+          {
+            "id": "zoom-in",
+            "w": 44,
+            "h": 44,
+            "visible": true
+          },
+          {
+            "id": "zoom-out",
+            "w": 44,
+            "h": 44,
+            "visible": true
+          },
+          {
+            "id": "reset-view",
+            "w": 50,
+            "h": 44,
+            "visible": true
+          }
+        ]
+      },
+      "detail": ""
+    },
+    {
+      "name": "responsive 390x844",
+      "pass": true,
+      "actual": {
+        "width": 390,
+        "height": 844,
+        "scrollWidth": 390,
+        "topHeight": 46,
+        "footerHeight": 61,
+        "layout": "t15",
+        "ui": "compact"
+      },
+      "detail": ""
+    },
+    {
+      "name": "camera quick rail 390x844",
+      "pass": true,
+      "actual": {
+        "rail": {
+          "left": 10,
+          "top": 329.609375,
+          "right": 54,
+          "bottom": 480.609375
+        },
+        "controls": [
+          {
+            "id": "zoom-in",
+            "w": 44,
+            "h": 44,
+            "visible": true
+          },
+          {
+            "id": "zoom-out",
+            "w": 44,
+            "h": 44,
+            "visible": true
+          },
+          {
+            "id": "reset-view",
+            "w": 44,
+            "h": 48,
+            "visible": true
+          }
+        ]
+      },
+      "detail": ""
+    },
+    {
+      "name": "solar mobile has compact orbital controls",
+      "pass": true,
+      "actual": {
+        "drawer": "time",
+        "title": "天体运动 · ORBITAL MOTION",
+        "datePresent": false
+      },
+      "detail": ""
+    },
+    {
+      "name": "mobile quality popover remains within the screen",
+      "pass": true,
+      "actual": {
+        "open": true,
+        "options": 3,
+        "fits": true
+      },
+      "detail": ""
+    },
+    {
+      "name": "mobile low quality updates renderer",
+      "pass": true,
+      "actual": {},
+      "detail": ""
+    },
+    {
+      "name": "mobile grouped search is single column with no overflow",
+      "pass": true,
+      "actual": {
+        "columns": 1,
+        "overflow": false
+      },
+      "detail": ""
+    },
+    {
+      "name": "scene readout vs detail sheet 390x844",
+      "pass": true,
+      "actual": {
+        "drawer": "detail",
+        "readoutHidden": true,
+        "readoutAriaHidden": "true",
+        "detailVisible": true
+      },
+      "detail": ""
+    },
+    {
+      "name": "camera tools clear open detail 390x844",
+      "pass": true,
+      "actual": {
+        "overlaps": false,
+        "reachable": true,
+        "camera": {
+          "top": 75,
+          "bottom": 226
+        },
+        "detail": {
+          "top": 281.484375,
+          "bottom": 771
+        }
+      },
+      "detail": ""
+    },
+    {
+      "name": "scene readout restored 390x844",
+      "pass": true,
+      "actual": {
+        "drawer": "none",
+        "readoutVisible": true,
+        "aria": "false"
+      },
+      "detail": ""
+    },
+    {
+      "name": "responsive 360x740",
+      "pass": true,
+      "actual": {
+        "width": 360,
+        "height": 740,
+        "scrollWidth": 360,
+        "topHeight": 46,
+        "footerHeight": 61,
+        "layout": "t15",
+        "ui": "compact"
+      },
+      "detail": ""
+    },
+    {
+      "name": "camera quick rail 360x740",
+      "pass": true,
+      "actual": {
+        "rail": {
+          "left": 10,
+          "top": 279.6875,
+          "right": 54,
+          "bottom": 430.6875
+        },
+        "controls": [
+          {
+            "id": "zoom-in",
+            "w": 44,
+            "h": 44,
+            "visible": true
+          },
+          {
+            "id": "zoom-out",
+            "w": 44,
+            "h": 44,
+            "visible": true
+          },
+          {
+            "id": "reset-view",
+            "w": 44,
+            "h": 48,
+            "visible": true
+          }
+        ]
+      },
+      "detail": ""
+    },
+    {
+      "name": "scene readout vs detail sheet 360x740",
+      "pass": true,
+      "actual": {
+        "drawer": "detail",
+        "readoutHidden": true,
+        "readoutAriaHidden": "true",
+        "detailVisible": true
+      },
+      "detail": ""
+    },
+    {
+      "name": "camera tools clear open detail 360x740",
+      "pass": true,
+      "actual": {
+        "overlaps": false,
+        "reachable": true,
+        "camera": {
+          "top": 75,
+          "bottom": 226
+        },
+        "detail": {
+          "top": 237.8125,
+          "bottom": 667
+        }
+      },
+      "detail": ""
+    },
+    {
+      "name": "scene readout restored 360x740",
+      "pass": true,
+      "actual": {
+        "drawer": "none",
+        "readoutVisible": true,
+        "aria": "false"
+      },
+      "detail": ""
+    },
+    {
+      "name": "responsive 844x390",
+      "pass": true,
+      "actual": {
+        "width": 844,
+        "height": 390,
+        "scrollWidth": 844,
+        "topHeight": 44,
+        "footerHeight": 174,
+        "layout": "t15",
+        "ui": "compact"
+      },
+      "detail": ""
+    },
+    {
+      "name": "camera quick rail 844x390",
+      "pass": true,
+      "actual": {
+        "rail": {
+          "left": 16,
+          "top": 119.5,
+          "right": 64,
+          "bottom": 270.5
+        },
+        "controls": [
+          {
+            "id": "zoom-in",
+            "w": 44,
+            "h": 44,
+            "visible": true
+          },
+          {
+            "id": "zoom-out",
+            "w": 44,
+            "h": 44,
+            "visible": true
+          },
+          {
+            "id": "reset-view",
+            "w": 48,
+            "h": 48,
+            "visible": true
+          }
+        ]
+      },
+      "detail": ""
+    },
+    {
+      "name": "scene readout vs detail sheet 844x390",
+      "pass": true,
+      "actual": {
+        "drawer": "detail",
+        "readoutHidden": false,
+        "readoutAriaHidden": "false",
+        "detailVisible": true
+      },
+      "detail": ""
+    },
+    {
+      "name": "camera tools clear open detail 844x390",
+      "pass": true,
+      "actual": {
+        "overlaps": false,
+        "reachable": true,
+        "camera": {
+          "top": 75,
+          "bottom": 226
+        },
+        "detail": {
+          "top": 67,
+          "bottom": 391
+        }
+      },
+      "detail": ""
+    },
+    {
+      "name": "scene readout restored 844x390",
+      "pass": true,
+      "actual": {
+        "drawer": "none",
+        "readoutVisible": true,
+        "aria": "false"
+      },
+      "detail": ""
+    },
+    {
+      "name": "planet close-up retains contextual motion and quick camera",
+      "pass": true,
+      "actual": {
+        "view": "planet",
+        "motionVisible": true,
+        "cameraVisible": true
+      },
+      "detail": ""
+    },
+    {
+      "name": "free-flight scene navigation",
+      "pass": true,
+      "actual": {
+        "view": "free",
+        "drawer": "none"
+      },
+      "detail": ""
+    },
+    {
+      "name": "free flight has separate speed and quick camera",
+      "pass": true,
+      "actual": {
+        "motionHidden": false,
+        "flightSpeedVisible": true,
+        "cameraVisible": true
+      },
+      "detail": ""
+    },
+    {
+      "name": "flight target and speed share a visible native selector panel",
+      "pass": true,
+      "actual": {
+        "drawer": "flight",
+        "targetCount": 23,
+        "groups": 5,
+        "native": true,
+        "samePanel": true,
+        "oldTilesHidden": true,
+        "speedVisible": true,
+        "customTriggers": true,
+        "arrow": "#ic-chevron-down"
+      },
+      "detail": ""
+    },
+    {
+      "name": "target dropdown expands as grouped scrollable themed list",
+      "pass": true,
+      "actual": {
+        "shown": true,
+        "expanded": "true",
+        "role": "combobox",
+        "active": "free-target-select-option-0",
+        "count": 23,
+        "groups": 5,
+        "height": 366,
+        "scroll": true,
+        "withinScreen": true,
+        "drawer": "flight"
+      },
+      "detail": ""
+    },
+    {
+      "name": "themed target selection locks planet and leaves drawer available",
+      "pass": true,
+      "actual": {
+        "value": "saturn",
+        "trigger": "土星",
+        "closed": true,
+        "drawer": "flight"
+      },
+      "detail": ""
+    },
+    {
+      "name": "speed dropdown expands with four custom options",
+      "pass": true,
+      "actual": {
+        "visible": true,
+        "options": 4,
+        "selected": 1,
+        "withinScreen": true
+      },
+      "detail": ""
+    },
+    {
+      "name": "speed dropdown supports arrow and Enter keyboard selection",
+      "pass": true,
+      "actual": {
+        "value": "2",
+        "label": "快速 · 2×",
+        "closed": true,
+        "focus": "flight-speed-trigger"
+      },
+      "detail": ""
+    },
+    {
+      "name": "opening a second dropdown dismisses the first",
+      "pass": true,
+      "actual": {},
+      "detail": ""
+    },
+    {
+      "name": "Escape dismisses dropdown without closing flight workspace",
+      "pass": true,
+      "actual": {},
+      "detail": ""
+    },
+    {
+      "name": "styled native flight target preserves locking",
+      "pass": true,
+      "actual": {
+        "value": "saturn",
+        "status": "土星 · 已锁定",
+        "goDisabled": false
+      },
+      "detail": ""
+    },
+    {
+      "name": "flight speed does not change orbital playback setting",
+      "pass": true,
+      "actual": {
+        "flight": "4",
+        "orbital": "1×"
+      },
+      "detail": ""
+    },
+    {
+      "name": "mobile flight selectors stack without overflow",
+      "pass": true,
+      "actual": {
+        "width": 390,
+        "overflow": false,
+        "target": {
+          "top": 513.953125,
+          "left": 40,
+          "width": 310,
+          "height": 45
+        },
+        "speed": {
+          "top": 592.953125,
+          "left": 40,
+          "width": 310,
+          "height": 45
+        },
+        "panel": {
+          "left": 39,
+          "right": 351
+        },
+        "speedHidden": false
+      },
+      "detail": ""
+    },
+    {
+      "name": "mobile target popup fits viewport and scrolls",
+      "pass": true,
+      "actual": {
+        "open": true,
+        "above": "above",
+        "viewport": [
+          390,
+          844
+        ],
+        "rect": {
+          "top": 140,
+          "bottom": 506,
+          "left": 40,
+          "right": 350,
+          "height": 366
+        },
+        "scrollable": true,
+        "role": "listbox"
+      },
+      "detail": ""
+    },
+    {
+      "name": "free-flight mobile archive sheet",
+      "pass": true,
+      "actual": {
+        "drawer": "detail",
+        "title": "自由漫游",
+        "peekLabel": "收起土星资料",
+        "readoutHidden": true,
+        "detailAria": "false"
+      },
+      "detail": ""
+    },
+    {
+      "name": "mobile toast clears the archive sheet",
+      "pass": true,
+      "actual": {
+        "toast": {
+          "top": 70,
+          "bottom": 109
+        },
+        "detail": {
+          "top": 281.484375,
+          "bottom": 771
+        },
+        "overlap": false
+      },
+      "detail": ""
+    },
+    {
+      "name": "WebGL loss shows recovery UI",
+      "pass": true,
+      "actual": {
+        "visible": true,
+        "focus": "webgl-reload"
+      },
+      "detail": ""
+    },
+    {
+      "name": "WebGL restores without reload",
+      "pass": true,
+      "actual": {
+        "visible": false,
+        "contextLost": false
+      },
+      "detail": ""
+    },
+    {
+      "name": "performance diagnostics accessible",
+      "pass": true,
+      "actual": {
+        "fps": 28,
+        "averageFps": 14,
+        "minFps": 8,
+        "samples": 9,
+        "mode": "free",
+        "transitioning": false,
+        "flying": false,
+        "cameraDistance": 65.07,
+        "qualityMode": "auto",
+        "qualityTier": "精细",
+        "dpr": 1,
+        "drawCalls": 1,
+        "triangles": 1,
+        "geometries": 27,
+        "textures": 35,
+        "contextLost": false,
+        "gpuMemoryBytes": null
+      },
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "browser": {
+    "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+    "width": 1344,
+    "height": 670,
+    "fullscreenEnabled": true,
+    "hasPerf": true,
+    "webgl": true
+  },
+  "solarScreenshot": "docs/baselines/2026-10-27-T27-T15-motion-mobile-390.png",
+  "flightTargetExpandedDesktop": "docs/baselines/2026-10-27-T27-T15-flight-target-expanded-desktop.png",
+  "flightDesktopScreenshot": "docs/baselines/2026-10-27-T27-T15-flight-select-desktop.png",
+  "flightTargetExpandedMobile": "docs/baselines/2026-10-27-T27-T15-flight-target-expanded-mobile-390.png",
+  "flightSpeedExpandedMobile": "docs/baselines/2026-10-27-T27-T15-flight-speed-expanded-mobile-390.png",
+  "flightMobileScreenshot": "docs/baselines/2026-10-27-T27-T15-flight-select-mobile-390.png",
+  "screenshot": "docs/baselines/2026-10-27-T27-T15-free-mobile-390.png",
+  "webglLoseExtensionAvailable": true,
+  "performance": {
+    "fps": 28,
+    "averageFps": 14,
+    "minFps": 8,
+    "samples": 9,
+    "mode": "free",
+    "transitioning": false,
+    "flying": false,
+    "cameraDistance": 65.07,
+    "qualityMode": "auto",
+    "qualityTier": "精细",
+    "dpr": 1,
+    "drawCalls": 1,
+    "triangles": 1,
+    "geometries": 27,
+    "textures": 35,
+    "contextLost": false,
+    "gpuMemoryBytes": null
+  },
+  "finished": "2026-10-27T09:46:45.265Z",
+  "summary": {
+    "passed": 77,
+    "failed": 0,
+    "errors": 0
+  }
+}

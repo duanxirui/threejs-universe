@@ -1,0 +1,943 @@
+{
+  "started": "2026-10-27T03:06:52.018Z",
+  "previewUrl": "http://127.0.0.1:5173/",
+  "environment": "Isolated Headless Chrome / SwiftShader / emulated viewport sizes",
+  "limitations": [
+    "Viewport emulation does not establish physical mobile touch, GPU performance or read-screen behavior."
+  ],
+  "checks": [
+    {
+      "name": "app initializes with T31 registry",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "desktop left rail, 3D stage and demo disclosure",
+      "pass": true,
+      "actual": {
+        "view": "1344x670",
+        "drawer": "none",
+        "nav": "none",
+        "detail": "false",
+        "version": "t31",
+        "scrollWidth": 1344,
+        "rail": {
+          "left": 14,
+          "right": 76,
+          "top": 335,
+          "bottom": 880,
+          "width": 62,
+          "height": 545
+        },
+        "workspace": {
+          "left": 81,
+          "right": 373,
+          "top": 85,
+          "bottom": 588,
+          "width": 292,
+          "height": 503
+        },
+        "inspector": {
+          "left": 984,
+          "right": 1334,
+          "top": 85,
+          "bottom": 588,
+          "width": 350,
+          "height": 503
+        },
+        "bottom": {
+          "left": 0,
+          "right": 0,
+          "top": 0,
+          "bottom": 0,
+          "width": 0,
+          "height": 0
+        },
+        "controls": [
+          {
+            "id": "planet-dock-toggle",
+            "width": 0,
+            "height": 0,
+            "expanded": "false"
+          },
+          {
+            "id": "time-open-trigger",
+            "width": 0,
+            "height": 0,
+            "expanded": "false"
+          },
+          {
+            "id": "detail-peek-trigger",
+            "width": 0,
+            "height": 0,
+            "expanded": "false"
+          }
+        ],
+        "railStyle": "flex",
+        "bottomStyle": "none",
+        "science": "科普演示 · 可切换 UTC 星历",
+        "workInert": true,
+        "detailInert": true
+      }
+    },
+    {
+      "name": "desktop explorer opens on left",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "desktop explorer and research panels coexist, stage >= 540px",
+      "pass": true,
+      "actual": {
+        "central": 592,
+        "twoPane": {
+          "view": "1344x670",
+          "drawer": "detail",
+          "nav": "objects",
+          "detail": "true",
+          "version": "t31",
+          "scrollWidth": 1344,
+          "rail": {
+            "left": 14,
+            "right": 76,
+            "top": 63.5,
+            "bottom": 606.5,
+            "width": 62,
+            "height": 543
+          },
+          "workspace": {
+            "left": 90,
+            "right": 382,
+            "top": 85,
+            "bottom": 588,
+            "width": 292,
+            "height": 503
+          },
+          "inspector": {
+            "left": 974,
+            "right": 1324,
+            "top": 85,
+            "bottom": 588,
+            "width": 350,
+            "height": 503
+          },
+          "bottom": {
+            "left": 0,
+            "right": 0,
+            "top": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0
+          },
+          "controls": [
+            {
+              "id": "planet-dock-toggle",
+              "width": 0,
+              "height": 0,
+              "expanded": "true"
+            },
+            {
+              "id": "time-open-trigger",
+              "width": 0,
+              "height": 0,
+              "expanded": "false"
+            },
+            {
+              "id": "detail-peek-trigger",
+              "width": 0,
+              "height": 0,
+              "expanded": "true"
+            }
+          ],
+          "railStyle": "flex",
+          "bottomStyle": "none",
+          "science": "科普演示 · 可切换 UTC 星历",
+          "workInert": false,
+          "detailInert": false
+        }
+      }
+    },
+    {
+      "name": "research tabs switch to data",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "research sources remain labeled as educational",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "registered routes workspace opens with inspector still visible",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "V3 guided tour modal opens from left workspace",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "closing modal restores both desktop workspaces",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "time explanation works in illustrative galaxy",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "quality and offline controls remain reachable",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "scene navigation retains functional solar motion",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "solar motion remains active in time workspace",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "future workspace registers without modifying fixed drawer branches",
+      "pass": true,
+      "actual": {
+        "items": 8,
+        "label": "注册工作区已渲染",
+        "trigger": true,
+        "active": "t31-proof"
+      }
+    },
+    {
+      "name": "mobile bottom three controls 390x844",
+      "pass": true,
+      "actual": {
+        "view": "390x844",
+        "drawer": "none",
+        "nav": "none",
+        "detail": "false",
+        "version": "t31",
+        "scrollWidth": 390,
+        "rail": {
+          "left": 0,
+          "right": 0,
+          "top": 0,
+          "bottom": 0,
+          "width": 0,
+          "height": 0
+        },
+        "workspace": {
+          "left": 11,
+          "right": 379,
+          "top": 741,
+          "bottom": 771,
+          "width": 368,
+          "height": 30
+        },
+        "inspector": {
+          "left": 11,
+          "right": 379,
+          "top": 466.65625,
+          "bottom": 771,
+          "width": 368,
+          "height": 304.34375
+        },
+        "bottom": {
+          "left": 11,
+          "right": 379,
+          "top": 773,
+          "bottom": 834,
+          "width": 368,
+          "height": 61
+        },
+        "controls": [
+          {
+            "id": "planet-dock-toggle",
+            "width": 115.65625,
+            "height": 50,
+            "expanded": "false"
+          },
+          {
+            "id": "time-open-trigger",
+            "width": 123.671875,
+            "height": 50,
+            "expanded": "false"
+          },
+          {
+            "id": "detail-peek-trigger",
+            "width": 115.671875,
+            "height": 50,
+            "expanded": "false"
+          }
+        ],
+        "railStyle": "none",
+        "bottomStyle": "block",
+        "science": "科普演示 · 可切换 UTC 星历",
+        "workInert": true,
+        "detailInert": true
+      }
+    },
+    {
+      "name": "mobile explorer sheet bounded 390x844",
+      "pass": true,
+      "actual": {
+        "view": "390x844",
+        "drawer": "objects",
+        "nav": "objects",
+        "detail": "false",
+        "version": "t31",
+        "scrollWidth": 390,
+        "rail": {
+          "left": 0,
+          "right": 0,
+          "top": 0,
+          "bottom": 0,
+          "width": 0,
+          "height": 0
+        },
+        "workspace": {
+          "left": 11,
+          "right": 379,
+          "top": 370,
+          "bottom": 762,
+          "width": 368,
+          "height": 392
+        },
+        "inspector": {
+          "left": 11,
+          "right": 379,
+          "top": 466.65625,
+          "bottom": 771,
+          "width": 368,
+          "height": 304.34375
+        },
+        "bottom": {
+          "left": 11,
+          "right": 379,
+          "top": 773,
+          "bottom": 834,
+          "width": 368,
+          "height": 61
+        },
+        "controls": [
+          {
+            "id": "planet-dock-toggle",
+            "width": 115.65625,
+            "height": 50,
+            "expanded": "true"
+          },
+          {
+            "id": "time-open-trigger",
+            "width": 123.671875,
+            "height": 50,
+            "expanded": "false"
+          },
+          {
+            "id": "detail-peek-trigger",
+            "width": 115.671875,
+            "height": 50,
+            "expanded": "false"
+          }
+        ],
+        "railStyle": "none",
+        "bottomStyle": "block",
+        "science": "科普演示 · 可切换 UTC 星历",
+        "workInert": false,
+        "detailInert": true
+      }
+    },
+    {
+      "name": "mobile time replaces explorer 390x844",
+      "pass": true,
+      "actual": {
+        "view": "390x844",
+        "drawer": "time",
+        "nav": "time",
+        "detail": "false",
+        "version": "t31",
+        "scrollWidth": 390,
+        "rail": {
+          "left": 0,
+          "right": 0,
+          "top": 0,
+          "bottom": 0,
+          "width": 0,
+          "height": 0
+        },
+        "workspace": {
+          "left": 11,
+          "right": 379,
+          "top": 310.65625,
+          "bottom": 762,
+          "width": 368,
+          "height": 451.34375
+        },
+        "inspector": {
+          "left": 11,
+          "right": 379,
+          "top": 466.65625,
+          "bottom": 771,
+          "width": 368,
+          "height": 304.34375
+        },
+        "bottom": {
+          "left": 11,
+          "right": 379,
+          "top": 773,
+          "bottom": 834,
+          "width": 368,
+          "height": 61
+        },
+        "controls": [
+          {
+            "id": "planet-dock-toggle",
+            "width": 115.65625,
+            "height": 50,
+            "expanded": "false"
+          },
+          {
+            "id": "time-open-trigger",
+            "width": 123.671875,
+            "height": 50,
+            "expanded": "true"
+          },
+          {
+            "id": "detail-peek-trigger",
+            "width": 115.671875,
+            "height": 50,
+            "expanded": "false"
+          }
+        ],
+        "railStyle": "none",
+        "bottomStyle": "block",
+        "science": "科普演示 · 可切换 UTC 星历",
+        "workInert": false,
+        "detailInert": true
+      }
+    },
+    {
+      "name": "mobile quality menu stays open in settings",
+      "pass": true,
+      "actual": {
+        "drawer": "settings",
+        "nav": "settings",
+        "hidden": false,
+        "expanded": "true",
+        "slotInert": false
+      }
+    },
+    {
+      "name": "mobile research replaces time 390x844",
+      "pass": true,
+      "actual": {
+        "view": "390x844",
+        "drawer": "detail",
+        "nav": "none",
+        "detail": "true",
+        "version": "t31",
+        "scrollWidth": 390,
+        "rail": {
+          "left": 0,
+          "right": 0,
+          "top": 0,
+          "bottom": 0,
+          "width": 0,
+          "height": 0
+        },
+        "workspace": {
+          "left": 11,
+          "right": 379,
+          "top": 741,
+          "bottom": 771,
+          "width": 368,
+          "height": 30
+        },
+        "inspector": {
+          "left": 11,
+          "right": 379,
+          "top": 457.65625,
+          "bottom": 762,
+          "width": 368,
+          "height": 304.34375
+        },
+        "bottom": {
+          "left": 11,
+          "right": 379,
+          "top": 773,
+          "bottom": 834,
+          "width": 368,
+          "height": 61
+        },
+        "controls": [
+          {
+            "id": "planet-dock-toggle",
+            "width": 115.65625,
+            "height": 50,
+            "expanded": "false"
+          },
+          {
+            "id": "time-open-trigger",
+            "width": 123.671875,
+            "height": 50,
+            "expanded": "false"
+          },
+          {
+            "id": "detail-peek-trigger",
+            "width": 115.671875,
+            "height": 50,
+            "expanded": "true"
+          }
+        ],
+        "railStyle": "none",
+        "bottomStyle": "block",
+        "science": "科普演示 · 可切换 UTC 星历",
+        "workInert": true,
+        "detailInert": false
+      }
+    },
+    {
+      "name": "mobile bottom three controls 360x740",
+      "pass": true,
+      "actual": {
+        "view": "360x740",
+        "drawer": "none",
+        "nav": "none",
+        "detail": "false",
+        "version": "t31",
+        "scrollWidth": 360,
+        "rail": {
+          "left": 0,
+          "right": 0,
+          "top": 0,
+          "bottom": 0,
+          "width": 0,
+          "height": 0
+        },
+        "workspace": {
+          "left": 11,
+          "right": 349,
+          "top": 637,
+          "bottom": 667,
+          "width": 338,
+          "height": 30
+        },
+        "inspector": {
+          "left": 11,
+          "right": 349,
+          "top": 373.65625,
+          "bottom": 667,
+          "width": 338,
+          "height": 293.34375
+        },
+        "bottom": {
+          "left": 11,
+          "right": 349,
+          "top": 669,
+          "bottom": 730,
+          "width": 338,
+          "height": 61
+        },
+        "controls": [
+          {
+            "id": "planet-dock-toggle",
+            "width": 105.65625,
+            "height": 50,
+            "expanded": "false"
+          },
+          {
+            "id": "time-open-trigger",
+            "width": 113.671875,
+            "height": 50,
+            "expanded": "false"
+          },
+          {
+            "id": "detail-peek-trigger",
+            "width": 105.671875,
+            "height": 50,
+            "expanded": "false"
+          }
+        ],
+        "railStyle": "none",
+        "bottomStyle": "block",
+        "science": "科普演示 · 可切换 UTC 星历",
+        "workInert": true,
+        "detailInert": true
+      }
+    },
+    {
+      "name": "mobile explorer sheet bounded 360x740",
+      "pass": true,
+      "actual": {
+        "view": "360x740",
+        "drawer": "objects",
+        "nav": "objects",
+        "detail": "false",
+        "version": "t31",
+        "scrollWidth": 360,
+        "rail": {
+          "left": 0,
+          "right": 0,
+          "top": 0,
+          "bottom": 0,
+          "width": 0,
+          "height": 0
+        },
+        "workspace": {
+          "left": 11,
+          "right": 349,
+          "top": 266,
+          "bottom": 658,
+          "width": 338,
+          "height": 392
+        },
+        "inspector": {
+          "left": 11,
+          "right": 349,
+          "top": 373.65625,
+          "bottom": 667,
+          "width": 338,
+          "height": 293.34375
+        },
+        "bottom": {
+          "left": 11,
+          "right": 349,
+          "top": 669,
+          "bottom": 730,
+          "width": 338,
+          "height": 61
+        },
+        "controls": [
+          {
+            "id": "planet-dock-toggle",
+            "width": 105.65625,
+            "height": 50,
+            "expanded": "true"
+          },
+          {
+            "id": "time-open-trigger",
+            "width": 113.671875,
+            "height": 50,
+            "expanded": "false"
+          },
+          {
+            "id": "detail-peek-trigger",
+            "width": 105.671875,
+            "height": 50,
+            "expanded": "false"
+          }
+        ],
+        "railStyle": "none",
+        "bottomStyle": "block",
+        "science": "科普演示 · 可切换 UTC 星历",
+        "workInert": false,
+        "detailInert": true
+      }
+    },
+    {
+      "name": "mobile time replaces explorer 360x740",
+      "pass": true,
+      "actual": {
+        "view": "360x740",
+        "drawer": "time",
+        "nav": "time",
+        "detail": "false",
+        "version": "t31",
+        "scrollWidth": 360,
+        "rail": {
+          "left": 0,
+          "right": 0,
+          "top": 0,
+          "bottom": 0,
+          "width": 0,
+          "height": 0
+        },
+        "workspace": {
+          "left": 11,
+          "right": 349,
+          "top": 228.8125,
+          "bottom": 658,
+          "width": 338,
+          "height": 429.1875
+        },
+        "inspector": {
+          "left": 11,
+          "right": 349,
+          "top": 373.65625,
+          "bottom": 667,
+          "width": 338,
+          "height": 293.34375
+        },
+        "bottom": {
+          "left": 11,
+          "right": 349,
+          "top": 669,
+          "bottom": 730,
+          "width": 338,
+          "height": 61
+        },
+        "controls": [
+          {
+            "id": "planet-dock-toggle",
+            "width": 105.65625,
+            "height": 50,
+            "expanded": "false"
+          },
+          {
+            "id": "time-open-trigger",
+            "width": 113.671875,
+            "height": 50,
+            "expanded": "true"
+          },
+          {
+            "id": "detail-peek-trigger",
+            "width": 105.671875,
+            "height": 50,
+            "expanded": "false"
+          }
+        ],
+        "railStyle": "none",
+        "bottomStyle": "block",
+        "science": "科普演示 · 可切换 UTC 星历",
+        "workInert": false,
+        "detailInert": true
+      }
+    },
+    {
+      "name": "mobile research replaces time 360x740",
+      "pass": true,
+      "actual": {
+        "view": "360x740",
+        "drawer": "detail",
+        "nav": "none",
+        "detail": "true",
+        "version": "t31",
+        "scrollWidth": 360,
+        "rail": {
+          "left": 0,
+          "right": 0,
+          "top": 0,
+          "bottom": 0,
+          "width": 0,
+          "height": 0
+        },
+        "workspace": {
+          "left": 11,
+          "right": 349,
+          "top": 637,
+          "bottom": 667,
+          "width": 338,
+          "height": 30
+        },
+        "inspector": {
+          "left": 11,
+          "right": 349,
+          "top": 364.65625,
+          "bottom": 658,
+          "width": 338,
+          "height": 293.34375
+        },
+        "bottom": {
+          "left": 11,
+          "right": 349,
+          "top": 669,
+          "bottom": 730,
+          "width": 338,
+          "height": 61
+        },
+        "controls": [
+          {
+            "id": "planet-dock-toggle",
+            "width": 105.65625,
+            "height": 50,
+            "expanded": "false"
+          },
+          {
+            "id": "time-open-trigger",
+            "width": 113.671875,
+            "height": 50,
+            "expanded": "false"
+          },
+          {
+            "id": "detail-peek-trigger",
+            "width": 105.671875,
+            "height": 50,
+            "expanded": "true"
+          }
+        ],
+        "railStyle": "none",
+        "bottomStyle": "block",
+        "science": "科普演示 · 可切换 UTC 星历",
+        "workInert": true,
+        "detailInert": false
+      }
+    },
+    {
+      "name": "landscape controller relocates to right",
+      "pass": true,
+      "actual": {
+        "view": "844x390",
+        "drawer": "none",
+        "nav": "none",
+        "detail": "false",
+        "version": "t31",
+        "scrollWidth": 844,
+        "rail": {
+          "left": 0,
+          "right": 0,
+          "top": 0,
+          "bottom": 0,
+          "width": 0,
+          "height": 0
+        },
+        "workspace": {
+          "left": 421,
+          "right": 766,
+          "top": 67,
+          "bottom": 391,
+          "width": 345,
+          "height": 324
+        },
+        "inspector": {
+          "left": 421,
+          "right": 766,
+          "top": 67,
+          "bottom": 391,
+          "width": 345,
+          "height": 324
+        },
+        "bottom": {
+          "left": 779,
+          "right": 836,
+          "top": 67,
+          "bottom": 241,
+          "width": 57,
+          "height": 174
+        },
+        "controls": [
+          {
+            "id": "planet-dock-toggle",
+            "width": 47,
+            "height": 52,
+            "expanded": "false"
+          },
+          {
+            "id": "time-open-trigger",
+            "width": 48,
+            "height": 59,
+            "expanded": "false"
+          },
+          {
+            "id": "detail-peek-trigger",
+            "width": 47,
+            "height": 52,
+            "expanded": "false"
+          }
+        ],
+        "railStyle": "none",
+        "bottomStyle": "block",
+        "science": "科普演示 · 可切换 UTC 星历",
+        "workInert": true,
+        "detailInert": true
+      }
+    },
+    {
+      "name": "landscape side sheet clears controller",
+      "pass": true,
+      "actual": {
+        "view": "844x390",
+        "drawer": "objects",
+        "nav": "objects",
+        "detail": "false",
+        "version": "t31",
+        "scrollWidth": 844,
+        "rail": {
+          "left": 0,
+          "right": 0,
+          "top": 0,
+          "bottom": 0,
+          "width": 0,
+          "height": 0
+        },
+        "workspace": {
+          "left": 421,
+          "right": 766,
+          "top": 58,
+          "bottom": 382,
+          "width": 345,
+          "height": 324
+        },
+        "inspector": {
+          "left": 421,
+          "right": 766,
+          "top": 67,
+          "bottom": 391,
+          "width": 345,
+          "height": 324
+        },
+        "bottom": {
+          "left": 779,
+          "right": 836,
+          "top": 67,
+          "bottom": 241,
+          "width": 57,
+          "height": 174
+        },
+        "controls": [
+          {
+            "id": "planet-dock-toggle",
+            "width": 47,
+            "height": 52,
+            "expanded": "true"
+          },
+          {
+            "id": "time-open-trigger",
+            "width": 48,
+            "height": 59,
+            "expanded": "false"
+          },
+          {
+            "id": "detail-peek-trigger",
+            "width": 47,
+            "height": 52,
+            "expanded": "false"
+          }
+        ],
+        "railStyle": "none",
+        "bottomStyle": "block",
+        "science": "科普演示 · 可切换 UTC 星历",
+        "workInert": false,
+        "detailInert": true
+      }
+    },
+    {
+      "name": "intermediate desktop allows only one expanded panel",
+      "pass": true,
+      "actual": null
+    }
+  ],
+  "screenshots": [
+    "docs/baselines/2026-10-27-T26-T31-regression-desktop-idle.png",
+    "docs/baselines/2026-10-27-T26-T31-regression-desktop-dual.png",
+    "docs/baselines/2026-10-27-T26-T31-regression-desktop-time.png",
+    "docs/baselines/2026-10-27-T26-T31-regression-desktop-solar-time.png",
+    "docs/baselines/2026-10-27-T26-T31-regression-mobile-390-idle.png",
+    "docs/baselines/2026-10-27-T26-T31-regression-mobile-390-explore.png",
+    "docs/baselines/2026-10-27-T26-T31-regression-mobile-390-research.png",
+    "docs/baselines/2026-10-27-T26-T31-regression-mobile-360-idle.png",
+    "docs/baselines/2026-10-27-T26-T31-regression-mobile-360-explore.png",
+    "docs/baselines/2026-10-27-T26-T31-regression-mobile-360-research.png",
+    "docs/baselines/2026-10-27-T26-T31-regression-landscape-explore.png",
+    "docs/baselines/2026-10-27-T26-T31-regression-tablet-research.png"
+  ],
+  "errors": [],
+  "finished": "2026-10-27T03:07:11.024Z",
+  "summary": {
+    "passed": 26,
+    "failed": 0,
+    "errors": 0
+  }
+}

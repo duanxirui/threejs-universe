@@ -1,0 +1,372 @@
+/* COSMOS ATLAS: unified scroll and dropdown finish (T31 UI refinement).
+   Loaded after workspace-v4.css to cover all existing responsive surfaces. */
+#app[data-layout="t15"] {
+  --control-scroll-thumb: #496b86;
+  --control-scroll-hover: #80acca;
+  --control-scroll-track: #10263a;
+  --control-outline: #a0def8;
+  --control-field-surface: #0c253a;
+  --control-field-border: rgba(144, 202, 235, .34);
+}
+
+/* Make the desktop explorer scrollbar dark and narrow; other drawers, nested
+   results and popovers use the same track. Preserve native wheel/touch scroll. */
+#app[data-layout="t15"] :is(
+  .workspace-panel, .detail-panel, .scene-rail,
+  .cosmos-dialog, .help-modal, .search-results, .atlas-route-list,
+  .atlas-personal-list, .flight-option-list, .planet-list,
+  .t29-results, .t30-results, .science-select-list
+) {
+  color-scheme: dark;
+  scrollbar-width: thin;
+  scrollbar-color: var(--control-scroll-thumb) var(--control-scroll-track);
+  overscroll-behavior: contain;
+}
+#app[data-layout="t15"] :is(.workspace-panel, .detail-panel) {
+  scrollbar-gutter: stable;
+}
+#app[data-layout="t15"] :is(
+  .workspace-panel, .detail-panel, .scene-rail,
+  .cosmos-dialog, .help-modal, .search-results, .atlas-route-list,
+  .atlas-personal-list, .flight-option-list, .planet-list,
+  .t29-results, .t30-results, .science-select-list
+)::-webkit-scrollbar {
+  display: block !important;
+  width: 7px;
+  height: 7px;
+}
+#app[data-layout="t15"] :is(
+  .workspace-panel, .detail-panel, .scene-rail,
+  .cosmos-dialog, .help-modal, .search-results, .atlas-route-list,
+  .atlas-personal-list, .flight-option-list, .planet-list,
+  .t29-results, .t30-results, .science-select-list
+)::-webkit-scrollbar-track {
+  background: var(--control-scroll-track);
+  border-radius: 99px;
+}
+#app[data-layout="t15"] :is(
+  .workspace-panel, .detail-panel, .scene-rail,
+  .cosmos-dialog, .help-modal, .search-results, .atlas-route-list,
+  .atlas-personal-list, .flight-option-list, .planet-list,
+  .t29-results, .t30-results, .science-select-list
+)::-webkit-scrollbar-thumb {
+  background-color: var(--control-scroll-thumb);
+  border: 1px solid #10263a;
+  border-radius: 99px;
+  min-height: 32px;
+}
+#app[data-layout="t15"] :is(
+  .workspace-panel, .detail-panel, .scene-rail,
+  .cosmos-dialog, .help-modal, .search-results, .atlas-route-list,
+  .atlas-personal-list, .flight-option-list, .planet-list,
+  .t29-results, .t30-results, .science-select-list
+)::-webkit-scrollbar-thumb:hover {
+  background-color: var(--control-scroll-hover);
+}
+#app[data-layout="t15"] :is(
+  .workspace-panel, .detail-panel, .scene-rail,
+  .cosmos-dialog, .flight-option-list, .t29-results, .t30-results,
+  .science-select-list
+)::-webkit-scrollbar-corner {
+  background: transparent;
+}
+#app[data-layout="t15"] .scene-rail {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(110, 153, 185, .7) transparent;
+}
+#app[data-layout="t15"] .scene-rail::-webkit-scrollbar {
+  width: 4px;
+}
+#app[data-layout="t15"] .scene-rail::-webkit-scrollbar-track {
+  background: transparent;
+}
+#app[data-layout="t15"] .scene-rail::-webkit-scrollbar-thumb {
+  background: rgba(111, 160, 194, .72);
+  border: none;
+}
+#app[data-layout="t15"] .planet-list {
+  touch-action: pan-x;
+}
+#app[data-layout="t15"] :is(
+  .t29-results, .t30-results, .flight-option-list, .science-select-list
+) {
+  overscroll-behavior-y: contain;
+  touch-action: pan-y;
+}
+
+/* Gaia and deep-sky filters use a select-backed combobox with an anchored
+   popover, matching the existing flight and quality menus. */
+#app[data-workspace-version="t31"] .science-select-shell {
+  --science-accent: #8fd9f5;
+  --science-focus-glow: rgba(121, 201, 242, .16);
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 44px;
+  min-height: 44px;
+  min-width: 0;
+  margin-top: 6px;
+  border: 1px solid var(--control-field-border);
+  border-radius: 10px;
+  box-sizing: border-box;
+  color: #edf8ff;
+  background: linear-gradient(150deg, #102e46 0%, #0b2235 100%);
+  box-shadow: inset 0 1px 0 rgba(218, 239, 251, .04);
+  transition: border-color .16s ease, background .16s ease, box-shadow .16s ease;
+}
+#app[data-workspace-version="t31"] .t30-deep-sky-panel .science-select-shell {
+  --science-accent: #d2beff;
+  --science-focus-glow: rgba(172, 148, 250, .17);
+  border-color: rgba(179, 166, 239, .40);
+  background: linear-gradient(150deg, #222c4a, #141f38);
+  margin-top: 0;
+}
+#app[data-workspace-version="t31"] .science-select-shell:not(.is-disabled):hover {
+  border-color: var(--science-accent);
+  background: linear-gradient(150deg, #1c4159, #102b40);
+}
+#app[data-workspace-version="t31"] .t30-deep-sky-panel .science-select-shell:not(.is-disabled):hover {
+  background: linear-gradient(150deg, #34345a, #1b2948);
+}
+#app[data-workspace-version="t31"] .science-select-shell:is(.is-open, :focus-within) {
+  border-color: var(--science-accent);
+  box-shadow: 0 0 0 3px var(--science-focus-glow),
+    inset 0 1px 0 rgba(233, 248, 255, .07);
+}
+#app[data-workspace-version="t31"] .science-select-shell.is-disabled {
+  opacity: .55;
+}
+#app[data-workspace-version="t31"] .science-select-shell[data-enhanced="true"] select {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  width: 1px !important;
+  height: 1px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0;
+  clip-path: inset(50%);
+  pointer-events: none;
+}
+#app[data-workspace-version="t31"] .science-select-trigger {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 0 36px 0 11px;
+  min-width: 0;
+  box-sizing: border-box;
+  background: transparent;
+  color: #ecf8ff;
+  border: 0;
+  border-radius: inherit;
+  text-align: left;
+  font: 600 12px/1.45 'DM Sans', 'Microsoft YaHei', sans-serif;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+#app[data-workspace-version="t31"] .science-select-trigger:focus-visible {
+  outline: none;
+}
+#app[data-workspace-version="t31"] .science-select-trigger:disabled {
+  cursor: progress;
+}
+#app[data-workspace-version="t31"] .science-select-value {
+  display: block;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+#app[data-workspace-version="t31"] .science-select-chevron {
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  width: 8px;
+  height: 8px;
+  border-right: 1.6px solid #b3d7e9;
+  border-bottom: 1.6px solid #b3d7e9;
+  transform: translateY(-70%) rotate(45deg);
+  pointer-events: none;
+  transition: transform .18s ease, border-color .18s ease;
+}
+#app[data-workspace-version="t31"] .science-select-shell.is-open .science-select-chevron {
+  transform: translateY(-15%) rotate(225deg);
+  border-color: var(--science-accent);
+}
+
+/* Anchored outside its scroll panel so the menu is never clipped. */
+#app[data-layout="t15"] .science-select-popover {
+  position: fixed;
+  z-index: 44;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 6px;
+  border: 1px solid rgba(139, 199, 234, .45);
+  border-radius: 13px;
+  color: #e9f6ff;
+  background: linear-gradient(148deg, rgba(18, 43, 66, .99), rgba(8, 23, 42, .995));
+  box-shadow: 0 20px 55px rgba(0, 4, 16, .65),
+    inset 0 1px 0 rgba(231, 246, 255, .08);
+  backdrop-filter: blur(16px);
+  isolation: isolate;
+}
+#app[data-layout="t15"] .science-select-popover[hidden] {
+  display: none !important;
+}
+#app[data-layout="t15"] .science-select-heading {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 9px 11px 10px;
+  border-bottom: 1px solid rgba(150, 197, 227, .18);
+}
+#app[data-layout="t15"] .science-select-heading strong {
+  color: #e5f4ff;
+  font: 600 12px/1.4 'Microsoft YaHei', sans-serif;
+}
+#app[data-layout="t15"] .science-select-heading small {
+  color: #91b4ca;
+  font: 500 10px/1.4 'DM Sans', sans-serif;
+}
+#app[data-layout="t15"] .science-select-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 4px 2px;
+}
+#app[data-layout="t15"] .science-select-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 43px;
+  padding: 9px 11px;
+  margin: 2px 0;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  color: #bfd9ea;
+  font: 500 12px/1.5 'Microsoft YaHei', 'DM Sans', sans-serif;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background .14s, border-color .14s, color .14s;
+}
+#app[data-layout="t15"] .science-select-option:is(:hover, .is-active) {
+  background: rgba(93, 159, 197, .17);
+  border-color: rgba(133, 200, 238, .22);
+  color: #f1fbff;
+}
+#app[data-layout="t15"] .science-select-option.is-selected {
+  border-color: rgba(131, 210, 244, .49);
+  background: rgba(53, 133, 184, .25);
+  color: #fff;
+}
+#app[data-layout="t15"] .science-select-option[aria-disabled="true"] {
+  opacity: .44;
+  cursor: not-allowed;
+}
+#app[data-layout="t15"] .science-select-option-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#app[data-layout="t15"] .science-select-check {
+  flex: 0 0 auto;
+  color: #9be0ff;
+  font-size: 15px;
+  line-height: 1;
+  opacity: 0;
+}
+#app[data-layout="t15"] .science-select-option.is-selected .science-select-check {
+  opacity: 1;
+}
+
+/* Remaining native comparison selects stay browser/keyboard accessible;
+   give their closed surfaces the same shape, contrast, and visible chevron. */
+#app[data-layout="t15"] .cosmos-dialog .compare-selects select {
+  appearance: none;
+  color-scheme: dark;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 9px 34px 9px 11px;
+  border-radius: 10px;
+  border-color: var(--control-field-border);
+  background-color: #102b41;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='m3 6 5 5 5-5' fill='none' stroke='%23a9d4eb' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-position: right 12px center;
+  background-size: 13px 13px;
+  background-repeat: no-repeat;
+  transition: border-color .16s, box-shadow .16s, background-color .16s;
+}
+#app[data-layout="t15"] .cosmos-dialog .compare-selects select:hover {
+  border-color: #8fd5f2;
+  background-color: #173a55;
+}
+#app[data-layout="t15"] .cosmos-dialog .compare-selects select:focus-visible {
+  border-color: var(--control-outline);
+  box-shadow: 0 0 0 3px rgba(126, 208, 243, .15);
+}
+#app[data-layout="t15"] .cosmos-dialog .compare-selects select option {
+  background: #102940;
+  color: #f1f9ff;
+}
+
+/* Soft hover feedback on the newer Gaia/deep-sky cards, matched to the
+   dropdowns while retaining the separate science/nebula accent. */
+#app[data-workspace-version="t31"] :is(.t29-result, .t29-load-all, .t29-mode-button) {
+  transition: border-color .16s, background .16s, box-shadow .16s;
+}
+#app[data-workspace-version="t31"] :is(.t29-result, .t29-load-all, .t29-mode-button):not(:disabled):hover {
+  border-color: rgba(139, 219, 250, .7);
+  background: rgba(42, 112, 160, .35);
+}
+#app[data-workspace-version="t31"] :is(.t30-object, .t30-route, .t30-toggle, .t30-lesson-actions button) {
+  transition: border-color .16s, background .16s, box-shadow .16s;
+}
+#app[data-workspace-version="t31"] :is(.t30-object, .t30-route, .t30-toggle, .t30-lesson-actions button):not(:disabled):hover {
+  border-color: rgba(205, 177, 255, .66);
+  background: rgba(98, 80, 157, .33);
+}
+#app[data-workspace-version="t31"] :is(.t29-result, .t30-object, .t30-route):focus-visible {
+  outline: 2px solid #b0e6ff;
+  outline-offset: 1px;
+}
+
+@media (max-width: 900px) {
+  #app[data-layout="t15"] :is(.workspace-panel, .detail-panel) {
+    scrollbar-gutter: auto;
+  }
+  #app[data-workspace-version="t31"] .science-select-shell {
+    min-height: 46px;
+    height: 46px;
+  }
+  #app[data-workspace-version="t31"] .science-select-trigger {
+    font-size: 14px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #app[data-workspace-version="t31"] .science-select-shell,
+  #app[data-workspace-version="t31"] .science-select-chevron,
+  #app[data-layout="t15"] .science-select-option,
+  #app[data-layout="t15"] .cosmos-dialog .compare-selects select,
+  #app[data-workspace-version="t31"] :is(.t29-result, .t29-load-all, .t29-mode-button,
+    .t30-object, .t30-route, .t30-toggle, .t30-lesson-actions button) {
+    transition: none;
+  }
+}

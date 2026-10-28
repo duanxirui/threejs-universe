@@ -1,0 +1,19 @@
+{
+  "name": "COSMOS ATLAS · 3D 宇宙图鉴",
+  "short_name": "COSMOS ATLAS",
+  "description": "探索太阳系，收藏天体并参与互动科普导览。",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#050912",
+  "theme_color": "#10263c",
+  "icons": [
+    {
+      "src": "./favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

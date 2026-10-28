@@ -1,0 +1,114 @@
+{
+  "schema": "cosmos-deepsky-v1",
+  "generatedOn": "2026-10-28",
+  "title": "T30 · OpenNGC J2000 sky object sample with NASA Messier classroom distances",
+  "objectCount": 15,
+  "routeCount": 3,
+  "coordinateFrame": "ICRS J2000.0",
+  "distanceUnit": "light-year",
+  "source": {
+    "catalog": "OpenNGC",
+    "author": "Mattia Verga",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "upstream": "https://github.com/mattiaverga/OpenNGC",
+    "raw": [
+      {
+        "filename": "NGC.csv",
+        "bytes": 3942946,
+        "sha256": "54abea0b57b0a103831bfc7a8e3a99a23acfbf4bb581fcf3d8af539cbb826c84"
+      },
+      {
+        "filename": "addendum.csv",
+        "bytes": 17496,
+        "sha256": "c93f983dda6780b76b7b2e9271a856a892627710148a982ee98101a54c642fdd"
+      }
+    ],
+    "distanceReferences": [
+      {
+        "id": "M1",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-1/"
+      },
+      {
+        "id": "M8",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-8/"
+      },
+      {
+        "id": "M16",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-16/"
+      },
+      {
+        "id": "M27",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-27/"
+      },
+      {
+        "id": "M42",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-42/"
+      },
+      {
+        "id": "M57",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-57/"
+      },
+      {
+        "id": "M3",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-3/"
+      },
+      {
+        "id": "M13",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-13/"
+      },
+      {
+        "id": "M44",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-44/"
+      },
+      {
+        "id": "M31",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-31/"
+      },
+      {
+        "id": "M51",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-51/"
+      },
+      {
+        "id": "M81",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-81/"
+      },
+      {
+        "id": "M82",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-82/"
+      },
+      {
+        "id": "M101",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-101/"
+      },
+      {
+        "id": "M104",
+        "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-104/"
+      }
+    ]
+  },
+  "visualization": {
+    "description": "App places direction-only markers on a virtual sky sphere of arbitrary radius.",
+    "physicalThreeDimensionalPositions": false,
+    "observedImagesBundled": false,
+    "note": "All in-app markers are schematic; real photos and their detailed image credits are on linked NASA Messier pages."
+  },
+  "limitations": [
+    "Curated selection of 15 objects, not a full sky census.",
+    "Distances are approximate published estimates and not used for 3D positions.",
+    "OpenNGC angles indicate sky direction at J2000, not actual physical depth.",
+    "Lessons are educational sequences, not navigable physical routes."
+  ],
+  "files": [
+    {
+      "file": "objects.json",
+      "bytes": 27039,
+      "sha256": "bcd087abedabb0dcef2df4fe871e33e5c3b60f16d0f591f84c0c395912eb6977"
+    },
+    {
+      "file": "routes.json",
+      "bytes": 3451,
+      "sha256": "335f2facde2ab766581150127f823d51fcfd85506ab59cdcb37de70761db4734"
+    }
+  ]
+}

@@ -1,0 +1,686 @@
+{
+  "started": "2026-10-26T02:18:55.497Z",
+  "environment": "Local built site / isolated Headless Chrome / default",
+  "limitations": [
+    "WebGL upload observations do not establish GPU physical memory usage or mobile compatibility.",
+    "The browser backend and GL renderer strings determine whether upload evidence is hardware or software.",
+    "Images are visual evidence for manual orientation and seam review, not pixel-perfect proofs."
+  ],
+  "checks": [
+    {
+      "name": "uranus KTX2 structure and Zstd mip lengths",
+      "status": "passed",
+      "actual": {
+        "size": [
+          2048,
+          1024
+        ],
+        "mipLevels": 12,
+        "jpgBytes": 77751,
+        "ktx2Bytes": 18940
+      }
+    },
+    {
+      "name": "neptune KTX2 structure and Zstd mip lengths",
+      "status": "passed",
+      "actual": {
+        "size": [
+          2048,
+          1024
+        ],
+        "mipLevels": 12,
+        "jpgBytes": 241580,
+        "ktx2Bytes": 193994
+      }
+    },
+    {
+      "name": "callisto KTX2 structure and Zstd mip lengths",
+      "status": "passed",
+      "actual": {
+        "size": [
+          1024,
+          498
+        ],
+        "mipLevels": 11,
+        "jpgBytes": 264772,
+        "ktx2Bytes": 205908
+      }
+    },
+    {
+      "name": "uranus scene remains interactive",
+      "status": "passed",
+      "actual": "planet"
+    },
+    {
+      "name": "uranus ETC2 upload",
+      "status": "skipped",
+      "reason": "WEBGL_compressed_texture_etc unavailable"
+    },
+    {
+      "name": "neptune scene remains interactive",
+      "status": "passed",
+      "actual": "planet"
+    },
+    {
+      "name": "neptune ETC2 upload",
+      "status": "skipped",
+      "reason": "WEBGL_compressed_texture_etc unavailable"
+    },
+    {
+      "name": "callisto scene remains interactive",
+      "status": "passed",
+      "actual": "planet"
+    },
+    {
+      "name": "callisto ETC2 upload",
+      "status": "skipped",
+      "reason": "WEBGL_compressed_texture_etc unavailable"
+    },
+    {
+      "name": "no ETC extension loads JPG without requesting KTX2",
+      "status": "passed",
+      "actual": {
+        "jpg": 1,
+        "ktx2": 0,
+        "blockedExtensionRequests": 2
+      }
+    },
+    {
+      "name": "404 KTX2 fallback",
+      "status": "skipped",
+      "reason": "compressed path cannot be entered without ETC extension"
+    },
+    {
+      "name": "corrupt KTX2 fallback",
+      "status": "skipped",
+      "reason": "compressed path cannot be entered without ETC extension"
+    }
+  ],
+  "requests": [
+    {
+      "phase": "normal",
+      "resource": "textures/uranus.jpg",
+      "status": 200,
+      "bytes": 77751
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/sun.jpg",
+      "status": 200,
+      "bytes": 822427
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/earth.jpg",
+      "status": 200,
+      "bytes": 463087
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/jupiter.jpg",
+      "status": 200,
+      "bytes": 498976
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/saturn.jpg",
+      "status": 200,
+      "bytes": 199916
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/mercury.jpg",
+      "status": 200,
+      "bytes": 872555
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/venus.jpg",
+      "status": 200,
+      "bytes": 885075
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/mars.jpg",
+      "status": 200,
+      "bytes": 750547
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/neptune.jpg",
+      "status": 200,
+      "bytes": 241580
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/neptune.jpg",
+      "status": 200,
+      "bytes": 241580
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/sun.jpg",
+      "status": 200,
+      "bytes": 822427
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/earth.jpg",
+      "status": 200,
+      "bytes": 463087
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/jupiter.jpg",
+      "status": 200,
+      "bytes": 498976
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/saturn.jpg",
+      "status": 200,
+      "bytes": 199916
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/satellites/triton.jpg",
+      "status": 200,
+      "bytes": 129677
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/mercury.jpg",
+      "status": 200,
+      "bytes": 872555
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/venus.jpg",
+      "status": 200,
+      "bytes": 885075
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/mars.jpg",
+      "status": 200,
+      "bytes": 750547
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/uranus.jpg",
+      "status": 200,
+      "bytes": 77751
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/satellites/callisto.jpg",
+      "status": 200,
+      "bytes": 264772
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/jupiter.jpg",
+      "status": 200,
+      "bytes": 498976
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/sun.jpg",
+      "status": 200,
+      "bytes": 822427
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/earth.jpg",
+      "status": 200,
+      "bytes": 463087
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/saturn.jpg",
+      "status": 200,
+      "bytes": 199916
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/mercury.jpg",
+      "status": 200,
+      "bytes": 872555
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/venus.jpg",
+      "status": 200,
+      "bytes": 885075
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/mars.jpg",
+      "status": 200,
+      "bytes": 750547
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/uranus.jpg",
+      "status": 200,
+      "bytes": 77751
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/neptune.jpg",
+      "status": 200,
+      "bytes": 241580
+    },
+    {
+      "phase": "noetc",
+      "resource": "textures/uranus.jpg",
+      "status": 200,
+      "bytes": 77751
+    },
+    {
+      "phase": "noetc",
+      "resource": "textures/sun.jpg",
+      "status": 200,
+      "bytes": 822427
+    },
+    {
+      "phase": "noetc",
+      "resource": "textures/earth.jpg",
+      "status": 200,
+      "bytes": 463087
+    },
+    {
+      "phase": "noetc",
+      "resource": "textures/jupiter.jpg",
+      "status": 200,
+      "bytes": 498976
+    },
+    {
+      "phase": "noetc",
+      "resource": "textures/saturn.jpg",
+      "status": 200,
+      "bytes": 199916
+    },
+    {
+      "phase": "noetc",
+      "resource": "textures/mercury.jpg",
+      "status": 200,
+      "bytes": 872555
+    },
+    {
+      "phase": "noetc",
+      "resource": "textures/venus.jpg",
+      "status": 200,
+      "bytes": 885075
+    },
+    {
+      "phase": "noetc",
+      "resource": "textures/mars.jpg",
+      "status": 200,
+      "bytes": 750547
+    },
+    {
+      "phase": "noetc",
+      "resource": "textures/neptune.jpg",
+      "status": 200,
+      "bytes": 241580
+    }
+  ],
+  "assets": [
+    {
+      "id": "uranus",
+      "jpgBytes": 77751,
+      "ktx2Bytes": 18940,
+      "width": 2048,
+      "height": 1024,
+      "vkFormat": 148,
+      "supercompression": 2,
+      "levels": [
+        {
+          "width": 2048,
+          "height": 1024,
+          "expected": 1048576,
+          "decoded": 1048576
+        },
+        {
+          "width": 1024,
+          "height": 512,
+          "expected": 262144,
+          "decoded": 262144
+        },
+        {
+          "width": 512,
+          "height": 256,
+          "expected": 65536,
+          "decoded": 65536
+        },
+        {
+          "width": 256,
+          "height": 128,
+          "expected": 16384,
+          "decoded": 16384
+        },
+        {
+          "width": 128,
+          "height": 64,
+          "expected": 4096,
+          "decoded": 4096
+        },
+        {
+          "width": 64,
+          "height": 32,
+          "expected": 1024,
+          "decoded": 1024
+        },
+        {
+          "width": 32,
+          "height": 16,
+          "expected": 256,
+          "decoded": 256
+        },
+        {
+          "width": 16,
+          "height": 8,
+          "expected": 64,
+          "decoded": 64
+        },
+        {
+          "width": 8,
+          "height": 4,
+          "expected": 16,
+          "decoded": 16
+        },
+        {
+          "width": 4,
+          "height": 2,
+          "expected": 8,
+          "decoded": 8
+        },
+        {
+          "width": 2,
+          "height": 1,
+          "expected": 8,
+          "decoded": 8
+        },
+        {
+          "width": 1,
+          "height": 1,
+          "expected": 8,
+          "decoded": 8
+        }
+      ]
+    },
+    {
+      "id": "neptune",
+      "jpgBytes": 241580,
+      "ktx2Bytes": 193994,
+      "width": 2048,
+      "height": 1024,
+      "vkFormat": 148,
+      "supercompression": 2,
+      "levels": [
+        {
+          "width": 2048,
+          "height": 1024,
+          "expected": 1048576,
+          "decoded": 1048576
+        },
+        {
+          "width": 1024,
+          "height": 512,
+          "expected": 262144,
+          "decoded": 262144
+        },
+        {
+          "width": 512,
+          "height": 256,
+          "expected": 65536,
+          "decoded": 65536
+        },
+        {
+          "width": 256,
+          "height": 128,
+          "expected": 16384,
+          "decoded": 16384
+        },
+        {
+          "width": 128,
+          "height": 64,
+          "expected": 4096,
+          "decoded": 4096
+        },
+        {
+          "width": 64,
+          "height": 32,
+          "expected": 1024,
+          "decoded": 1024
+        },
+        {
+          "width": 32,
+          "height": 16,
+          "expected": 256,
+          "decoded": 256
+        },
+        {
+          "width": 16,
+          "height": 8,
+          "expected": 64,
+          "decoded": 64
+        },
+        {
+          "width": 8,
+          "height": 4,
+          "expected": 16,
+          "decoded": 16
+        },
+        {
+          "width": 4,
+          "height": 2,
+          "expected": 8,
+          "decoded": 8
+        },
+        {
+          "width": 2,
+          "height": 1,
+          "expected": 8,
+          "decoded": 8
+        },
+        {
+          "width": 1,
+          "height": 1,
+          "expected": 8,
+          "decoded": 8
+        }
+      ]
+    },
+    {
+      "id": "callisto",
+      "jpgBytes": 264772,
+      "ktx2Bytes": 205908,
+      "width": 1024,
+      "height": 498,
+      "vkFormat": 148,
+      "supercompression": 2,
+      "levels": [
+        {
+          "width": 1024,
+          "height": 498,
+          "expected": 256000,
+          "decoded": 256000
+        },
+        {
+          "width": 512,
+          "height": 249,
+          "expected": 64512,
+          "decoded": 64512
+        },
+        {
+          "width": 256,
+          "height": 124,
+          "expected": 15872,
+          "decoded": 15872
+        },
+        {
+          "width": 128,
+          "height": 62,
+          "expected": 4096,
+          "decoded": 4096
+        },
+        {
+          "width": 64,
+          "height": 31,
+          "expected": 1024,
+          "decoded": 1024
+        },
+        {
+          "width": 32,
+          "height": 15,
+          "expected": 256,
+          "decoded": 256
+        },
+        {
+          "width": 16,
+          "height": 7,
+          "expected": 64,
+          "decoded": 64
+        },
+        {
+          "width": 8,
+          "height": 3,
+          "expected": 16,
+          "decoded": 16
+        },
+        {
+          "width": 4,
+          "height": 1,
+          "expected": 8,
+          "decoded": 8
+        },
+        {
+          "width": 2,
+          "height": 1,
+          "expected": 8,
+          "decoded": 8
+        },
+        {
+          "width": 1,
+          "height": 1,
+          "expected": 8,
+          "decoded": 8
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "body": "uranus",
+      "testCase": "normal",
+      "ready": true,
+      "focused": true,
+      "requested": false,
+      "state": {
+        "mode": "planet",
+        "contextLost": false,
+        "drawCalls": 1,
+        "textureCount": 41,
+        "gpuMemoryBytes": null,
+        "renderer": "WebKit WebGL",
+        "vendor": "WebKit",
+        "unmaskedRenderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A788) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "etcExtension": false,
+        "supportedExtensions": false,
+        "probe": {
+          "compressed": [],
+          "blockedEtcRequests": 0,
+          "installed": 2
+        }
+      }
+    },
+    {
+      "body": "neptune",
+      "testCase": "normal",
+      "ready": true,
+      "focused": true,
+      "requested": false,
+      "state": {
+        "mode": "planet",
+        "contextLost": false,
+        "drawCalls": 1,
+        "textureCount": 41,
+        "gpuMemoryBytes": null,
+        "renderer": "WebKit WebGL",
+        "vendor": "WebKit",
+        "unmaskedRenderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A788) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "etcExtension": false,
+        "supportedExtensions": false,
+        "probe": {
+          "compressed": [],
+          "blockedEtcRequests": 0,
+          "installed": 2
+        }
+      }
+    },
+    {
+      "body": "callisto",
+      "testCase": "normal",
+      "ready": true,
+      "focused": true,
+      "requested": false,
+      "state": {
+        "mode": "planet",
+        "contextLost": false,
+        "drawCalls": 1,
+        "textureCount": 41,
+        "gpuMemoryBytes": null,
+        "renderer": "WebKit WebGL",
+        "vendor": "WebKit",
+        "unmaskedRenderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A788) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "etcExtension": false,
+        "supportedExtensions": false,
+        "probe": {
+          "compressed": [],
+          "blockedEtcRequests": 0,
+          "installed": 2
+        }
+      }
+    },
+    {
+      "body": "uranus",
+      "testCase": "noetc",
+      "ready": true,
+      "focused": true,
+      "requested": true,
+      "state": {
+        "mode": "planet",
+        "contextLost": false,
+        "drawCalls": 1,
+        "textureCount": 41,
+        "gpuMemoryBytes": null,
+        "renderer": "WebKit WebGL",
+        "vendor": "WebKit",
+        "unmaskedRenderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A788) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "etcExtension": false,
+        "supportedExtensions": false,
+        "probe": {
+          "compressed": [],
+          "blockedEtcRequests": 2,
+          "installed": 2
+        }
+      }
+    }
+  ],
+  "errors": [],
+  "webgl": {
+    "etcAvailable": false,
+    "renderer": "WebKit WebGL",
+    "vendor": "WebKit",
+    "unmaskedRenderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A788) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "finished": "2026-10-26T02:19:55.851Z",
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "skipped": 5,
+    "errors": 0
+  }
+}

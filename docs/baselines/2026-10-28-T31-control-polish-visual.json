@@ -1,0 +1,70 @@
+{
+  "topic": "T31 controls visual preview",
+  "capturedOn": "2026-10-28T05:01:43.800Z",
+  "environment": "Local build, isolated Chrome/SwiftShader, simulated mobile viewport",
+  "screenshots": [
+    "docs/baselines/2026-10-28-T31-control-polish-gaia-desktop.png",
+    "docs/baselines/2026-10-28-T31-control-polish-deep-sky-desktop.png",
+    "docs/baselines/2026-10-28-T31-control-polish-deep-sky-mobile.png"
+  ],
+  "styles": {
+    "gaiaDesktop": {
+      "scrollbarWidth": "thin",
+      "scrollbarColor": "rgb(73, 107, 134) rgb(16, 38, 58)",
+      "panelScrollHeight": 1972,
+      "panelClientHeight": 501,
+      "activePopover": "t29-distance-popover",
+      "nativeValue": "400",
+      "popoverRect": {
+        "left": 123,
+        "top": 364,
+        "right": 367,
+        "bottom": 556
+      },
+      "viewport": {
+        "width": 1344,
+        "height": 670
+      }
+    },
+    "deepSkyDesktop": {
+      "scrollbarWidth": "thin",
+      "scrollbarColor": "rgb(73, 107, 134) rgb(16, 38, 58)",
+      "panelScrollHeight": 1433,
+      "panelClientHeight": 501,
+      "activePopover": "t30-category-popover",
+      "nativeValue": "all",
+      "popoverRect": {
+        "left": 123,
+        "top": 365,
+        "right": 367,
+        "bottom": 601
+      },
+      "viewport": {
+        "width": 1344,
+        "height": 670
+      }
+    },
+    "deepSkyMobile": {
+      "scrollbarWidth": "thin",
+      "scrollbarColor": "rgb(73, 107, 134) rgb(16, 38, 58)",
+      "panelScrollHeight": 1370,
+      "panelClientHeight": 488,
+      "activePopover": "t30-category-popover",
+      "nativeValue": "all",
+      "popoverRect": {
+        "left": 42,
+        "top": 385,
+        "right": 348,
+        "bottom": 621
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    }
+  },
+  "notes": [
+    "Popovers captured with native browser pointer interactions."
+  ],
+  "finishedAt": "2026-10-28T05:01:50.047Z"
+}

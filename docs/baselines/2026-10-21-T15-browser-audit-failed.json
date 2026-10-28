@@ -1,7 +1,7 @@
 {
   "previewUrl": "http://127.0.0.1:5173/",
   "tool": "Headless Chrome via native CDP",
-  "started": "2026-10-21T10:20:55.163Z",
+  "started": "2026-10-23T07:33:14.563Z",
   "limitations": [
     "Headless software WebGL performance is not physical GPU/mobile performance."
   ],
@@ -29,8 +29,8 @@
       "name": "unified local SVG interface icons",
       "pass": true,
       "actual": {
-        "symbols": 28,
-        "headerIcons": 5,
+        "symbols": 32,
+        "headerIcons": 6,
         "zoomIcon": "#ic-plus",
         "dockIcon": "#ic-info",
         "pseudo": "none"
@@ -298,7 +298,19 @@
     {
       "name": "Escape closes modal and returns focus",
       "pass": false,
-      "actual": {},
+      "actual": {
+        "immediate": {
+          "open": false,
+          "focus": "global-settings-trigger",
+          "tag": "BUTTON",
+          "fullscreen": false
+        },
+        "settled": {
+          "open": false,
+          "focus": "global-settings-trigger",
+          "tag": "BUTTON"
+        }
+      },
       "detail": ""
     },
     {
@@ -740,7 +752,7 @@
         "active": "free-target-select-option-0",
         "count": 23,
         "groups": 5,
-        "height": 322.296875,
+        "height": 323.71875,
         "scroll": true,
         "withinScreen": true,
         "drawer": "flight"
@@ -876,8 +888,8 @@
       "pass": true,
       "actual": {
         "toast": {
-          "top": 85,
-          "bottom": 124
+          "top": 70,
+          "bottom": 109
         },
         "detail": {
           "top": 451.28125,
@@ -910,13 +922,13 @@
       "pass": true,
       "actual": {
         "fps": 32,
-        "averageFps": 14,
+        "averageFps": 12,
         "minFps": 6,
         "samples": 13,
         "mode": "free",
         "transitioning": false,
         "flying": false,
-        "cameraDistance": 69.09,
+        "cameraDistance": 68.22,
         "qualityMode": "auto",
         "qualityTier": "精细",
         "dpr": 1,
@@ -949,13 +961,13 @@
   "webglLoseExtensionAvailable": true,
   "performance": {
     "fps": 32,
-    "averageFps": 14,
+    "averageFps": 12,
     "minFps": 6,
     "samples": 13,
     "mode": "free",
     "transitioning": false,
     "flying": false,
-    "cameraDistance": 69.09,
+    "cameraDistance": 68.22,
     "qualityMode": "auto",
     "qualityTier": "精细",
     "dpr": 1,
@@ -966,7 +978,7 @@
     "contextLost": false,
     "gpuMemoryBytes": null
   },
-  "finished": "2026-10-21T10:21:21.700Z",
+  "finished": "2026-10-23T07:33:40.401Z",
   "summary": {
     "passed": 76,
     "failed": 1,

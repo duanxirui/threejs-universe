@@ -1,6 +1,14 @@
 import { UniverseApp } from './core/UniverseApp.js';
 import { createLayoutController } from './ui/layoutController.js';
 import { createFlightDropdowns } from './ui/flightDropdown.js';
+import { createAtlasExperience } from './v3/createAtlasExperience.js';
+import { createOfflineManager } from './offline/offlineManager.js';
+import { createEphemerisControls } from './ui/ephemerisControls.js';
+import { createScaleControls } from './ui/scaleControls.js';
+import { createObservationControls } from './ui/observationControls.js';
+import { createGaiaControls } from './ui/gaiaControls.js';
+import { createDeepSkyControls } from './ui/deepSkyControls.js';
+import { createScienceDropdowns } from './ui/scienceDropdowns.js';
 import {
   CELESTIALS, ALL_BODIES, ALL_BY_ID, SATELLITES_BY_PARENT,
   COMPARISON_FACTS, formatMassKg, getOrbitReferenceId
@@ -44,7 +52,6 @@ const elements = {
   dockSubtitle: get('dock-subtitle'),
   dockHint: get('dock-hint'),
   searchFootnote: get('search-footnote'),
-  mobileQuality: get('mobile-quality-select'),
   mobileMenu: get('mobile-menu'),
   mobileMenuTrigger: get('mobile-menu-trigger'),
   dockToggle: get('planet-dock-toggle'),
@@ -57,6 +64,8 @@ const elements = {
   searchResults: get('search-results'),
   helpOverlay: get('help-overlay'),
   compareOverlay: get('compare-overlay'),
+  atlasOverlay: get('atlas-overlay'),
+  copyOverlay: get('copy-overlay'),
   compareLeft: get('compare-left'),
   compareRight: get('compare-right'),
   compareTable: get('compare-table'),
@@ -100,6 +109,13 @@ const heroCopy = {
 let universe;
 let layoutController;
 let flightDropdowns;
+let atlasExperience;
+let ephemerisControls;
+let scaleControls;
+let observationControls;
+let gaiaControls;
+let deepSkyControls;
+let scienceDropdowns;
 let currentState = { mode: 'galaxy' };
 let toastTimer;
 const SPEED_STEPS = [0, .25, 1, 3, 10, 25, 50];
@@ -109,9 +125,11 @@ let dockOpen = false;
 let layoutFrame = 0;
 let dialogReturnFocus = null;
 let dialogReturnDrawer = 'none';
+let dialogReturnWorkspaces = null;
 let activeModalOverlay = null;
 let contextReturnFocus = null;
-const modalOverlays = [elements.searchOverlay, elements.helpOverlay, elements.compareOverlay];
+const modalOverlays = [elements.searchOverlay, elements.helpOverlay,
+  elements.compareOverlay, elements.atlasOverlay, elements.copyOverlay];
 const inertBeforeDialog = new Map();
 const compactQuery = window.matchMedia('(max-width: 640px), (max-width: 900px) and (max-height: 480px)');
 const isCompact = () => compactQuery.matches;
@@ -199,7 +217,7 @@ function setDockOpen(open) {
   const wasOpen = layoutController?.isObjectsOpen ?? dockOpen;
   if (layoutController) {
     if (open) layoutController.setDrawer(currentState.mode === 'free' ? 'flight' : 'objects');
-    else if (wasOpen) layoutController.setDrawer('none');
+    else if (wasOpen) layoutController.closePane('navigation');
     dockOpen = layoutController.isObjectsOpen;
   } else dockOpen = Boolean(open && isCompact());
   get('app').dataset.dock = dockOpen ? 'open' : 'closed';
@@ -225,8 +243,7 @@ function setMobileMenuOpen(open) {
   elements.mobileMenuTrigger.setAttribute('aria-expanded', String(open));
   elements.mobileMenuTrigger.setAttribute('aria-label', open ? '关闭更多选项' : '打开更多选项');
   get('mobile-scene-trigger').setAttribute('aria-expanded', String(open));
-  if (closingFocusedMenu) focusIfAvailable(usesNavigationMenu()
-    ? get('mobile-scene-trigger') : elements.mobileMenuTrigger);
+  if (closingFocusedMenu) focusIfAvailable(elements.mobileMenuTrigger);
 }
 
 function setSheetState(next) {
@@ -236,8 +253,8 @@ function setSheetState(next) {
   if (sheetState !== 'collapsed') savedDetailScroll = elements.detail.scrollTop;
   sheetState = next;
   if (layoutController) {
-    if (next === 'collapsed' && layoutController.activeDrawer === 'detail') {
-      layoutController.setDrawer('none');
+    if (next === 'collapsed' && layoutController.inspectorOpen) {
+      layoutController.closePane('detail', { restoreFocus: false });
     } else if (next !== 'collapsed' && currentState.mode === 'planet') {
       layoutController.setDrawer('detail');
     }
@@ -266,6 +283,7 @@ function navigateToScene(destination) {
     showToast('场景正在切换，请稍候');
     return;
   }
+  atlasExperience?.onManualNavigation();
   setMobileMenuOpen(false);
   layoutController?.setDrawer('none');
   if (destination === 'galaxy') universe.viewGalaxy();
@@ -278,6 +296,7 @@ function focusBodyWhenReady(id) {
     showToast('场景正在切换，请稍候，再选择天体');
     return false;
   }
+  atlasExperience?.onManualNavigation();
   universe.focusBody(id);
   return true;
 }
@@ -487,7 +506,7 @@ function updateInterface(state) {
   get('app').dataset.view = state.mode;
   const showingDetail = state.mode === 'planet' && Boolean(state.focusId);
   const focusWasInHero = showingDetail && elements.hero.contains(document.activeElement);
-  const focusWasInDetail = !showingDetail && layoutController?.activeDrawer !== 'detail' &&
+  const focusWasInDetail = !showingDetail && !layoutController?.inspectorOpen &&
     elements.detail.contains(document.activeElement);
   const focusWasInChangingDetail = showingDetail && previousFocusId !== state.focusId &&
     elements.detail.contains(document.activeElement);
@@ -495,7 +514,7 @@ function updateInterface(state) {
   if (showingDetail && dockOpen) setDockOpen(false);
   elements.hero.classList.toggle('is-hidden', showingDetail);
   elements.hero.setAttribute('aria-hidden', 'true');
-  const detailOpen = layoutController?.activeDrawer === 'detail';
+  const detailOpen = layoutController?.inspectorOpen ?? layoutController?.activeDrawer === 'detail';
   elements.detail.classList.toggle('is-visible', showingDetail || detailOpen);
   elements.detail.setAttribute('aria-hidden', String(!detailOpen));
   elements.hero.inert = true;
@@ -576,7 +595,6 @@ function updateInterface(state) {
     '天体运动控制，当前 ' + elements.speedValue.textContent +
     (state.paused ? '，已暂停' : '，运行中'));
   elements.qualitySelect.value = state.qualityMode;
-  elements.mobileQuality.value = state.qualityMode;
   elements.flightSpeed.value = String(state.flightSpeed);
   const freeMode = state.mode === 'free';
   elements.flightSpeedControl.hidden = !freeMode;
@@ -584,7 +602,7 @@ function updateInterface(state) {
   elements.dockHeading.textContent = freeMode ? 'FLIGHT NAVIGATION' : 'SOLAR SYSTEM';
   elements.dockSubtitle.textContent = freeMode ? '航行目标' : '天体导航';
   elements.dockHint.hidden = freeMode;
-  get('dock-toggle-label').textContent = freeMode ? '航行导航' : '天体列表';
+  get('dock-toggle-label').textContent = '探索';
   elements.dockToggle.setAttribute('aria-label',
     (dockOpen ? '收起' : '展开') + (freeMode ? '航行导航' : '天体导航'));
   elements.freeTargetSelect.value = state.freeTargetId || '';
@@ -598,12 +616,36 @@ function updateInterface(state) {
   elements.freeFlightStatus.textContent = !targetName ? '选择一个天体作为航行目标' :
     targetName + ' · ' + (state.freeAutopilot ? '自动接近中' : state.freeArrived ? '安全抵达，持续跟随' : '已锁定');
 
-  for (const [element, isOn] of [[elements.orbitToggle, state.showOrbits], [elements.labelToggle, state.showLabels]]) {
+  const isDateMode = Boolean(universe?.getEphemerisInfo?.().enabled);
+  const isPhysicalScale = universe?.getScaleInfo?.().mode === 'physical';
+  const orbitUnsupported = isDateMode || isPhysicalScale;
+  for (const [element, isOn] of [
+    [elements.orbitToggle, !orbitUnsupported && state.showOrbits],
+    [elements.labelToggle, state.showLabels]
+  ]) {
     element.classList.toggle('is-on', isOn);
     element.setAttribute('aria-pressed', String(isOn));
   }
-  elements.orbitToggle.setAttribute('aria-label', state.showOrbits ? '隐藏轨道线' : '显示轨道线');
+  elements.orbitToggle.disabled = orbitUnsupported;
+  get('t31-orbit-hint').hidden = !orbitUnsupported;
+  get('t31-orbit-hint').textContent = isPhysicalScale
+    ? '真实比例使用统一公里尺度；旧演示轨道线尺寸不匹配，已隐藏。切回科普增强可显示轨道线。'
+    : 'UTC 星历模式隐藏演示轨道线；返回演示模式后可再次切换。';
+  elements.orbitToggle.setAttribute('aria-label', orbitUnsupported
+    ? (isPhysicalScale ? '真实比例暂不显示演示轨道线' : '日期星历模式不显示演示轨道线')
+    : state.showOrbits ? '隐藏轨道线' : '显示轨道线');
   elements.labelToggle.setAttribute('aria-label', state.showLabels ? '隐藏天体标签' : '显示天体标签');
+  document.querySelector('.speed-readout span').textContent = isDateMode
+    ? '1× ≈ 1 天/秒' : '运动倍速';
+  elements.speed.setAttribute('aria-label', isDateMode
+    ? '日期推进倍速，1 倍约为每秒一天' : '演示天体运动倍速');
+  elements.playPause.setAttribute('aria-label', isDateMode
+    ? (state.paused ? '继续日期播放' : '暂停日期播放')
+    : (state.paused ? '继续天体运动' : '暂停天体运动'));
+  get('mobile-pure-action').textContent = layoutController?.uiMode === 'pure'
+    ? '退出纯净观赏' : '纯净观赏';
+  get('mobile-fullscreen-action').textContent = document.fullscreenElement
+    ? '退出全屏' : '全屏显示';
   const infoTargetId = state.mode === 'free' ? state.freeTargetId : state.focusId;
   layoutController?.setScene(state.mode, state.focusId,
     ALL_BY_ID[infoTargetId]?.name, ALL_BY_ID[infoTargetId]?.index);
@@ -613,19 +655,29 @@ function updateInterface(state) {
   }
   flightDropdowns?.sync();
   if (previousMode !== state.mode || previousFocusId !== state.focusId) scheduleLayoutMeasure();
+  atlasExperience?.onStateChange(state);
+  gaiaControls?.render(state);
+  deepSkyControls?.render(state);
+  scienceDropdowns?.sync();
 }
 
-function openModal(name) {
+function openModal(name, opener = null) {
   if (!elements.contextRecovery.hidden) return;
   if (activeModalOverlay) closeModals();
-  dialogReturnFocus = elements.mobileMenu.contains(document.activeElement)
-    ? (usesNavigationMenu() ? get('mobile-scene-trigger') : elements.mobileMenuTrigger) : document.activeElement;
+  // Pointer clicks do not consistently move focus in every browser. Remember
+  // the actual clicked opener so Esc restores the expected control.
+  const returnTarget = opener || document.activeElement;
+  dialogReturnFocus = elements.mobileMenu.contains(returnTarget)
+    ? (usesNavigationMenu() ? get('mobile-scene-trigger') : elements.mobileMenuTrigger) : returnTarget;
   dialogReturnDrawer = layoutController?.activeDrawer || 'none';
+  dialogReturnWorkspaces = layoutController?.snapshot() || null;
   setMobileMenuOpen(false);
   layoutController?.setDrawer('none', { restoreFocus: false });
   setDockOpen(false);
   const overlay = name === 'search' ? elements.searchOverlay :
-    name === 'compare' ? elements.compareOverlay : elements.helpOverlay;
+    name === 'compare' ? elements.compareOverlay :
+    name === 'atlas' ? elements.atlasOverlay :
+    name === 'copy' ? elements.copyOverlay : elements.helpOverlay;
   activeModalOverlay = overlay;
   overlay.inert = false;
   overlay.classList.add('is-open');
@@ -645,10 +697,13 @@ function openModal(name) {
     elements.compareRight.value = focus === 'mars' ? 'jupiter' : 'mars';
     renderComparison();
   }
+  if (name === 'atlas') atlasExperience?.onHubOpened();
   requestAnimationFrame(() => {
     if (activeModalOverlay !== overlay) return;
     const preferred = name === 'search' ? elements.searchInput :
-      name === 'compare' ? elements.compareLeft : get('help-close');
+      name === 'compare' ? elements.compareLeft :
+      name === 'atlas' ? get('atlas-tab-routes') :
+      name === 'copy' ? get('copy-link-input') : get('help-close');
     (preferred || overlay.querySelector('[role="dialog"]')).focus();
   });
 }
@@ -662,10 +717,13 @@ function closeModals() {
   }
   activeModalOverlay = null;
   restoreBackgroundInert();
-  if (dialogReturnDrawer !== 'none' && layoutController?.uiMode !== 'pure') {
+  if (layoutController?.uiMode !== 'pure' && dialogReturnWorkspaces) {
+    layoutController.restore(dialogReturnWorkspaces);
+  } else if (dialogReturnDrawer !== 'none' && layoutController?.uiMode !== 'pure') {
     layoutController?.setDrawer(dialogReturnDrawer, { restoreFocus: false });
   }
   dialogReturnDrawer = 'none';
+  dialogReturnWorkspaces = null;
   focusIfAvailable(dialogReturnFocus || get('search-trigger'));
   dialogReturnFocus = null;
 }
@@ -785,6 +843,7 @@ function renderComparison() {
     }
     elements.compareTable.appendChild(row);
   }
+  atlasExperience?.renderComparisonScale(left.id, right.id);
 }
 
 function renderSearchResults(query) {
@@ -877,11 +936,42 @@ function bindInterface() {
     setDockOpen(false);
     setMobileMenuOpen(elements.mobileMenu.hidden);
   });
-  get('mobile-help-trigger').addEventListener('click', () => openModal('help'));
+  get('mobile-help-trigger').addEventListener('click', event => openModal('help', event.currentTarget));
+  get('atlas-trigger').addEventListener('click', event => openModal('atlas', event.currentTarget));
+  get('mobile-settings-action').addEventListener('click', () => {
+    setMobileMenuOpen(false);
+    layoutController?.toggleDrawer('settings');
+  });
+  get('mobile-pure-action').addEventListener('click', () => {
+    setMobileMenuOpen(false);
+    get('pure-mode-trigger').click();
+  });
+  get('mobile-fullscreen-action').addEventListener('click', () => {
+    setMobileMenuOpen(false);
+    // Fullscreen requires the original user activation. Synthetic .click()
+    // on the hidden desktop button is not reliably gesture-authorized.
+    toggleFullscreen();
+  });
+  get('atlas-close').addEventListener('click', closeModals);
+  get('copy-close').addEventListener('click', closeModals);
+  get('copy-link-done').addEventListener('click', closeModals);
+  get('copy-link-select').addEventListener('click', () => {
+    const input = get('copy-link-input');
+    input.focus();
+    input.select();
+    try {
+      if (typeof document.execCommand === 'function' && document.execCommand('copy')) {
+        showToast('探索链接已复制');
+        return;
+      }
+    } catch {
+      // Keep the text selected for the browser's standard copy shortcut.
+    }
+    showToast('链接已选中，请使用 Ctrl+C 复制');
+  });
   document.querySelectorAll('.mobile-view-link[data-view]').forEach(button => {
     button.addEventListener('click', () => navigateToScene(button.dataset.view));
   });
-  elements.mobileQuality.addEventListener('change', event => universe.setQuality(event.target.value));
   elements.dockToggle.addEventListener('click', () => {
     setMobileMenuOpen(false);
     setDockOpen(!dockOpen);
@@ -935,7 +1025,10 @@ function bindInterface() {
   get('detail-back').addEventListener('click', () => universe.viewSolar());
   elements.detailClose.addEventListener('click', () => {
     setSheetState('collapsed');
-    focusIfAvailable(layoutController ? get('detail-peek-trigger') : elements.detailSummary);
+    focusIfAvailable(layoutController
+      ? (window.matchMedia('(min-width: 901px)').matches
+        ? get('t31-rail-detail') : get('detail-peek-trigger'))
+      : elements.detailSummary);
   });
   get('detail-prev').addEventListener('click', () => {
     const current = ALL_BY_ID[currentState.focusId];
@@ -947,7 +1040,7 @@ function bindInterface() {
     const index = CELESTIALS.findIndex(body => body.id === (current?.parentId || current?.id));
     focusBodyWhenReady(CELESTIALS[(index + 1) % CELESTIALS.length].id);
   });
-  get('detail-compare-trigger').addEventListener('click', () => openModal('compare'));
+  get('detail-compare-trigger').addEventListener('click', event => openModal('compare', event.currentTarget));
   elements.playPause.addEventListener('click', () => universe.togglePaused());
   elements.speed.addEventListener('input', event => universe.setTimeScale(SPEED_STEPS[Number(event.target.value)]));
   elements.qualitySelect.addEventListener('change', event => universe.setQuality(event.target.value));
@@ -971,8 +1064,8 @@ function bindInterface() {
     if (!universe.zoom(1.3)) showToast('场景正在切换，请稍候');
   });
   elements.resetView.addEventListener('click', () => universe.resetView());
-  get('search-trigger').addEventListener('click', () => openModal('search'));
-  get('help-trigger').addEventListener('click', () => openModal('help'));
+  get('search-trigger').addEventListener('click', event => openModal('search', event.currentTarget));
+  get('help-trigger').addEventListener('click', event => openModal('help', event.currentTarget));
   get('search-close').addEventListener('click', closeModals);
   get('help-close').addEventListener('click', closeModals);
   get('compare-close').addEventListener('click', closeModals);
@@ -1022,9 +1115,14 @@ function bindInterface() {
         closeModals();
         return;
       }
+      if (atlasExperience?.hasActiveTour()) {
+        event.preventDefault();
+        atlasExperience.endTour();
+        return;
+      }
       if (!elements.mobileMenu.hidden) {
         setMobileMenuOpen(false);
-        focusIfAvailable(get('mobile-scene-trigger'));
+        focusIfAvailable(elements.mobileMenuTrigger);
       }
       else if (layoutController?.activeDrawer !== 'none') {
         event.preventDefault();
@@ -1148,10 +1246,21 @@ try {
       scheduleLayoutMeasure();
       requestAnimationFrame(() => universe?.reframeFocusedBody());
     },
-    onDetailOpen: () => setSheetState('half')
+    onDetailOpen: () => setSheetState('half'),
+    onOpenAtlas: opener => openModal('atlas', opener)
+  });
+  // Stable extension point for future science, Gaia and deep-sky workspaces.
+  // Registration adds a navigation entry without copying existing UI nodes.
+  window.CosmosWorkspaces = Object.freeze({
+    register: definition => layoutController.registerWorkspace(definition),
+    open: id => layoutController.setDrawer(id),
+    close: () => layoutController.setDrawer('none'),
+    list: () => layoutController.listWorkspaces(),
+    state: () => layoutController.snapshot()
   });
   syncFullscreen();
   bindInterface();
+  createOfflineManager({ toast: showToast });
   flightDropdowns = createFlightDropdowns({
     accentFor: id => ALL_BY_ID[id]?.accent
   });
@@ -1159,6 +1268,15 @@ try {
     labelsLayer: get('labels-layer'),
     transitionElement: get('scene-transition'),
     onStateChange: updateInterface,
+    onEphemerisTime: info => {
+      ephemerisControls?.render(info);
+      observationControls?.render();
+    },
+    onScaleModeChange: info => {
+      scaleControls?.render(info);
+      ephemerisControls?.render();
+      observationControls?.render();
+    },
     onContextStatus: updateWebGLStatus,
     onToast: showToast,
     onTelemetry: ({ fps, dpr, qualityTier, drawCalls }) => {
@@ -1169,8 +1287,96 @@ try {
       get('camera-distance').textContent = 'CAM / ' + distance.toFixed(1);
     }
   });
+  ephemerisControls = createEphemerisControls({ universe, toast: showToast });
+  scaleControls = createScaleControls({ universe, toast: showToast });
+  observationControls = createObservationControls({ universe });
+  gaiaControls = createGaiaControls({ universe, layoutController, toast: showToast });
+  deepSkyControls = createDeepSkyControls({ universe, layoutController, toast: showToast });
+  scienceDropdowns = createScienceDropdowns();
+  atlasExperience = createAtlasExperience({
+    getUniverse: () => universe,
+    getState: () => currentState,
+    closeModal: closeModals,
+    openModal,
+    toast: showToast
+  });
+  atlasExperience.onStateChange(currentState);
+  atlasExperience.applyLocationLink();
   // Read-only diagnostics for repeatable local browser/device benchmarks.
   window.getCosmosPerformance = () => universe.getPerformanceSnapshot();
+  window.getCosmosEphemeris = () => ({
+    ...universe.getEphemerisInfo(),
+    mode: universe.mode,
+    paused: universe.paused,
+    timeScale: universe.timeScale,
+    orbitsVisible: universe.solar.orbitsGroup.visible,
+    cameraDistance: universe.camera.position.distanceTo(universe.controls.target),
+    displayPositions: Object.fromEntries(['sun', 'earth', 'moon', 'mars'].map(id =>
+      [id, universe.solar.bodies[id].root.position.toArray()]))
+  });
+  // T27 local read-only diagnostics; positions in km do not depend on scale.
+  window.getCosmosScale = () => ({
+    ...universe.getScaleInfo(),
+    transitioning: universe.transitioning,
+    flying: universe.flying,
+    cameraNear: universe.camera.near,
+    cameraFar: universe.camera.far,
+    cameraDistance: universe.camera.position.distanceTo(universe.controls.target),
+    focusedBody: universe.focusId,
+    scene: universe.mode,
+    floatingOrigin: universe.solar.group.position.toArray(),
+    bodies: Object.fromEntries(Object.entries(universe.solar.bodies).map(([id, body]) => [
+      id, {
+        radiusScene: body.data.radius,
+        absoluteKm: universe.solar.getPhysicalPositionKm(id),
+        parentRelativeKm: universe.solar.getPhysicalRelativeKm(id),
+        worldPosition: body.root.getWorldPosition(body.root.position.clone()).toArray()
+      }
+    ]))
+  });
+  // T28 diagnostic: date geometry and rendered pose share the same UTC clock.
+  window.getCosmosObservations = () => ({
+    ...universe.solar.getObservationInfo(),
+    mode: universe.mode,
+    scaleMode: universe.getScaleInfo().mode,
+    sunWorld: universe.solar.getSunWorldPosition(),
+    earthOrientation: universe.solar.getOrientationInfo('earth'),
+    moonOrientation: universe.solar.getOrientationInfo('moon'),
+    marsOrientation: universe.solar.getOrientationInfo('mars')
+  });
+  // T29 read-only state. The original catalog IDs remain strings to avoid
+  // losing precision when a 64-bit Gaia source ID exceeds JS safe integers.
+  window.getCosmosGaia = () => ({
+    ...universe.getGaiaInfo(),
+    scene: universe.mode,
+    illustrationVisible: universe.galaxy.group.visible,
+    backgroundStarsVisible: universe.starfield.visible,
+    cameraDistance: universe.camera.position.distanceTo(universe.controls.target),
+    cameraTarget: universe.controls.target.toArray(),
+    referenceEpoch: gaiaControls?.getCatalog()?.manifest.referenceEpoch ?? null,
+    sourcesSample: gaiaControls?.getCatalog()?.allRecords().slice(0, 3)
+      .map(row => ({
+        sourceId: row.sourceId, raDeg: row.raDeg, decDeg: row.decDeg,
+        parallaxMas: row.parallaxMas, distancePc: row.distancePc,
+        gMag: row.gMag
+      })) || []
+  });
+  // T30 read-only integration diagnostic. Virtual sky marker positions
+  // deliberately do not depend on the objects' approximate light-year values.
+  window.getCosmosDeepSky = () => ({
+    ...universe.getDeepSkyInfo(),
+    illustrationVisible: universe.galaxy.group.visible,
+    gaiaVisible: universe.gaiaLayer.group.visible,
+    starsVisible: universe.starfield.visible,
+    cameraDistance: universe.camera.position.distanceTo(universe.controls.target),
+    cameraTarget: universe.controls.target.toArray(),
+    lesson: deepSkyControls?.getLessonState() || null,
+    sample: deepSkyControls?.getCatalog()?.objects.slice(0, 3).map(o => ({
+      id: o.id, catalogId: o.catalogId, raDeg: o.position.raDeg,
+      decDeg: o.position.decDeg, distanceLy: o.distance.approximateLightYears,
+      markerPosition: [...o.markerPosition]
+    })) || []
+  });
 
   // Allow the first 3D frame to render before dismissing the cover.
   requestAnimationFrame(() => {
@@ -1185,3 +1391,10 @@ try {
   fallback.textContent = '宇宙场景初始化失败，请刷新页面重试。详细错误可查看浏览器控制台。';
   fallback.hidden = false;
 }
+
+// Preserve a page restored from the back/forward cache. An actual exit (or
+// Vite hot replacement) releases its WebGL resources through the same path.
+window.addEventListener('pagehide', event => {
+  if (!event.persisted) universe?.dispose();
+});
+if (import.meta.hot) import.meta.hot.dispose(() => universe?.dispose());

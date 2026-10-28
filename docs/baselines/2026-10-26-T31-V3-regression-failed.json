@@ -1,0 +1,162 @@
+{
+  "started": "2026-10-26T04:04:34.761Z",
+  "previewUrl": "http://127.0.0.1:5173/",
+  "environment": "Isolated Headless Chrome/SwiftShader and CSS mobile emulation",
+  "limitations": [
+    "Not physical Android/iOS touch, GPU memory or FPS evidence."
+  ],
+  "checks": [
+    {
+      "name": "V3 page initialized",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "all five dialogs share surface, heading and close styles",
+      "passed": true,
+      "actual": {
+        "count": 5,
+        "radii": [
+          "18px"
+        ],
+        "backgrounds": [
+          "linear-gradient(145deg, rgb(16, 38, 60) 0%, rgb(8, 22, 37) 100%)"
+        ],
+        "headers": [
+          "linear-gradient(110deg, rgb(23, 57, 84) 0%, rgb(12, 35, 56) 100%)"
+        ],
+        "closeHeights": [
+          "44px"
+        ]
+      }
+    },
+    {
+      "name": "search dialog fits desktop viewport",
+      "passed": true,
+      "actual": {
+        "left": 337,
+        "right": 1007,
+        "top": 20,
+        "bottom": 650,
+        "width": 670,
+        "height": 630,
+        "viewport": 1344,
+        "viewportHeight": 670
+      }
+    },
+    {
+      "name": "help dialog fits desktop viewport",
+      "passed": true,
+      "actual": {
+        "left": 322,
+        "right": 1022,
+        "top": 20,
+        "bottom": 650,
+        "width": 700,
+        "height": 630,
+        "viewport": 1344,
+        "viewportHeight": 670
+      }
+    },
+    {
+      "name": "compare dialog fits desktop viewport",
+      "passed": true,
+      "actual": {
+        "left": 292,
+        "right": 1052,
+        "top": 20,
+        "bottom": 650,
+        "width": 760,
+        "height": 630,
+        "viewport": 1344,
+        "viewportHeight": 670
+      }
+    },
+    {
+      "name": "atlas dialog fits desktop viewport",
+      "passed": true,
+      "actual": {
+        "left": 322,
+        "right": 1022,
+        "top": 47.328125,
+        "bottom": 622.65625,
+        "width": 700,
+        "height": 575.328125,
+        "viewport": 1344,
+        "viewportHeight": 670
+      }
+    },
+    {
+      "name": "clipboard denied opens shared link dialog",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "link can be selected without a native prompt",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "link dialog closes and restores focus",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "V3 hub opens and isolates background",
+      "passed": true,
+      "actual": {
+        "open": true,
+        "inert": true,
+        "routeCount": 3
+      }
+    },
+    {
+      "name": "guided route starts",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "guided arrival at Sun",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "guided next step",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "guided previous step",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "guided skip step",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "guided tour exits",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "celestial source and scale disclosure",
+      "passed": true,
+      "actual": {
+        "href": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/",
+        "note": "最靠近太阳 · 当前页面是近似科普数据；球体大小、轨道间距和运行速度另作视觉缩放。"
+      }
+    }
+  ],
+  "errors": [
+    "Error: Element not clickable: #atlas-favorite {\"x\":0,\"y\":0,\"ready\":false}\n    at CDP.click (file:///D:/codex%E9%A1%B9%E7%9B%AE/threejs-universe/scripts/v3-browser-audit.mjs:88:28)\n    at async file:///D:/codex%E9%A1%B9%E7%9B%AE/threejs-universe/scripts/v3-browser-audit.mjs:236:3"
+  ],
+  "desktopScreenshot": "docs/baselines/2026-10-26-T31-regression-V3-atlas-desktop.png",
+  "finished": "2026-10-26T04:04:52.740Z",
+  "summary": {
+    "passed": 17,
+    "failed": 0,
+    "errors": 1
+  }
+}

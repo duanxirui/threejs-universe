@@ -247,20 +247,25 @@ export function createNightLightsTexture() {
   return texture;
 }
 
-/** Keep emissive city lights on the unlit side of a planet. */
-export function addNightSideLighting(material) {
+/** Keep illustrative city lights on the actual Sun-facing hemisphere. */
+export function addNightSideLighting(material, sunWorld = new THREE.Vector3()) {
+  const uniforms = { uT28NightSunWorld: { value: sunWorld } };
+  const previousCompile = material.onBeforeCompile;
+  const previousKey = material.customProgramCacheKey.bind(material);
   material.onBeforeCompile = shader => {
+    previousCompile.call(material, shader);
+    Object.assign(shader.uniforms, uniforms);
     shader.vertexShader = shader.vertexShader.replace('#include <common>',
       '#include <common>\nvarying vec3 vNightWorldNormal;\nvarying vec3 vNightWorldPosition;');
     shader.vertexShader = shader.vertexShader.replace('#include <worldpos_vertex>',
       '#include <worldpos_vertex>\nvNightWorldPosition = (modelMatrix * vec4(transformed, 1.0)).xyz;\nvNightWorldNormal = normalize(mat3(modelMatrix) * normal);');
     shader.fragmentShader = shader.fragmentShader.replace('#include <common>',
-      '#include <common>\nvarying vec3 vNightWorldNormal;\nvarying vec3 vNightWorldPosition;');
+      '#include <common>\nvarying vec3 vNightWorldNormal;\nvarying vec3 vNightWorldPosition;\nuniform vec3 uT28NightSunWorld;');
     shader.fragmentShader = shader.fragmentShader.replace('#include <emissivemap_fragment>',
-      '#include <emissivemap_fragment>\nfloat sunlight = dot(normalize(vNightWorldNormal), normalize(-vNightWorldPosition));\ntotalEmissiveRadiance *= 1.0 - smoothstep(-0.18, 0.12, sunlight);');
+      '#include <emissivemap_fragment>\nfloat sunlight = dot(normalize(vNightWorldNormal), normalize(uT28NightSunWorld - vNightWorldPosition));\ntotalEmissiveRadiance *= 1.0 - smoothstep(-0.18, 0.12, sunlight);');
   };
-  material.customProgramCacheKey = () => 'night-side-lighting';
-  return material;
+  material.customProgramCacheKey = () => previousKey() + '|night-side-lighting-v2';
+  return uniforms;
 }
 
 export function createGlowTexture() {

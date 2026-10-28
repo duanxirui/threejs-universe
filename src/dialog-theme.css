@@ -1,0 +1,363 @@
+/* COSMOS ATLAS: one surface and interaction system for every popup.
+   Content-specific layouts remain in their feature stylesheets. */
+#app[data-layout="t15"] {
+  --dialog-surface: linear-gradient(145deg, #10263c 0%, #081625 100%);
+  --dialog-header: linear-gradient(110deg, #173954 0%, #0c2338 100%);
+  --dialog-line: rgba(139, 195, 226, .3);
+  --dialog-line-soft: rgba(139, 195, 226, .18);
+  --dialog-text: #e7f3fc;
+  --dialog-muted: #94b1c7;
+  --dialog-accent: #87d5f5;
+  --dialog-control: rgba(69, 129, 167, .14);
+  --dialog-control-hover: rgba(77, 153, 196, .27);
+  --dialog-card: rgba(19, 45, 69, .64);
+  --dialog-radius: 18px;
+  --dialog-inner-radius: 11px;
+  --dialog-shadow: 0 28px 85px rgba(0, 4, 16, .65), inset 0 1px 0 rgba(213, 237, 250, .08);
+}
+
+#app[data-layout="t15"] .modal-overlay {
+  box-sizing: border-box;
+  padding: 20px;
+  background: rgba(2, 8, 19, .8);
+  backdrop-filter: blur(12px);
+}
+
+#app[data-layout="t15"] .cosmos-dialog {
+  box-sizing: border-box;
+  min-width: 0;
+  width: min(700px, 100%);
+  max-width: 100%;
+  max-height: min(800px, calc(var(--visible-viewport-height, 100dvh) - 40px));
+  padding: 26px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--dialog-line);
+  border-radius: var(--dialog-radius);
+  background: var(--dialog-surface);
+  box-shadow: var(--dialog-shadow);
+  color: var(--dialog-text);
+  scrollbar-width: thin;
+  scrollbar-color: #496c88 rgba(11, 29, 47, .4);
+}
+
+/* Search keeps its independent results scroller; help keeps its sticky header. */
+#app[data-layout="t15"] .cosmos-dialog.search-modal {
+  width: min(670px, 100%);
+  max-height: min(750px, calc(var(--visible-viewport-height, 100dvh) - 40px));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+#app[data-layout="t15"] .cosmos-dialog.help-modal {
+  width: min(700px, 100%);
+  padding: 0;
+}
+#app[data-layout="t15"] .cosmos-dialog.compare-modal { width: min(760px, 100%); }
+#app[data-layout="t15"] .cosmos-dialog.atlas-modal { width: min(700px, 100%); }
+#app[data-layout="t15"] .cosmos-dialog.copy-modal { width: min(540px, 100%); }
+
+#app[data-layout="t15"] .cosmos-dialog .modal-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex: 0 0 auto;
+  gap: 16px;
+  margin: 0;
+  padding: 24px 26px 19px;
+  border-bottom: 1px solid var(--dialog-line-soft);
+  background: var(--dialog-header);
+}
+#app[data-layout="t15"] .cosmos-dialog:not(.help-modal) .modal-heading {
+  margin: -26px -26px 22px;
+  border-radius: 17px 17px 0 0;
+}
+#app[data-layout="t15"] .cosmos-dialog.help-modal .modal-heading {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  margin: 0;
+}
+#app[data-layout="t15"] .cosmos-dialog .modal-heading > div { min-width: 0; }
+#app[data-layout="t15"] .cosmos-dialog .modal-heading small {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #83c6e5;
+  font: 700 10px/1.5 'Space Grotesk', 'Microsoft YaHei', sans-serif;
+  letter-spacing: .19em;
+}
+#app[data-layout="t15"] .cosmos-dialog .modal-heading small::before {
+  content: '';
+  flex: 0 0 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--dialog-accent);
+  box-shadow: 0 0 10px rgba(135, 213, 245, .5);
+}
+#app[data-layout="t15"] .cosmos-dialog .modal-heading h2 {
+  margin: 7px 0 0;
+  color: #f0f8ff;
+  font: 500 clamp(24px, 4vw, 30px)/1.2 'Microsoft YaHei', 'DM Sans', sans-serif;
+  letter-spacing: -.035em;
+}
+#app[data-layout="t15"] .cosmos-dialog .modal-heading p {
+  margin: 9px 0 0;
+  color: var(--dialog-muted);
+  font: 400 12px/1.6 'Microsoft YaHei', sans-serif;
+}
+#app[data-layout="t15"] .cosmos-dialog .modal-close {
+  display: grid;
+  place-items: center;
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid rgba(135, 192, 224, .26);
+  border-radius: 11px;
+  background: var(--dialog-control);
+  color: #a9c6da;
+  cursor: pointer;
+  transition: background .18s, border-color .18s, color .18s;
+}
+#app[data-layout="t15"] .cosmos-dialog .modal-close .ui-icon {
+  width: 20px;
+  height: 20px;
+}
+#app[data-layout="t15"] .cosmos-dialog .modal-close:hover {
+  background: var(--dialog-control-hover);
+  border-color: rgba(145, 220, 251, .53);
+  color: #fff;
+}
+
+#app[data-layout="t15"] .cosmos-dialog .modal-footnote {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: 20px 0 0;
+  padding: 14px 0 0;
+  border-top: 1px solid var(--dialog-line-soft);
+  color: var(--dialog-muted);
+  font: 400 11px/1.65 'Microsoft YaHei', sans-serif;
+}
+#app[data-layout="t15"] .cosmos-dialog .modal-footnote .ui-icon {
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
+  margin-top: 1px;
+  color: #83c6e5;
+}
+#app[data-layout="t15"] .cosmos-dialog.search-modal .modal-footnote { margin-top: 0; }
+#app[data-layout="t15"] .cosmos-dialog.help-modal > .modal-footnote {
+  margin: 15px 26px 23px;
+}
+
+/* Matched controls, cards, scrollbars and keyboard focus for dialog content. */
+#app[data-layout="t15"] .cosmos-dialog .compare-selects select,
+#app[data-layout="t15"] .cosmos-dialog .copy-link-field input {
+  box-sizing: border-box;
+  min-height: 44px;
+  border: 1px solid var(--dialog-line);
+  border-radius: var(--dialog-inner-radius);
+  background: rgba(17, 42, 65, .88);
+  color: var(--dialog-text);
+}
+#app[data-layout="t15"] .cosmos-dialog :is(button, select, input):focus-visible {
+  outline: 2px solid var(--dialog-accent);
+  outline-offset: 3px;
+}
+#app[data-layout="t15"] .cosmos-dialog .search-result:focus-visible {
+  outline: 2px solid var(--dialog-accent);
+  outline-offset: 1px;
+}
+#app[data-layout="t15"] .cosmos-dialog .compare-selects select:focus-visible {
+  border-color: var(--dialog-accent);
+}
+#app[data-layout="t15"] .cosmos-dialog .search-result,
+#app[data-layout="t15"] .cosmos-dialog .help-grid > div,
+#app[data-layout="t15"] .cosmos-dialog .atlas-route-card,
+#app[data-layout="t15"] .cosmos-dialog .atlas-body-link {
+  border-color: var(--dialog-line-soft);
+  border-radius: var(--dialog-inner-radius);
+  background: var(--dialog-card);
+}
+#app[data-layout="t15"] .cosmos-dialog .atlas-tabs button,
+#app[data-layout="t15"] .cosmos-dialog .atlas-route-card button,
+#app[data-layout="t15"] .cosmos-dialog .atlas-list-heading button,
+#app[data-layout="t15"] .cosmos-dialog .atlas-modal-footer button,
+#app[data-layout="t15"] .cosmos-dialog .copy-link-actions button {
+  border: 1px solid var(--dialog-line);
+  border-radius: 10px;
+  background: var(--dialog-control);
+  color: var(--dialog-text);
+  min-height: 42px;
+  cursor: pointer;
+}
+#app[data-layout="t15"] .cosmos-dialog .atlas-tabs button:hover,
+#app[data-layout="t15"] .cosmos-dialog .atlas-route-card button:hover,
+#app[data-layout="t15"] .cosmos-dialog .atlas-list-heading button:hover,
+#app[data-layout="t15"] .cosmos-dialog .atlas-modal-footer button:hover,
+#app[data-layout="t15"] .cosmos-dialog .copy-link-actions button:hover {
+  border-color: rgba(145, 220, 251, .55);
+  background: var(--dialog-control-hover);
+}
+#app[data-layout="t15"] .cosmos-dialog .atlas-tabs button[aria-selected="true"],
+#app[data-layout="t15"] .cosmos-dialog .atlas-route-card button,
+#app[data-layout="t15"] .cosmos-dialog .copy-link-actions .copy-link-done {
+  background: #215d7c;
+  border-color: rgba(137, 213, 248, .58);
+  color: #f4fbff;
+}
+#app[data-layout="t15"] .cosmos-dialog .atlas-modal-footer {
+  border-top-color: var(--dialog-line-soft);
+}
+#app[data-layout="t15"] .cosmos-dialog .search-results,
+#app[data-layout="t15"] .cosmos-dialog .atlas-route-list,
+#app[data-layout="t15"] .cosmos-dialog .atlas-personal-list {
+  scrollbar-width: thin;
+  scrollbar-color: #496c88 rgba(11, 29, 47, .4);
+}
+#app[data-layout="t15"] .cosmos-dialog::-webkit-scrollbar,
+#app[data-layout="t15"] .cosmos-dialog .search-results::-webkit-scrollbar { width: 6px; }
+#app[data-layout="t15"] .cosmos-dialog::-webkit-scrollbar-thumb,
+#app[data-layout="t15"] .cosmos-dialog .search-results::-webkit-scrollbar-thumb {
+  background: #496c88;
+  border-radius: 10px;
+}
+
+/* Floating workspace, tour card and native-select replacement share the
+   dialog palette, while retaining their established anchors and stacking. */
+#app[data-layout="t15"] .flight-option-popover,
+#app[data-layout="t15"] .workspace-panel,
+#app[data-layout="t15"] .atlas-tour-panel {
+  border-color: var(--dialog-line);
+  border-radius: 15px;
+  background: var(--dialog-surface);
+  color: var(--dialog-text);
+  box-shadow: var(--dialog-shadow);
+}
+
+#app[data-layout="t15"] .toast {
+  border-color: var(--dialog-line);
+  border-radius: 10px;
+  background: #10263c;
+  box-shadow: 0 12px 36px rgba(0, 4, 16, .4);
+}
+
+/* The WebGL recovery alert remains modal and uses the same panel vocabulary. */
+#app[data-layout="t15"] .context-recovery {
+  background: rgba(2, 8, 19, .92);
+  backdrop-filter: blur(12px);
+}
+#app[data-layout="t15"] .context-recovery-card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 15px;
+  width: min(520px, 100%);
+  padding: 30px;
+  border: 1px solid var(--dialog-line);
+  border-radius: var(--dialog-radius);
+  background: var(--dialog-surface);
+  color: var(--dialog-text);
+  text-align: left;
+  box-shadow: var(--dialog-shadow);
+}
+#app[data-layout="t15"] .context-recovery-card small {
+  color: var(--dialog-accent);
+  font: 700 10px/1.5 'Space Grotesk', sans-serif;
+  letter-spacing: .18em;
+}
+#app[data-layout="t15"] .context-recovery-card h2 {
+  margin: 0;
+  font-size: clamp(23px, 4vw, 30px);
+  color: #f0f8ff;
+}
+#app[data-layout="t15"] .context-recovery-card p {
+  max-width: 100%;
+  color: var(--dialog-muted);
+}
+#app[data-layout="t15"] .context-recovery-card #webgl-reload {
+  min-height: 44px;
+  padding: 10px 18px;
+  border: 1px solid rgba(137, 213, 248, .58);
+  border-radius: 10px;
+  background: #215d7c;
+  color: #f4fbff;
+  cursor: pointer;
+}
+#app[data-layout="t15"] .context-recovery-card #webgl-reload:focus-visible {
+  outline: 2px solid var(--dialog-accent);
+  outline-offset: 3px;
+}
+
+#app[data-layout="t15"] .cosmos-dialog .copy-link-field {
+  display: grid;
+  gap: 9px;
+  color: var(--dialog-muted);
+  font-size: 12px;
+}
+#app[data-layout="t15"] .cosmos-dialog .copy-link-field input {
+  width: 100%;
+  padding: 10px 12px;
+  font: 13px/1.4 'DM Sans', sans-serif;
+}
+#app[data-layout="t15"] .cosmos-dialog .copy-link-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+#app[data-layout="t15"] .cosmos-dialog .copy-link-actions button { padding: 9px 16px; }
+
+@media (max-width: 640px) {
+  #app[data-layout="t15"] .modal-overlay {
+    top: var(--visible-viewport-top, 0px);
+    bottom: auto;
+    height: var(--visible-viewport-height, 100dvh);
+    padding: 12px;
+  }
+  #app[data-layout="t15"] .cosmos-dialog {
+    width: 100%;
+    max-height: calc(var(--visible-viewport-height, 100dvh) - 24px);
+    padding: 17px 16px;
+    border-radius: 15px;
+  }
+  #app[data-layout="t15"] .cosmos-dialog.help-modal { padding: 0; }
+  #app[data-layout="t15"] .cosmos-dialog .modal-heading {
+    gap: 10px;
+    padding: 17px 16px 15px;
+  }
+  #app[data-layout="t15"] .cosmos-dialog:not(.help-modal) .modal-heading {
+    margin: -17px -16px 16px;
+    border-radius: 14px 14px 0 0;
+  }
+  #app[data-layout="t15"] .cosmos-dialog .modal-heading h2 { font-size: 23px; }
+  #app[data-layout="t15"] .cosmos-dialog .modal-heading p { font-size: 11px; }
+  #app[data-layout="t15"] .cosmos-dialog .modal-close {
+    flex-basis: 40px;
+    width: 40px;
+    height: 40px;
+  }
+  #app[data-layout="t15"] .cosmos-dialog.help-modal > .modal-footnote {
+    margin: 13px 16px 18px;
+  }
+  #app[data-layout="t15"] .flight-option-popover,
+  #app[data-layout="t15"] .workspace-panel,
+  #app[data-layout="t15"] .atlas-tour-panel { border-radius: 14px; }
+  #app[data-layout="t15"] .context-recovery-card {
+    padding: 22px 18px;
+    border-radius: 15px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #app[data-layout="t15"] .modal-overlay,
+  #app[data-layout="t15"] .cosmos-dialog .modal-close,
+  #app[data-layout="t15"] .cosmos-dialog .atlas-tabs button,
+  #app[data-layout="t15"] .cosmos-dialog .atlas-route-card button {
+    transition-duration: 0s;
+  }
+}

@@ -3,11 +3,12 @@ import * as THREE from 'three';
 // Analytic sphere eclipses. Only the direct contribution of the existing solar
 // point light is attenuated; ambient light and night-side city lights remain.
 // This is a soft illustrative penumbra, not an ephemeris or a shadow map.
-export function addEclipseShading(material) {
+export function addEclipseShading(material, sunWorld = new THREE.Vector3()) {
   const uniforms = {
     uEclipseStrength: { value: 0 },
     uEclipseCasterA: { value: new THREE.Vector4(0, 0, 0, 0) },
-    uEclipseCasterB: { value: new THREE.Vector4(0, 0, 0, 0) }
+    uEclipseCasterB: { value: new THREE.Vector4(0, 0, 0, 0) },
+    uT28EclipseSunWorld: { value: sunWorld }
   };
   const previousCompile = material.onBeforeCompile;
   const previousKey = material.customProgramCacheKey.bind(material);
@@ -30,10 +31,12 @@ export function addEclipseShading(material) {
        uniform float uEclipseStrength;
        uniform vec4 uEclipseCasterA;
        uniform vec4 uEclipseCasterB;
+       uniform vec3 uT28EclipseSunWorld;
        float t12EclipseOcclusion(vec4 caster) {
          if (caster.w <= 0.0) return 0.0;
-         float sunDistance = length(vT12SurfaceWorld);
-         vec3 sunward = -vT12SurfaceWorld / max(sunDistance, 0.001);
+         vec3 toSun = uT28EclipseSunWorld - vT12SurfaceWorld;
+         float sunDistance = length(toSun);
+         vec3 sunward = toSun / max(sunDistance, 0.001);
          vec3 toCaster = caster.xyz - vT12SurfaceWorld;
          float along = dot(toCaster, sunward);
          if (along <= 0.001 || along >= sunDistance - 0.001) return 0.0;
@@ -98,7 +101,7 @@ export function addJupiterBandDrift(material) {
 // Precompute parent, satellite and sibling candidates to limit per-frame work.
 // Medium quality picks one caster, high quality up to two, low quality none.
 // Moving casters are sampled every frame to keep their silhouettes continuous.
-export function createEclipseUpdater(bodies) {
+export function createEclipseUpdater(bodies, sunRoot) {
   const entries = Object.values(bodies).filter(entry => entry.data.id !== 'sun')
     .map(entry => ({ entry, position: new THREE.Vector3() }));
   for (const receiver of entries) {
@@ -112,15 +115,16 @@ export function createEclipseUpdater(bodies) {
       candidate,
       // A point-source shadow at the display scale would otherwise cover an
       // oversized portion of a parent planet during satellite transits.
-      radius: candidate.entry.data.parentId === target.id
-        ? candidate.entry.data.radius * 0.65 : candidate.entry.data.radius
+      radiusFactor: candidate.entry.data.parentId === target.id ? 0.65 : 1
     }));
   }
   const sunward = new THREE.Vector3();
   const offset = new THREE.Vector3();
+  const sunWorld = new THREE.Vector3();
 
   return function updateEclipses(qualityTier) {
     if (qualityTier === 0) return;
+    sunRoot.getWorldPosition(sunWorld);
     for (const candidate of entries) {
       candidate.entry.root.getWorldPosition(candidate.position);
     }
@@ -128,14 +132,15 @@ export function createEclipseUpdater(bodies) {
     for (const receiver of entries) {
       if (!receiver.casters.length) continue;
       const position = receiver.position;
-      const sunDistance = position.length();
+      const sunDistance = position.distanceTo(sunWorld);
       if (sunDistance <= 0.001) continue;
-      sunward.copy(position).multiplyScalar(-1 / sunDistance);
+      sunward.copy(sunWorld).sub(position).multiplyScalar(1 / sunDistance);
       let first = null, second = null;
       let firstRadius = 0, secondRadius = 0;
       let firstScore = Infinity, secondScore = Infinity;
 
-      for (const { candidate: caster, radius } of receiver.casters) {
+      for (const { candidate: caster, radiusFactor } of receiver.casters) {
+        const radius = caster.entry.data.radius * radiusFactor;
         offset.copy(caster.position).sub(position);
         const along = offset.dot(sunward);
         if (along <= 0 || along >= sunDistance) continue;

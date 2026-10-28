@@ -1,0 +1,70 @@
+{
+  "checkedAtUtc": "2026-10-27T02:40:59.062Z",
+  "task": "T26",
+  "source": "NASA/JPL Horizons DE441",
+  "scope": "4 bodies / UTC 2026-01-01 to 2028-01-01 / daily geometric vectors",
+  "checks": [
+    {
+      "name": "load complete year files and schema",
+      "pass": true,
+      "actual": {
+        "source": "DE441",
+        "years": 2
+      }
+    },
+    {
+      "name": "valid UTC inputs and invalid calendar dates",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "data UTC range inclusive and overrun rejected",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "annual boundary position and velocity agree",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "Hermite interpolation reproduces daily samples",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "earth and mars solar-relative distances within expected planetary bands",
+      "pass": true,
+      "actual": {
+        "sunEarthAu": 0.9939837997526411,
+        "sunMarsAu": 1.5888608778610518
+      }
+    },
+    {
+      "name": "moon relative position and exaggerated scene size remain separate",
+      "pass": true,
+      "actual": {
+        "moonEarthKm": 366472.37457567034,
+        "visualLunarDistance": 1.8113879076320856,
+        "note": "Moon visual distance deliberately enlarged"
+      }
+    },
+    {
+      "name": "source-frame conversion preserves handedness and height",
+      "pass": true,
+      "actual": null
+    },
+    {
+      "name": "no unsupported day injected into source files",
+      "pass": true,
+      "actual": null
+    }
+  ],
+  "errors": [],
+  "summary": {
+    "passed": 9,
+    "failed": 0,
+    "dailyRowsPerBody": 731,
+    "sourceVersion": "DE441"
+  }
+}

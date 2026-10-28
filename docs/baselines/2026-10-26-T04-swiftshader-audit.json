@@ -1,0 +1,1528 @@
+{
+  "started": "2026-10-26T02:31:00.292Z",
+  "environment": "Local built site / isolated Headless Chrome / swiftshader",
+  "limitations": [
+    "WebGL upload observations do not establish GPU physical memory usage or mobile compatibility.",
+    "The browser backend and GL renderer strings determine whether upload evidence is hardware or software.",
+    "Images are visual evidence for manual orientation and seam review, not pixel-perfect proofs."
+  ],
+  "checks": [
+    {
+      "name": "uranus KTX2 structure and Zstd mip lengths",
+      "status": "passed",
+      "actual": {
+        "size": [
+          2048,
+          1024
+        ],
+        "mipLevels": 12,
+        "jpgBytes": 77751,
+        "ktx2Bytes": 18940
+      }
+    },
+    {
+      "name": "neptune KTX2 structure and Zstd mip lengths",
+      "status": "passed",
+      "actual": {
+        "size": [
+          2048,
+          1024
+        ],
+        "mipLevels": 12,
+        "jpgBytes": 241580,
+        "ktx2Bytes": 193994
+      }
+    },
+    {
+      "name": "callisto KTX2 structure and Zstd mip lengths",
+      "status": "passed",
+      "actual": {
+        "size": [
+          1024,
+          498
+        ],
+        "mipLevels": 11,
+        "jpgBytes": 264772,
+        "ktx2Bytes": 205908
+      }
+    },
+    {
+      "name": "uranus scene remains interactive",
+      "status": "passed",
+      "actual": "planet"
+    },
+    {
+      "name": "uranus requests KTX2 and avoids JPG fallback",
+      "status": "passed",
+      "actual": {
+        "ktx2": 1,
+        "jpg": 0
+      }
+    },
+    {
+      "name": "uranus ETC2 mipmaps upload without GL error",
+      "status": "passed",
+      "actual": {
+        "uploadCount": 12,
+        "successfulEtc2": 12,
+        "mip0Count": 1,
+        "allMipDimensionsSeen": true,
+        "errors": []
+      }
+    },
+    {
+      "name": "neptune scene remains interactive",
+      "status": "passed",
+      "actual": "planet"
+    },
+    {
+      "name": "neptune requests KTX2 and avoids JPG fallback",
+      "status": "passed",
+      "actual": {
+        "ktx2": 2,
+        "jpg": 0
+      }
+    },
+    {
+      "name": "neptune ETC2 mipmaps upload without GL error",
+      "status": "passed",
+      "actual": {
+        "uploadCount": 24,
+        "successfulEtc2": 24,
+        "mip0Count": 2,
+        "allMipDimensionsSeen": true,
+        "errors": []
+      }
+    },
+    {
+      "name": "callisto scene remains interactive",
+      "status": "passed",
+      "actual": "planet"
+    },
+    {
+      "name": "callisto requests KTX2 and avoids JPG fallback",
+      "status": "passed",
+      "actual": {
+        "ktx2": 1,
+        "jpg": 0
+      }
+    },
+    {
+      "name": "callisto ETC2 mipmaps upload without GL error",
+      "status": "passed",
+      "actual": {
+        "uploadCount": 23,
+        "successfulEtc2": 23,
+        "mip0Count": 1,
+        "allMipDimensionsSeen": true,
+        "errors": []
+      }
+    },
+    {
+      "name": "no ETC extension loads JPG without requesting KTX2",
+      "status": "passed",
+      "actual": {
+        "jpg": 1,
+        "ktx2": 0,
+        "blockedExtensionRequests": 2
+      }
+    },
+    {
+      "name": "missing Neptune KTX2 (404) falls back to JPG",
+      "status": "passed",
+      "actual": {
+        "ktx2": [
+          {
+            "phase": "missing",
+            "resource": "textures/ktx2/neptune.ktx2",
+            "status": 404,
+            "bytes": 0
+          }
+        ],
+        "jpg": [
+          {
+            "phase": "missing",
+            "resource": "textures/neptune.jpg",
+            "status": 200,
+            "bytes": 241580
+          }
+        ]
+      }
+    },
+    {
+      "name": "corrupt Callisto KTX2 parse falls back to JPG",
+      "status": "passed",
+      "actual": {
+        "ktx2": [
+          {
+            "phase": "corrupt",
+            "resource": "textures/ktx2/satellites/callisto.ktx2",
+            "status": 200,
+            "bytes": 22
+          }
+        ],
+        "jpg": [
+          {
+            "phase": "corrupt",
+            "resource": "textures/satellites/callisto.jpg",
+            "status": 200,
+            "bytes": 264772
+          }
+        ]
+      }
+    }
+  ],
+  "requests": [
+    {
+      "phase": "normal",
+      "resource": "textures/sun.jpg",
+      "status": 200,
+      "bytes": 822427
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/ktx2/uranus.ktx2",
+      "status": 200,
+      "bytes": 18940
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/earth.jpg",
+      "status": 200,
+      "bytes": 463087
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/jupiter.jpg",
+      "status": 200,
+      "bytes": 498976
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/saturn.jpg",
+      "status": 200,
+      "bytes": 199916
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/mercury.jpg",
+      "status": 200,
+      "bytes": 872555
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/venus.jpg",
+      "status": 200,
+      "bytes": 885075
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/mars.jpg",
+      "status": 200,
+      "bytes": 750547
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/ktx2/neptune.ktx2",
+      "status": 200,
+      "bytes": 193994
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/sun.jpg",
+      "status": 200,
+      "bytes": 822427
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/ktx2/neptune.ktx2",
+      "status": 200,
+      "bytes": 193994
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/earth.jpg",
+      "status": 200,
+      "bytes": 463087
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/jupiter.jpg",
+      "status": 200,
+      "bytes": 498976
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/saturn.jpg",
+      "status": 200,
+      "bytes": 199916
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/satellites/triton.jpg",
+      "status": 200,
+      "bytes": 129677
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/mercury.jpg",
+      "status": 200,
+      "bytes": 872555
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/venus.jpg",
+      "status": 200,
+      "bytes": 885075
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/mars.jpg",
+      "status": 200,
+      "bytes": 750547
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/ktx2/uranus.ktx2",
+      "status": 200,
+      "bytes": 18940
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/jupiter.jpg",
+      "status": 200,
+      "bytes": 498976
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/ktx2/satellites/callisto.ktx2",
+      "status": 200,
+      "bytes": 205908
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/sun.jpg",
+      "status": 200,
+      "bytes": 822427
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/earth.jpg",
+      "status": 200,
+      "bytes": 463087
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/saturn.jpg",
+      "status": 200,
+      "bytes": 199916
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/mercury.jpg",
+      "status": 200,
+      "bytes": 872555
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/venus.jpg",
+      "status": 200,
+      "bytes": 885075
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/mars.jpg",
+      "status": 200,
+      "bytes": 750547
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/ktx2/uranus.ktx2",
+      "status": 200,
+      "bytes": 18940
+    },
+    {
+      "phase": "normal",
+      "resource": "textures/ktx2/neptune.ktx2",
+      "status": 200,
+      "bytes": 193994
+    },
+    {
+      "phase": "noetc",
+      "resource": "textures/uranus.jpg",
+      "status": 200,
+      "bytes": 77751
+    },
+    {
+      "phase": "noetc",
+      "resource": "textures/sun.jpg",
+      "status": 200,
+      "bytes": 822427
+    },
+    {
+      "phase": "noetc",
+      "resource": "textures/earth.jpg",
+      "status": 200,
+      "bytes": 463087
+    },
+    {
+      "phase": "noetc",
+      "resource": "textures/jupiter.jpg",
+      "status": 200,
+      "bytes": 498976
+    },
+    {
+      "phase": "noetc",
+      "resource": "textures/saturn.jpg",
+      "status": 200,
+      "bytes": 199916
+    },
+    {
+      "phase": "noetc",
+      "resource": "textures/mercury.jpg",
+      "status": 200,
+      "bytes": 872555
+    },
+    {
+      "phase": "noetc",
+      "resource": "textures/venus.jpg",
+      "status": 200,
+      "bytes": 885075
+    },
+    {
+      "phase": "noetc",
+      "resource": "textures/mars.jpg",
+      "status": 200,
+      "bytes": 750547
+    },
+    {
+      "phase": "noetc",
+      "resource": "textures/neptune.jpg",
+      "status": 200,
+      "bytes": 241580
+    },
+    {
+      "phase": "missing",
+      "resource": "textures/sun.jpg",
+      "status": 200,
+      "bytes": 822427
+    },
+    {
+      "phase": "missing",
+      "resource": "textures/ktx2/neptune.ktx2",
+      "status": 404,
+      "bytes": 0
+    },
+    {
+      "phase": "missing",
+      "resource": "textures/neptune.jpg",
+      "status": 200,
+      "bytes": 241580
+    },
+    {
+      "phase": "missing",
+      "resource": "textures/earth.jpg",
+      "status": 200,
+      "bytes": 463087
+    },
+    {
+      "phase": "missing",
+      "resource": "textures/jupiter.jpg",
+      "status": 200,
+      "bytes": 498976
+    },
+    {
+      "phase": "missing",
+      "resource": "textures/saturn.jpg",
+      "status": 200,
+      "bytes": 199916
+    },
+    {
+      "phase": "missing",
+      "resource": "textures/satellites/triton.jpg",
+      "status": 200,
+      "bytes": 129677
+    },
+    {
+      "phase": "missing",
+      "resource": "textures/mercury.jpg",
+      "status": 200,
+      "bytes": 872555
+    },
+    {
+      "phase": "missing",
+      "resource": "textures/venus.jpg",
+      "status": 200,
+      "bytes": 885075
+    },
+    {
+      "phase": "missing",
+      "resource": "textures/mars.jpg",
+      "status": 200,
+      "bytes": 750547
+    },
+    {
+      "phase": "missing",
+      "resource": "textures/ktx2/uranus.ktx2",
+      "status": 200,
+      "bytes": 18940
+    },
+    {
+      "phase": "corrupt",
+      "resource": "textures/jupiter.jpg",
+      "status": 200,
+      "bytes": 498976
+    },
+    {
+      "phase": "corrupt",
+      "resource": "textures/ktx2/satellites/callisto.ktx2",
+      "status": 200,
+      "bytes": 22
+    },
+    {
+      "phase": "corrupt",
+      "resource": "textures/sun.jpg",
+      "status": 200,
+      "bytes": 822427
+    },
+    {
+      "phase": "corrupt",
+      "resource": "textures/satellites/callisto.jpg",
+      "status": 200,
+      "bytes": 264772
+    },
+    {
+      "phase": "corrupt",
+      "resource": "textures/earth.jpg",
+      "status": 200,
+      "bytes": 463087
+    },
+    {
+      "phase": "corrupt",
+      "resource": "textures/saturn.jpg",
+      "status": 200,
+      "bytes": 199916
+    },
+    {
+      "phase": "corrupt",
+      "resource": "textures/mercury.jpg",
+      "status": 200,
+      "bytes": 872555
+    },
+    {
+      "phase": "corrupt",
+      "resource": "textures/venus.jpg",
+      "status": 200,
+      "bytes": 885075
+    },
+    {
+      "phase": "corrupt",
+      "resource": "textures/mars.jpg",
+      "status": 200,
+      "bytes": 750547
+    },
+    {
+      "phase": "corrupt",
+      "resource": "textures/ktx2/uranus.ktx2",
+      "status": 200,
+      "bytes": 18940
+    },
+    {
+      "phase": "corrupt",
+      "resource": "textures/ktx2/neptune.ktx2",
+      "status": 200,
+      "bytes": 193994
+    }
+  ],
+  "assets": [
+    {
+      "id": "uranus",
+      "jpgBytes": 77751,
+      "ktx2Bytes": 18940,
+      "width": 2048,
+      "height": 1024,
+      "vkFormat": 148,
+      "supercompression": 2,
+      "levels": [
+        {
+          "width": 2048,
+          "height": 1024,
+          "expected": 1048576,
+          "decoded": 1048576
+        },
+        {
+          "width": 1024,
+          "height": 512,
+          "expected": 262144,
+          "decoded": 262144
+        },
+        {
+          "width": 512,
+          "height": 256,
+          "expected": 65536,
+          "decoded": 65536
+        },
+        {
+          "width": 256,
+          "height": 128,
+          "expected": 16384,
+          "decoded": 16384
+        },
+        {
+          "width": 128,
+          "height": 64,
+          "expected": 4096,
+          "decoded": 4096
+        },
+        {
+          "width": 64,
+          "height": 32,
+          "expected": 1024,
+          "decoded": 1024
+        },
+        {
+          "width": 32,
+          "height": 16,
+          "expected": 256,
+          "decoded": 256
+        },
+        {
+          "width": 16,
+          "height": 8,
+          "expected": 64,
+          "decoded": 64
+        },
+        {
+          "width": 8,
+          "height": 4,
+          "expected": 16,
+          "decoded": 16
+        },
+        {
+          "width": 4,
+          "height": 2,
+          "expected": 8,
+          "decoded": 8
+        },
+        {
+          "width": 2,
+          "height": 1,
+          "expected": 8,
+          "decoded": 8
+        },
+        {
+          "width": 1,
+          "height": 1,
+          "expected": 8,
+          "decoded": 8
+        }
+      ]
+    },
+    {
+      "id": "neptune",
+      "jpgBytes": 241580,
+      "ktx2Bytes": 193994,
+      "width": 2048,
+      "height": 1024,
+      "vkFormat": 148,
+      "supercompression": 2,
+      "levels": [
+        {
+          "width": 2048,
+          "height": 1024,
+          "expected": 1048576,
+          "decoded": 1048576
+        },
+        {
+          "width": 1024,
+          "height": 512,
+          "expected": 262144,
+          "decoded": 262144
+        },
+        {
+          "width": 512,
+          "height": 256,
+          "expected": 65536,
+          "decoded": 65536
+        },
+        {
+          "width": 256,
+          "height": 128,
+          "expected": 16384,
+          "decoded": 16384
+        },
+        {
+          "width": 128,
+          "height": 64,
+          "expected": 4096,
+          "decoded": 4096
+        },
+        {
+          "width": 64,
+          "height": 32,
+          "expected": 1024,
+          "decoded": 1024
+        },
+        {
+          "width": 32,
+          "height": 16,
+          "expected": 256,
+          "decoded": 256
+        },
+        {
+          "width": 16,
+          "height": 8,
+          "expected": 64,
+          "decoded": 64
+        },
+        {
+          "width": 8,
+          "height": 4,
+          "expected": 16,
+          "decoded": 16
+        },
+        {
+          "width": 4,
+          "height": 2,
+          "expected": 8,
+          "decoded": 8
+        },
+        {
+          "width": 2,
+          "height": 1,
+          "expected": 8,
+          "decoded": 8
+        },
+        {
+          "width": 1,
+          "height": 1,
+          "expected": 8,
+          "decoded": 8
+        }
+      ]
+    },
+    {
+      "id": "callisto",
+      "jpgBytes": 264772,
+      "ktx2Bytes": 205908,
+      "width": 1024,
+      "height": 498,
+      "vkFormat": 148,
+      "supercompression": 2,
+      "levels": [
+        {
+          "width": 1024,
+          "height": 498,
+          "expected": 256000,
+          "decoded": 256000
+        },
+        {
+          "width": 512,
+          "height": 249,
+          "expected": 64512,
+          "decoded": 64512
+        },
+        {
+          "width": 256,
+          "height": 124,
+          "expected": 15872,
+          "decoded": 15872
+        },
+        {
+          "width": 128,
+          "height": 62,
+          "expected": 4096,
+          "decoded": 4096
+        },
+        {
+          "width": 64,
+          "height": 31,
+          "expected": 1024,
+          "decoded": 1024
+        },
+        {
+          "width": 32,
+          "height": 15,
+          "expected": 256,
+          "decoded": 256
+        },
+        {
+          "width": 16,
+          "height": 7,
+          "expected": 64,
+          "decoded": 64
+        },
+        {
+          "width": 8,
+          "height": 3,
+          "expected": 16,
+          "decoded": 16
+        },
+        {
+          "width": 4,
+          "height": 1,
+          "expected": 8,
+          "decoded": 8
+        },
+        {
+          "width": 2,
+          "height": 1,
+          "expected": 8,
+          "decoded": 8
+        },
+        {
+          "width": 1,
+          "height": 1,
+          "expected": 8,
+          "decoded": 8
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "body": "uranus",
+      "testCase": "normal",
+      "ready": true,
+      "focused": true,
+      "requested": true,
+      "state": {
+        "mode": "planet",
+        "contextLost": false,
+        "drawCalls": 1,
+        "textureCount": 36,
+        "gpuMemoryBytes": null,
+        "renderer": "WebKit WebGL",
+        "vendor": "WebKit",
+        "unmaskedRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "etcExtension": true,
+        "supportedExtensions": true,
+        "probe": {
+          "compressed": [
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 2048,
+              "height": 1024,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 1024,
+              "height": 512,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 512,
+              "height": 256,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 256,
+              "height": 128,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 128,
+              "height": 64,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 64,
+              "height": 32,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 32,
+              "height": 16,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 16,
+              "height": 8,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 8,
+              "height": 4,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 4,
+              "height": 2,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 2,
+              "height": 1,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 1,
+              "height": 1,
+              "error": 0
+            }
+          ],
+          "blockedEtcRequests": 0,
+          "installed": 2
+        }
+      }
+    },
+    {
+      "body": "neptune",
+      "testCase": "normal",
+      "ready": true,
+      "focused": true,
+      "requested": true,
+      "state": {
+        "mode": "planet",
+        "contextLost": false,
+        "drawCalls": 1,
+        "textureCount": 41,
+        "gpuMemoryBytes": null,
+        "renderer": "WebKit WebGL",
+        "vendor": "WebKit",
+        "unmaskedRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "etcExtension": true,
+        "supportedExtensions": true,
+        "probe": {
+          "compressed": [
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 2048,
+              "height": 1024,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 1024,
+              "height": 512,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 512,
+              "height": 256,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 256,
+              "height": 128,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 128,
+              "height": 64,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 64,
+              "height": 32,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 32,
+              "height": 16,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 16,
+              "height": 8,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 8,
+              "height": 4,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 4,
+              "height": 2,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 2,
+              "height": 1,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 1,
+              "height": 1,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 2048,
+              "height": 1024,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 1024,
+              "height": 512,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 512,
+              "height": 256,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 256,
+              "height": 128,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 128,
+              "height": 64,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 64,
+              "height": 32,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 32,
+              "height": 16,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 16,
+              "height": 8,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 8,
+              "height": 4,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 4,
+              "height": 2,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 2,
+              "height": 1,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 1,
+              "height": 1,
+              "error": 0
+            }
+          ],
+          "blockedEtcRequests": 0,
+          "installed": 2
+        }
+      }
+    },
+    {
+      "body": "callisto",
+      "testCase": "normal",
+      "ready": true,
+      "focused": true,
+      "requested": true,
+      "state": {
+        "mode": "planet",
+        "contextLost": false,
+        "drawCalls": 1,
+        "textureCount": 39,
+        "gpuMemoryBytes": null,
+        "renderer": "WebKit WebGL",
+        "vendor": "WebKit",
+        "unmaskedRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "etcExtension": true,
+        "supportedExtensions": true,
+        "probe": {
+          "compressed": [
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 1024,
+              "height": 498,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 512,
+              "height": 249,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 256,
+              "height": 124,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 128,
+              "height": 62,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 64,
+              "height": 31,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 32,
+              "height": 15,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 16,
+              "height": 7,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 8,
+              "height": 3,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 4,
+              "height": 1,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 2,
+              "height": 1,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 1,
+              "height": 1,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 2048,
+              "height": 1024,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 1024,
+              "height": 512,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 512,
+              "height": 256,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 256,
+              "height": 128,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 128,
+              "height": 64,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 64,
+              "height": 32,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 32,
+              "height": 16,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 16,
+              "height": 8,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 8,
+              "height": 4,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 4,
+              "height": 2,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 2,
+              "height": 1,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 1,
+              "height": 1,
+              "error": 0
+            }
+          ],
+          "blockedEtcRequests": 0,
+          "installed": 2
+        }
+      }
+    },
+    {
+      "body": "uranus",
+      "testCase": "noetc",
+      "ready": true,
+      "focused": true,
+      "requested": true,
+      "state": {
+        "mode": "planet",
+        "contextLost": false,
+        "drawCalls": 1,
+        "textureCount": 40,
+        "gpuMemoryBytes": null,
+        "renderer": "WebKit WebGL",
+        "vendor": "WebKit",
+        "unmaskedRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "etcExtension": false,
+        "supportedExtensions": true,
+        "probe": {
+          "compressed": [],
+          "blockedEtcRequests": 2,
+          "installed": 2
+        }
+      }
+    },
+    {
+      "body": "neptune",
+      "testCase": "missing",
+      "ready": true,
+      "focused": true,
+      "requested": true,
+      "state": {
+        "mode": "planet",
+        "contextLost": false,
+        "drawCalls": 1,
+        "textureCount": 41,
+        "gpuMemoryBytes": null,
+        "renderer": "WebKit WebGL",
+        "vendor": "WebKit",
+        "unmaskedRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "etcExtension": true,
+        "supportedExtensions": true,
+        "probe": {
+          "compressed": [
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 2048,
+              "height": 1024,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 1024,
+              "height": 512,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 512,
+              "height": 256,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 256,
+              "height": 128,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 128,
+              "height": 64,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 64,
+              "height": 32,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 32,
+              "height": 16,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 16,
+              "height": 8,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 8,
+              "height": 4,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 4,
+              "height": 2,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 2,
+              "height": 1,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 1,
+              "height": 1,
+              "error": 0
+            }
+          ],
+          "blockedEtcRequests": 0,
+          "installed": 2
+        }
+      }
+    },
+    {
+      "body": "callisto",
+      "testCase": "corrupt",
+      "ready": true,
+      "focused": true,
+      "requested": true,
+      "state": {
+        "mode": "planet",
+        "contextLost": false,
+        "drawCalls": 1,
+        "textureCount": 39,
+        "gpuMemoryBytes": null,
+        "renderer": "WebKit WebGL",
+        "vendor": "WebKit",
+        "unmaskedRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "etcExtension": true,
+        "supportedExtensions": true,
+        "probe": {
+          "compressed": [
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 2048,
+              "height": 1024,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 1024,
+              "height": 512,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 512,
+              "height": 256,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 256,
+              "height": 128,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 128,
+              "height": 64,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 64,
+              "height": 32,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 32,
+              "height": 16,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 16,
+              "height": 8,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 8,
+              "height": 4,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 4,
+              "height": 2,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 2,
+              "height": 1,
+              "error": 0
+            },
+            {
+              "method": "compressedTexSubImage2D",
+              "internalformat": 37493,
+              "width": 1,
+              "height": 1,
+              "error": 0
+            }
+          ],
+          "blockedEtcRequests": 0,
+          "installed": 2
+        }
+      }
+    }
+  ],
+  "errors": [],
+  "webgl": {
+    "etcAvailable": true,
+    "renderer": "WebKit WebGL",
+    "vendor": "WebKit",
+    "unmaskedRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+  },
+  "finished": "2026-10-26T02:31:35.768Z",
+  "summary": {
+    "passed": 15,
+    "failed": 0,
+    "skipped": 0,
+    "errors": 0
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "schema": "cosmos-ephemeris-v1",
+  "source": "NASA/JPL Horizons API",
+  "sourceUrl": "https://ssd.jpl.nasa.gov/api/horizons.api",
+  "sourceVersion": "DE441",
+  "generatedAtUtc": "2026-10-27T02:28:43.072Z",
+  "center": "Solar System Barycenter (0)",
+  "requestedReferenceSystem": "ICRF",
+  "referenceFrame": "Ecliptic of J2000.0",
+  "timeScale": "UT / UTC (after 1962)",
+  "vectorUnits": [
+    "km",
+    "km/s"
+  ],
+  "stepSeconds": 86400,
+  "startUtc": "2026-01-01T00:00:00.000Z",
+  "endUtc": "2028-01-01T00:00:00.000Z",
+  "bodies": [
+    "sun",
+    "earth",
+    "moon",
+    "mars"
+  ],
+  "targetCommands": {
+    "sun": "10",
+    "earth": "399",
+    "moon": "301",
+    "mars": "499"
+  },
+  "years": [
+    {
+      "year": 2026,
+      "file": "2026.json",
+      "startUtc": "2026-01-01T00:00:00.000Z",
+      "endUtc": "2027-01-01T00:00:00.000Z"
+    },
+    {
+      "year": 2027,
+      "file": "2027.json",
+      "startUtc": "2027-01-01T00:00:00.000Z",
+      "endUtc": "2028-01-01T00:00:00.000Z"
+    }
+  ],
+  "note": "Interpolated geometric positions are reference data. Scene spacing and body radii remain visually enhanced."
+}

@@ -1,0 +1,300 @@
+{
+  "started": "2026-10-26T02:00:06.990Z",
+  "environment": "Local built site / isolated Headless Chrome / SwiftShader",
+  "limitations": [
+    "Headless SwiftShader does not verify physical GPU memory release or Android/iOS behavior.",
+    "The HTTP server observes transport aborts; it cannot measure GPU resource bytes."
+  ],
+  "checks": [
+    {
+      "name": "site initializes in galaxy",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "galaxy does not prefetch solar textures",
+      "passed": true,
+      "actual": 0
+    },
+    {
+      "name": "solar scene opens with delayed texture requests",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "galaxy reopens during slow downloads",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "in-flight texture HTTP transfers abort on scene exit",
+      "passed": true,
+      "actual": {
+        "heldAtExit": 2,
+        "abortedCount": 2
+      }
+    },
+    {
+      "name": "solar scene reopens after abort",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "aborted key can be requested again and served successfully",
+      "passed": true,
+      "actual": [
+        {
+          "resource": "textures/sun.jpg",
+          "status": 200
+        },
+        {
+          "resource": "textures/earth.jpg",
+          "status": 200
+        },
+        {
+          "resource": "textures/jupiter.jpg",
+          "status": 200
+        },
+        {
+          "resource": "textures/saturn.jpg",
+          "status": 200
+        },
+        {
+          "resource": "textures/mercury.jpg",
+          "status": 200
+        },
+        {
+          "resource": "textures/venus.jpg",
+          "status": 200
+        }
+      ]
+    },
+    {
+      "name": "galaxy opens after successful loads",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "solar scene returns using cached textures",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "completed sun and earth textures are not downloaded twice",
+      "passed": true,
+      "actual": {
+        "completedCounts": {
+          "sun": 1,
+          "earth": 1
+        },
+        "repeatedCounts": {
+          "sun": 1,
+          "earth": 1
+        }
+      }
+    },
+    {
+      "name": "new page initializes for 404 fallback",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "solar scene opens with earth texture unavailable",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "missing earth JPG returns 404",
+      "passed": true,
+      "actual": null
+    },
+    {
+      "name": "procedural fallback keeps WebGL scene interactive",
+      "passed": true,
+      "actual": {
+        "performance": {
+          "fps": 60,
+          "averageFps": 60,
+          "minFps": 60,
+          "samples": 0,
+          "mode": "solar",
+          "transitioning": false,
+          "flying": false,
+          "cameraDistance": 108.46,
+          "qualityMode": "auto",
+          "qualityTier": "精细",
+          "dpr": 1,
+          "drawCalls": 1,
+          "triangles": 1,
+          "geometries": 34,
+          "textures": 40,
+          "contextLost": false,
+          "gpuMemoryBytes": null
+        },
+        "fatal": false
+      }
+    },
+    {
+      "name": "galaxy remains reachable after failed texture",
+      "passed": true,
+      "actual": null
+    }
+  ],
+  "requests": [
+    {
+      "resource": "textures/sun.jpg",
+      "phase": "hold",
+      "status": null,
+      "completed": false,
+      "connectionClosedBeforeResponse": true
+    },
+    {
+      "resource": "textures/earth.jpg",
+      "phase": "hold",
+      "status": null,
+      "completed": false,
+      "connectionClosedBeforeResponse": true
+    },
+    {
+      "resource": "textures/sun.jpg",
+      "phase": "normal",
+      "status": 200,
+      "completed": true,
+      "connectionClosedBeforeResponse": false
+    },
+    {
+      "resource": "textures/earth.jpg",
+      "phase": "normal",
+      "status": 200,
+      "completed": true,
+      "connectionClosedBeforeResponse": false
+    },
+    {
+      "resource": "textures/jupiter.jpg",
+      "phase": "normal",
+      "status": 200,
+      "completed": true,
+      "connectionClosedBeforeResponse": false
+    },
+    {
+      "resource": "textures/saturn.jpg",
+      "phase": "normal",
+      "status": 200,
+      "completed": true,
+      "connectionClosedBeforeResponse": false
+    },
+    {
+      "resource": "textures/mercury.jpg",
+      "phase": "normal",
+      "status": 200,
+      "completed": true,
+      "connectionClosedBeforeResponse": false
+    },
+    {
+      "resource": "textures/venus.jpg",
+      "phase": "normal",
+      "status": 200,
+      "completed": true,
+      "connectionClosedBeforeResponse": false
+    },
+    {
+      "resource": "textures/mars.jpg",
+      "phase": "normal",
+      "status": 200,
+      "completed": true,
+      "connectionClosedBeforeResponse": false
+    },
+    {
+      "resource": "textures/ktx2/uranus.ktx2",
+      "phase": "normal",
+      "status": 200,
+      "completed": true,
+      "connectionClosedBeforeResponse": false
+    },
+    {
+      "resource": "textures/ktx2/neptune.ktx2",
+      "phase": "normal",
+      "status": 200,
+      "completed": true,
+      "connectionClosedBeforeResponse": false
+    },
+    {
+      "resource": "textures/sun.jpg",
+      "phase": "broken",
+      "status": 200,
+      "completed": true,
+      "connectionClosedBeforeResponse": false
+    },
+    {
+      "resource": "textures/earth.jpg",
+      "phase": "broken",
+      "status": 404,
+      "completed": true,
+      "connectionClosedBeforeResponse": false
+    },
+    {
+      "resource": "textures/jupiter.jpg",
+      "phase": "broken",
+      "status": 200,
+      "completed": true,
+      "connectionClosedBeforeResponse": false
+    },
+    {
+      "resource": "textures/saturn.jpg",
+      "phase": "broken",
+      "status": 200,
+      "completed": true,
+      "connectionClosedBeforeResponse": false
+    },
+    {
+      "resource": "textures/mercury.jpg",
+      "phase": "broken",
+      "status": 200,
+      "completed": true,
+      "connectionClosedBeforeResponse": false
+    },
+    {
+      "resource": "textures/venus.jpg",
+      "phase": "broken",
+      "status": 200,
+      "completed": true,
+      "connectionClosedBeforeResponse": false
+    }
+  ],
+  "errors": [],
+  "metrics": {
+    "beforeRepeat": {
+      "fps": 8,
+      "averageFps": 7,
+      "minFps": 6,
+      "samples": 3,
+      "mode": "solar",
+      "transitioning": false,
+      "flying": false,
+      "cameraDistance": 108.46,
+      "qualityMode": "auto",
+      "qualityTier": "精细",
+      "dpr": 1,
+      "drawCalls": 1,
+      "triangles": 1,
+      "geometries": 35,
+      "textures": 41,
+      "contextLost": false,
+      "gpuMemoryBytes": null
+    },
+    "completedCounts": {
+      "sun": 1,
+      "earth": 1
+    },
+    "repeatedCounts": {
+      "sun": 1,
+      "earth": 1
+    }
+  },
+  "finished": "2026-10-26T02:00:20.113Z",
+  "summary": {
+    "passed": 15,
+    "failed": 0,
+    "errors": 0
+  }
+}

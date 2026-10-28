@@ -1,0 +1,189 @@
+{
+  "task": "T30",
+  "started": "2026-10-28T04:37:55.199Z",
+  "environment": "Local dist / isolated headless Chrome SwiftShader / desktop and emulated mobile",
+  "limitations": [
+    "No physical Android/iOS touch, native GPU measurements, screen reader or live Pages release test.",
+    "Sky marker distance is arbitrary; observed NASA photographic images are not embedded."
+  ],
+  "checks": [
+    {
+      "name": "app initializes with WebGL and an independent T30 panel",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "no deep-sky data fetched before choosing the feature",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "15 OpenNGC objects and 3 lessons loaded on demand",
+      "pass": true,
+      "data": {
+        "mode": "galaxy",
+        "active": true,
+        "loaded": 15,
+        "routes": 3,
+        "referenceFrame": "ICRS J2000.0",
+        "visible": true,
+        "count": 15,
+        "selectedId": null,
+        "category": "all",
+        "qualityTier": 2,
+        "markersVisible": 15,
+        "illustrationVisible": false,
+        "gaiaVisible": false,
+        "starsVisible": false,
+        "cameraDistance": 116.96580696938749,
+        "cameraTarget": [
+          0,
+          0,
+          0
+        ],
+        "lesson": null,
+        "sample": [
+          {
+            "id": "M1",
+            "catalogId": "NGC1952",
+            "raDeg": 83.63320833,
+            "decDeg": 22.01447222,
+            "distanceLy": 6500,
+            "markerPosition": [
+              16.4492222440933,
+              -3.6145194391236757,
+              -159.11115088763773
+            ]
+          },
+          {
+            "id": "M8",
+            "catalogId": "NGC6523",
+            "raDeg": 270.92195833,
+            "decDeg": -24.38016667,
+            "distanceLy": 5200,
+            "markerPosition": [
+              2.3449069225331827,
+              -2.63480686608502,
+              159.96111778898987
+            ]
+          },
+          {
+            "id": "M16",
+            "catalogId": "NGC6611",
+            "raDeg": 274.70070833,
+            "decDeg": -13.80722222,
+            "distanceLy": 7000,
+            "markerPosition": [
+              12.733247254683826,
+              26.56340449925321,
+              157.2649037635548
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "observational sky directions and procedural galaxy separated",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "three route cards present in existing exploration workspace",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "galaxy category filters 6 actual markers and results",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "cluster category filters 3 sources",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "nebula category filters 6 sources",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "NGC cross-ID search identifies M31",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "selected M31 opens NASA image/source and accurate reference values",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "stellar-cycle lesson starts at M42",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "lesson moves to next real source",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "lesson previous step returns to prior source",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "four-stage stellar lesson reaches M1",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "lesson records completion and disables next button",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "five-stage star-cluster lesson is independently selectable",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "six-stage galaxy morphology lesson starts at M31",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "mobile Explore panel fits viewport without horizontal overflow",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "returning to procedural galaxy hides T30 markers",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "catalog can reopen without duplicate controls or resources",
+      "pass": true,
+      "data": null
+    },
+    {
+      "name": "solar system navigation exits T30 sky mode cleanly",
+      "pass": true,
+      "data": null
+    }
+  ],
+  "screenshots": [
+    "docs/baselines/2026-10-28-T30-desktop-catalog.png",
+    "docs/baselines/2026-10-28-T30-desktop-andromeda.png",
+    "docs/baselines/2026-10-28-T30-desktop-lesson.png",
+    "docs/baselines/2026-10-28-T30-mobile-lesson.png"
+  ],
+  "errors": [],
+  "finished": "2026-10-28T04:38:04.474Z",
+  "summary": {
+    "passed": 21,
+    "failed": 0,
+    "errors": 0
+  }
+}

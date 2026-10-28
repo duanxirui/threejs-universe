@@ -1,7 +1,7 @@
 {
   "previewUrl": "http://127.0.0.1:5173/",
   "tool": "Headless Chrome via native CDP",
-  "started": "2026-10-22T01:51:07.324Z",
+  "started": "2026-10-23T07:36:30.622Z",
   "limitations": [
     "Headless software WebGL performance is not physical GPU/mobile performance."
   ],
@@ -29,8 +29,8 @@
       "name": "unified local SVG interface icons",
       "pass": true,
       "actual": {
-        "symbols": 28,
-        "headerIcons": 5,
+        "symbols": 32,
+        "headerIcons": 6,
         "zoomIcon": "#ic-plus",
         "dockIcon": "#ic-info",
         "pseudo": "none"
@@ -270,7 +270,7 @@
       "pass": true,
       "actual": {
         "open": true,
-        "focus": "search-trigger",
+        "focus": "",
         "backgroundInert": true
       },
       "detail": ""
@@ -752,7 +752,7 @@
         "active": "free-target-select-option-0",
         "count": 23,
         "groups": 5,
-        "height": 324.59375,
+        "height": 323.71875,
         "scroll": true,
         "withinScreen": true,
         "drawer": "flight"
@@ -921,14 +921,14 @@
       "name": "performance diagnostics accessible",
       "pass": true,
       "actual": {
-        "fps": 40,
-        "averageFps": 13,
+        "fps": 27,
+        "averageFps": 14,
         "minFps": 7,
-        "samples": 11,
+        "samples": 13,
         "mode": "free",
         "transitioning": false,
         "flying": false,
-        "cameraDistance": 66.23,
+        "cameraDistance": 68.24,
         "qualityMode": "auto",
         "qualityTier": "精细",
         "dpr": 1,
@@ -960,14 +960,14 @@
   "screenshot": "docs/baselines/2026-10-21-T15-free-mobile-390.png",
   "webglLoseExtensionAvailable": true,
   "performance": {
-    "fps": 40,
-    "averageFps": 13,
+    "fps": 27,
+    "averageFps": 14,
     "minFps": 7,
-    "samples": 11,
+    "samples": 13,
     "mode": "free",
     "transitioning": false,
     "flying": false,
-    "cameraDistance": 66.23,
+    "cameraDistance": 68.24,
     "qualityMode": "auto",
     "qualityTier": "精细",
     "dpr": 1,
@@ -978,7 +978,7 @@
     "contextLost": false,
     "gpuMemoryBytes": null
   },
-  "finished": "2026-10-22T01:51:31.190Z",
+  "finished": "2026-10-23T07:36:56.070Z",
   "summary": {
     "passed": 77,
     "failed": 0,

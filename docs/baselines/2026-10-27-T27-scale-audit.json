@@ -1,0 +1,64 @@
+{
+  "task": "T27",
+  "generatedAt": "2026-10-27T09:20:44.824Z",
+  "environment": "Node.js float64 scene/data invariance",
+  "checks": [
+    {
+      "name": "all 22 bodies have valid double-precision km positions",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "JPL date-driven bodies and approximate satellites remain distinguishable",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Sun/Earth radius and 1AU centre distance use exactly the same scene scale",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Earth/Moon orbit centre and true-scale mean distance stay separate",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "other 18 bodies use km mean orbit distances with intact parent relation",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "floating origin cancels focused Earth position in double precision",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "switching render modes does not alter physical coordinates or UTC",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "UTC date change updates physical states without mutating catalog radii",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "legacy enhanced-only orbit locations remain independent from JPL source",
+      "pass": true,
+      "detail": null
+    }
+  ],
+  "errors": [],
+  "notes": [
+    "Physical radii and distances share one uniform km scale.",
+    "Time-sampled sources cover four bodies; other orbital directions remain educational approximations."
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 0,
+    "errors": 0,
+    "physicalBodies": 22,
+    "unitsPerAu": 1000
+  }
+}

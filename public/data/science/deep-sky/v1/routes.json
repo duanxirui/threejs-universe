@@ -1,0 +1,104 @@
+{
+  "schema": "cosmos-deepsky-routes-v1",
+  "routes": [
+    {
+      "id": "stellar-cycle",
+      "title": "气体云与恒星的一生",
+      "subtitle": "从诞生走向爆发",
+      "description": "观察恒星形成区、恒星晚期外壳以及超新星遗迹。路线是教学顺序，不是天体间的实际航线。",
+      "steps": [
+        {
+          "objectId": "M42",
+          "title": "恒星的摇篮",
+          "prompt": "观察明亮气体与年轻恒星，思考星云为何会发光。"
+        },
+        {
+          "objectId": "M8",
+          "title": "成团的分子云",
+          "prompt": "比较猎户座星云与更遥远的礁湖星云；外观与拍摄波段有关。"
+        },
+        {
+          "objectId": "M16",
+          "title": "创生之柱",
+          "prompt": "区分星云 IC 4703 与星团 NGC 6611，理解尘埃柱背后的恒星形成。"
+        },
+        {
+          "objectId": "M1",
+          "title": "超新星之后",
+          "prompt": "由恒星诞生转向爆发遗迹，比较气体云的不同起源。"
+        }
+      ]
+    },
+    {
+      "id": "star-groups",
+      "title": "星团与恒星晚年",
+      "subtitle": "疏散星团、球状星团与气体外壳",
+      "description": "认识星团成员结构，再学习类似太阳的恒星如何抛出外层气体。",
+      "steps": [
+        {
+          "objectId": "M44",
+          "title": "疏散星团",
+          "prompt": "观察相对松散的成员分布。"
+        },
+        {
+          "objectId": "M13",
+          "title": "密集的球状星团",
+          "prompt": "与 M44 比较结构与年龄，避免用示意点尺寸推断恒星物理半径。"
+        },
+        {
+          "objectId": "M3",
+          "title": "古老的恒星族群",
+          "prompt": "了解球状星团与变星的距离研究。"
+        },
+        {
+          "objectId": "M27",
+          "title": "行星状星云",
+          "prompt": "这是恒星外层气体，不是行星。"
+        },
+        {
+          "objectId": "M57",
+          "title": "投影与真实形状",
+          "prompt": "环状外观并不表示气体只形成一个薄平面。"
+        }
+      ]
+    },
+    {
+      "id": "galaxy-forms",
+      "title": "星系形态与距离阶梯",
+      "subtitle": "从本星系群到数千万光年",
+      "description": "比较星系的旋臂、尘埃带与星暴活动。距离是来源给出的近似值。",
+      "steps": [
+        {
+          "objectId": "M31",
+          "title": "邻近的大星系",
+          "prompt": "以仙女座星系建立百万光年的距离概念。"
+        },
+        {
+          "objectId": "M81",
+          "title": "旋涡结构",
+          "prompt": "观察明亮的星系核与盘。"
+        },
+        {
+          "objectId": "M82",
+          "title": "星暴邻居",
+          "prompt": "思考与 M81 相互作用为何能改变恒星形成。"
+        },
+        {
+          "objectId": "M51",
+          "title": "旋臂与引力作用",
+          "prompt": "比较涡状星系的旋臂结构。"
+        },
+        {
+          "objectId": "M101",
+          "title": "正面看旋涡星系",
+          "prompt": "改变视角后星系形态会怎样改变？"
+        },
+        {
+          "objectId": "M104",
+          "title": "侧看与尘埃带",
+          "prompt": "侧视星系的明暗结构与正面视角有何不同？"
+        }
+      ]
+    }
+  ]
+}

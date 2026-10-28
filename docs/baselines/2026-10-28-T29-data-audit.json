@@ -1,0 +1,114 @@
+{
+  "task": "T29",
+  "created": "2026-10-28T05:10:34.315Z",
+  "environment": "Node.js local immutable ESA Gaia DR3 snapshot",
+  "assumptions": [
+    "High signal-to-noise random-index sample only, not a census.",
+    "Inverse-parallax distance approximations, no Bayesian distance inference.",
+    "ICRS J2016.0 sky directions; no proper-motion or epoch propagation.",
+    "No scientific manual review required; software field consistency is checked."
+  ],
+  "checks": [
+    {
+      "name": "manifest identifies official Gaia DR3 and J2016.0 ICRS",
+      "pass": true,
+      "value": null
+    },
+    {
+      "name": "four raw ESA TAP snapshots match SHA-256 and row counts",
+      "pass": true,
+      "value": 2057
+    },
+    {
+      "name": "raw Gaia CSV slice 00 matches recorded checksum",
+      "pass": true,
+      "value": null
+    },
+    {
+      "name": "raw Gaia CSV slice 01 matches recorded checksum",
+      "pass": true,
+      "value": null
+    },
+    {
+      "name": "raw Gaia CSV slice 02 matches recorded checksum",
+      "pass": true,
+      "value": null
+    },
+    {
+      "name": "raw Gaia CSV slice 03 matches recorded checksum",
+      "pass": true,
+      "value": null
+    },
+    {
+      "name": "static near chunk matches checksum and byte size",
+      "pass": true,
+      "value": null
+    },
+    {
+      "name": "static mid chunk matches checksum and byte size",
+      "pass": true,
+      "value": null
+    },
+    {
+      "name": "static far chunk matches checksum and byte size",
+      "pass": true,
+      "value": null
+    },
+    {
+      "name": "distance conversion refuses low SNR or negative parallax",
+      "pass": true,
+      "value": null
+    },
+    {
+      "name": "ICRS to scene axes have normalized directions",
+      "pass": true,
+      "value": null
+    },
+    {
+      "name": "near block is loaded lazily and independently",
+      "pass": true,
+      "value": null
+    },
+    {
+      "name": "mid block adds only its Gaia sources",
+      "pass": true,
+      "value": null
+    },
+    {
+      "name": "full sample has exactly 2057 distinct immutable source identifiers",
+      "pass": true,
+      "value": null
+    },
+    {
+      "name": "records preserve 64-bit ID and measured Gaia values",
+      "pass": true,
+      "value": null
+    },
+    {
+      "name": "magnitude, distance and exact-source search are repeatable",
+      "pass": true,
+      "value": {
+        "bright": 180,
+        "all": 2057,
+        "near": 18
+      }
+    },
+    {
+      "name": "catalog scene positions do not mutate source coordinates",
+      "pass": true,
+      "value": null
+    }
+  ],
+  "errors": [],
+  "summary": {
+    "passed": 17,
+    "failed": 0,
+    "errors": 0,
+    "total": 2057,
+    "partitions": {
+      "near": 18,
+      "mid": 365,
+      "far": 1674
+    }
+  }
+}

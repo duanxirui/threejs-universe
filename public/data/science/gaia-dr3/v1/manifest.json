@@ -1,0 +1,98 @@
+{
+  "schema": "cosmos-gaia-dr3-v1",
+  "release": "Gaia DR3",
+  "snapshotDate": "2026-10-28",
+  "title": "Gaia DR3 · high-SNR nearby sample",
+  "provider": "ESA / Gaia / DPAC",
+  "sourceTable": "gaiadr3.gaia_source",
+  "archive": "https://gea.esac.esa.int/archive/",
+  "referenceEpoch": 2016,
+  "referenceFrame": "ICRS",
+  "fields": [
+    "sourceId",
+    "raDeg",
+    "decDeg",
+    "parallaxMas",
+    "parallaxErrorMas",
+    "parallaxOverError",
+    "gMag",
+    "bpRp",
+    "pmRaMasYr",
+    "pmDecMasYr"
+  ],
+  "selection": {
+    "randomIndexRange": [
+      0,
+      240000
+    ],
+    "criteria": "parallax > 1 AND parallax_over_error > 10 AND phot_g_mean_mag < 16 AND ruwe < 1.4 AND bp_rp IS NOT NULL",
+    "description": "Deterministic random-index subset, high parallax SNR, G<16, RUWE<1.4; not a complete or volume-limited census."
+  },
+  "distance": {
+    "method": "1000 / positive parallax (mas), only for parallax_over_error > 10",
+    "units": "pc",
+    "note": "Approximation with measurement uncertainty and sample bias; no distances fabricated for missing or low-SNR parallaxes."
+  },
+  "total": 2057,
+  "raw": [
+    {
+      "file": "data/sources/gaia-dr3/2026-10-28/slice-00.csv",
+      "sha256": "410f76b4e1d452f75b0bcfa5b4e851ba2d51ae58898652e6565ad5297e23ec92",
+      "count": 521,
+      "query": "SELECT TOP 1200 source_id,ra,dec,parallax,parallax_error,parallax_over_error,phot_g_mean_mag,bp_rp,pmra,pmdec,ruwe,ref_epoch FROM gaiadr3.gaia_source WHERE random_index >= 0 AND random_index < 60000 AND parallax > 1 AND parallax_over_error > 10 AND phot_g_mean_mag < 16 AND ruwe < 1.4 AND bp_rp IS NOT NULL ORDER BY random_index"
+    },
+    {
+      "file": "data/sources/gaia-dr3/2026-10-28/slice-01.csv",
+      "sha256": "a4ceb349e6aa84c1ed285d93aae0db5614df0ab949a9b69899d1900461e6c011",
+      "count": 521,
+      "query": "SELECT TOP 1200 source_id,ra,dec,parallax,parallax_error,parallax_over_error,phot_g_mean_mag,bp_rp,pmra,pmdec,ruwe,ref_epoch FROM gaiadr3.gaia_source WHERE random_index >= 60000 AND random_index < 120000 AND parallax > 1 AND parallax_over_error > 10 AND phot_g_mean_mag < 16 AND ruwe < 1.4 AND bp_rp IS NOT NULL ORDER BY random_index"
+    },
+    {
+      "file": "data/sources/gaia-dr3/2026-10-28/slice-02.csv",
+      "sha256": "a9b3a56d3d32f77f6144f5fe0a253f6c15a45b1bed7d49bf7560992372c3925d",
+      "count": 534,
+      "query": "SELECT TOP 1200 source_id,ra,dec,parallax,parallax_error,parallax_over_error,phot_g_mean_mag,bp_rp,pmra,pmdec,ruwe,ref_epoch FROM gaiadr3.gaia_source WHERE random_index >= 120000 AND random_index < 180000 AND parallax > 1 AND parallax_over_error > 10 AND phot_g_mean_mag < 16 AND ruwe < 1.4 AND bp_rp IS NOT NULL ORDER BY random_index"
+    },
+    {
+      "file": "data/sources/gaia-dr3/2026-10-28/slice-03.csv",
+      "sha256": "e42e91ab09533b1b38d92e946c73ba94d53dbdf165e4b6add901652f911ab11b",
+      "count": 481,
+      "query": "SELECT TOP 1200 source_id,ra,dec,parallax,parallax_error,parallax_over_error,phot_g_mean_mag,bp_rp,pmra,pmdec,ruwe,ref_epoch FROM gaiadr3.gaia_source WHERE random_index >= 180000 AND random_index < 240000 AND parallax > 1 AND parallax_over_error > 10 AND phot_g_mean_mag < 16 AND ruwe < 1.4 AND bp_rp IS NOT NULL ORDER BY random_index"
+    }
+  ],
+  "chunks": [
+    {
+      "id": "near",
+      "file": "near.json",
+      "count": 18,
+      "minPc": 0,
+      "maxPc": 100,
+      "bytes": 2025,
+      "sha256": "a794fcaec6827f502915fd83169d70aeac31cd0cc8cbcde843bd80bc587238a7"
+    },
+    {
+      "id": "mid",
+      "file": "mid.json",
+      "count": 365,
+      "minPc": 100,
+      "maxPc": 400,
+      "bytes": 38475,
+      "sha256": "bfddbc7826f0805fffcea770f84c471e7482ee932f1bba80d86bd9f371c87902"
+    },
+    {
+      "id": "far",
+      "file": "far.json",
+      "count": 1674,
+      "minPc": 400,
+      "maxPc": 1000,
+      "bytes": 174378,
+      "sha256": "026f90e17cae0cd20031b6c266a5c0616c0c065fdcc8dddae6749659b7942619"
+    }
+  ],
+  "attribution": "Gaia Collaboration, ESA, DPAC; Gaia Data Release 3 (2022).",
+  "notes": [
+    "Positions are ICRS at epoch J2016.0; no epoch propagation in this scene.",
+    "Apparent G magnitudes are not intrinsic luminosities.",
+    "Rendered point sizes and colors are visual encoding."
+  ]
+}

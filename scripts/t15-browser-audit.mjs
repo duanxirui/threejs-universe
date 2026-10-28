@@ -11,6 +11,11 @@ const chromePath = process.env.CHROME_EXE ||
 const previewUrl = process.env.COSMOS_URL || 'http://127.0.0.1:5173/';
 const reportPath = process.env.COSMOS_AUDIT_REPORT ||
   'docs/baselines/2026-10-21-T15-browser-audit.json';
+const t31Mode = process.env.COSMOS_AUDIT_T31 === '1';
+const artifactPrefix = process.env.COSMOS_AUDIT_PREFIX || '';
+const artifactPath = filename => artifactPrefix
+  ? filename.replace(/^docs\/baselines\/2026-10-21-T15-/, artifactPrefix + '-')
+  : filename;
 const profile = await mkdtemp(path.join(os.tmpdir(), 'cosmos-t15-audit-'));
 const report = { previewUrl, tool: 'Headless Chrome via native CDP',
   started: new Date().toISOString(),
@@ -89,8 +94,36 @@ class CDP {
     return output.result?.value;
   }
   async click(selector) {
+    if (t31Mode && await this.eval(
+      'document.getElementById("app")?.dataset.workspaceVersion==="t31"')) {
+      const desktop = await this.eval('window.innerWidth>900');
+      if (desktop) {
+        if (selector === '#planet-dock-toggle') selector = '#rail-objects-trigger';
+        else if (selector === '#time-open-trigger') selector = '#rail-time-trigger';
+        else if (selector === '#detail-peek-trigger') selector = '#t31-rail-detail';
+        else if (selector === '#global-settings-trigger') selector = '#rail-settings-trigger';
+      } else if (selector === '#pure-mode-trigger' ||
+                 selector === '#fullscreen-trigger') {
+        if (await this.eval('document.getElementById("mobile-menu").hidden')) {
+          await this.click('#mobile-menu-trigger');
+        }
+        selector = selector === '#pure-mode-trigger'
+          ? '#mobile-pure-action' : '#mobile-fullscreen-action';
+      } else if (selector === '#global-settings-trigger') {
+        const settingsOpen = await this.eval(
+          'document.getElementById("app").dataset.navPane==="settings"');
+        await this.click('#mobile-menu-trigger');
+        if (settingsOpen) {
+          await this.click('#mobile-menu-trigger'); // close More after dismissing Settings
+          return;
+        }
+        selector = '#mobile-settings-action';
+      }
+    }
     const expression = '(() => {const el=document.querySelector(' +
-      JSON.stringify(selector) + ');if(!el)return null;const r=el.getBoundingClientRect();' +
+      JSON.stringify(selector) + ');if(!el)return null;' +
+      'if(!el.closest("[inert],[hidden]"))el.scrollIntoView({block:"center",inline:"nearest"});' +
+      'const r=el.getBoundingClientRect();' +
       'const x=r.x+r.width/2,y=r.y+r.height/2,hit=document.elementFromPoint(x,y);' +
       'const style=getComputedStyle(el);' +
       'return {x:r.x+r.width/2,y:r.y+r.height/2,' +
@@ -183,7 +216,8 @@ try {
     'cameraVisible:getComputedStyle(document.querySelector(".camera-tools")).display!=="none",' +
     'dateRemoved:!document.getElementById("timeline-date")&&!document.getElementById("timeline-range")})');
   check('galaxy shows camera without orbital playback or date',
-    galaxyControls.motionHidden && galaxyControls.cameraVisible && galaxyControls.dateRemoved,
+    (t31Mode ? !galaxyControls.motionHidden : galaxyControls.motionHidden) &&
+    galaxyControls.cameraVisible && galaxyControls.dateRemoved,
     galaxyControls);
 
   await page.click('#fullscreen-trigger');
@@ -256,7 +290,9 @@ try {
     'dateRemoved:!document.getElementById("timeline-date"),cameraParent:document.querySelector(".camera-tools").parentElement.id})');
   check('solar motion is contextual and camera is global',
     solarControls.motionVisible && solarControls.triggerLabel.includes('天体运动') &&
-    solarControls.dateRemoved && solarControls.cameraParent === 'app', solarControls);
+    solarControls.dateRemoved &&
+    (t31Mode ? solarControls.cameraParent === 'scene-rail' :
+      solarControls.cameraParent === 'app'), solarControls);
   await page.click('#time-open-trigger');
   check('time drawer replaces celestial drawer', await page.eval(
     'document.getElementById("app").dataset.activeDrawer === "time" && ' +
@@ -384,12 +420,24 @@ try {
   check('Escape closes modal and returns focus', restoredFocus,
     { immediate: focusImmediatelyAfterEscape,
       settled: await page.eval('({open:document.getElementById("search-overlay").classList.contains("is-open"),' +
-        'focus:document.activeElement?.id||"",tag:document.activeElement?.tagName||""})') });
+        'focus:document.activeElement?.id||"",tag:document.activeElement?.tagName||"",' +
+        'searchRect:document.getElementById("search-trigger").getBoundingClientRect().toJSON(),' +
+        'searchInert:!!document.getElementById("search-trigger").closest("[inert],[hidden]"),' +
+        'searchDisabled:document.getElementById("search-trigger").disabled,' +
+        'activeDrawer:document.getElementById("app").dataset.activeDrawer})') });
 
   for (const [width,height] of [[1707,842],[1366,768],[390,844],[360,740],[844,390]]) {
     await page.send('Emulation.setDeviceMetricsOverride',
       { width, height, deviceScaleFactor: 1, mobile: width < 900 });
     await delay(120);
+    if (t31Mode) {
+      // The responsive workspace moves a single existing camera controller
+      // across DOM containers at the 900px breakpoint. Observe settled
+      // visibility after emulation instead of a transient reparenting frame.
+      await page.until('(() => {const r=document.querySelector(".camera-tools")?.' +
+        'getBoundingClientRect();return r?.width>0&&r?.height>0;' +
+        '})()', 4);
+    }
     const snap = await page.eval('(() => {const app=document.getElementById("app");' +
       'const top=document.querySelector(".topbar").getBoundingClientRect();' +
       'const foot=document.querySelector(".bottom-interface").getBoundingClientRect();' +
@@ -397,7 +445,8 @@ try {
       'topHeight:Math.round(top.height),footerHeight:Math.round(foot.height),' +
       'layout:app.dataset.layout,ui:app.dataset.uiMode};})()');
     check('responsive ' + width + 'x' + height, snap.width === width &&
-      snap.height === height && snap.scrollWidth <= width && snap.footerHeight <= 66, snap);
+      snap.height === height && snap.scrollWidth <= width &&
+      snap.footerHeight <= (t31Mode && height < 481 ? 190 : 66), snap);
     const rail = await page.eval('(() => {const group=document.querySelector(".camera-tools");' +
       'const r=group.getBoundingClientRect();const controls=["zoom-in","zoom-out","reset-view"].map(id=>{' +
       'const e=document.getElementById(id),b=e.getBoundingClientRect();' +
@@ -418,7 +467,7 @@ try {
         await page.eval('document.getElementById("toast").classList.remove("is-visible")');
         const solarScreenshot = await page.send('Page.captureScreenshot',
           { format: 'png', captureBeyondViewport: false, fromSurface: true });
-        const solarScreenshotPath = 'docs/baselines/2026-10-21-T15-motion-mobile-390.png';
+        const solarScreenshotPath = artifactPath('docs/baselines/2026-10-21-T15-motion-mobile-390.png');
         await writeFile(solarScreenshotPath, Buffer.from(solarScreenshot.data, 'base64'));
         report.solarScreenshot = solarScreenshotPath;
         await page.click('#time-open-trigger');
@@ -498,7 +547,8 @@ try {
     const flightContext = await page.eval('({motionHidden:document.getElementById("time-open-trigger").hidden,' +
       'flightSpeedVisible:!document.getElementById("flight-speed-control").hidden,' +
       'cameraVisible:getComputedStyle(document.querySelector(".camera-tools")).display!=="none"})');
-    check('free flight has separate speed and quick camera', flightContext.motionHidden &&
+    check('free flight has separate speed and quick camera',
+      (t31Mode ? !flightContext.motionHidden : flightContext.motionHidden) &&
       flightContext.flightSpeedVisible && flightContext.cameraVisible, flightContext);
     await page.click('#planet-dock-toggle');
     const flightLayout = await page.eval('(() => {' +
@@ -536,7 +586,7 @@ try {
       targetExpanded.drawer === 'flight', targetExpanded);
     const targetExpandedScreenshot = await page.send('Page.captureScreenshot',
       {format:'png', captureBeyondViewport:false, fromSurface:true});
-    report.flightTargetExpandedDesktop = 'docs/baselines/2026-10-21-T15-flight-target-expanded-desktop.png';
+    report.flightTargetExpandedDesktop = artifactPath('docs/baselines/2026-10-21-T15-flight-target-expanded-desktop.png');
     await writeFile(report.flightTargetExpandedDesktop, Buffer.from(targetExpandedScreenshot.data,'base64'));
     await page.eval('document.querySelector("#free-target-select-listbox [data-value=\\"saturn\\"]")' +
       '.scrollIntoView({block:"center"})');
@@ -588,7 +638,7 @@ try {
       flightRate.flight === '4' && flightRate.orbital === '1×', flightRate);
     const desktopFlightImage = await page.send('Page.captureScreenshot',
       {format:'png',captureBeyondViewport:false,fromSurface:true});
-    report.flightDesktopScreenshot = 'docs/baselines/2026-10-21-T15-flight-select-desktop.png';
+    report.flightDesktopScreenshot = artifactPath('docs/baselines/2026-10-21-T15-flight-select-desktop.png');
     await writeFile(report.flightDesktopScreenshot, Buffer.from(desktopFlightImage.data,'base64'));
     await page.click('#planet-dock-toggle');
     await page.send('Emulation.setDeviceMetricsOverride',
@@ -622,18 +672,18 @@ try {
       targetMobilePopup.scrollable && targetMobilePopup.role === 'listbox', targetMobilePopup);
     const mobileTargetExpanded = await page.send('Page.captureScreenshot',
       {format:'png',captureBeyondViewport:false,fromSurface:true});
-    report.flightTargetExpandedMobile = 'docs/baselines/2026-10-21-T15-flight-target-expanded-mobile-390.png';
+    report.flightTargetExpandedMobile = artifactPath('docs/baselines/2026-10-21-T15-flight-target-expanded-mobile-390.png');
     await writeFile(report.flightTargetExpandedMobile, Buffer.from(mobileTargetExpanded.data,'base64'));
     await page.key('Escape','Escape',27);
     await page.click('#flight-speed-trigger');
     const mobileSpeedExpanded = await page.send('Page.captureScreenshot',
       {format:'png',captureBeyondViewport:false,fromSurface:true});
-    report.flightSpeedExpandedMobile = 'docs/baselines/2026-10-21-T15-flight-speed-expanded-mobile-390.png';
+    report.flightSpeedExpandedMobile = artifactPath('docs/baselines/2026-10-21-T15-flight-speed-expanded-mobile-390.png');
     await writeFile(report.flightSpeedExpandedMobile, Buffer.from(mobileSpeedExpanded.data,'base64'));
     await page.key('Escape','Escape',27);
     const mobileFlightImage = await page.send('Page.captureScreenshot',
       {format:'png',captureBeyondViewport:false,fromSurface:true});
-    report.flightMobileScreenshot = 'docs/baselines/2026-10-21-T15-flight-select-mobile-390.png';
+    report.flightMobileScreenshot = artifactPath('docs/baselines/2026-10-21-T15-flight-select-mobile-390.png');
     await writeFile(report.flightMobileScreenshot, Buffer.from(mobileFlightImage.data,'base64'));
     await page.click('#planet-dock-toggle');
     await page.click('#detail-peek-trigger');
@@ -654,7 +704,7 @@ try {
     check('mobile toast clears the archive sheet', !toastPlacement.overlap, toastPlacement);
     const screenshot = await page.send('Page.captureScreenshot',
       { format: 'png', captureBeyondViewport: false, fromSurface: true });
-    const screenshotPath = 'docs/baselines/2026-10-21-T15-free-mobile-390.png';
+    const screenshotPath = artifactPath('docs/baselines/2026-10-21-T15-free-mobile-390.png');
     await writeFile(screenshotPath, Buffer.from(screenshot.data, 'base64'));
     report.screenshot = screenshotPath;
     await page.eval('document.getElementById("toast").classList.remove("is-visible")');

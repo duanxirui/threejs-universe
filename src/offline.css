@@ -1,0 +1,60 @@
+/* T23 optional offline control, styled with the existing settings palette. */
+#app[data-layout="t15"] .offline-settings {
+  margin-top: 15px !important;
+  padding-top: 15px;
+  border-top: 1px solid rgba(132, 184, 217, .18);
+}
+#app[data-layout="t15"] #offline-toggle {
+  display: flex !important;
+  width: 100%;
+  min-height: 65px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 13px;
+  border: 1px solid rgba(117, 172, 204, .19);
+  border-radius: 11px;
+  background: rgba(28, 57, 81, .47);
+  color: #d7eaf8;
+  text-align: left;
+  cursor: pointer;
+}
+#app[data-layout="t15"] #offline-toggle:hover,
+#app[data-layout="t15"] #offline-toggle:focus-visible {
+  background: rgba(34, 74, 102, .58);
+  border-color: rgba(144, 209, 240, .42);
+}
+#app[data-layout="t15"] #offline-toggle:focus-visible,
+#app[data-layout="t15"] #offline-clear-textures:focus-visible {
+  outline: 2px solid #88d6f4;
+  outline-offset: 2px;
+}
+#app[data-layout="t15"] #offline-toggle:disabled {
+  opacity: .55;
+  cursor: default;
+}
+#app[data-layout="t15"] .offline-status {
+  margin: 9px 2px 0 !important;
+  color: #92b4ca;
+  font: 400 11px/1.6 'Microsoft YaHei', sans-serif;
+}
+#app[data-layout="t15"] #offline-clear-textures {
+  margin-top: 8px;
+  min-height: 38px;
+  padding: 8px 13px;
+  border: 1px solid rgba(125, 182, 213, .28);
+  border-radius: 9px;
+  background: rgba(63, 121, 156, .13);
+  color: #b9dbee;
+  font: 500 11px/1.4 'Microsoft YaHei', sans-serif;
+  cursor: pointer;
+}
+#app[data-layout="t15"] #offline-clear-textures:disabled {
+  opacity: .4;
+  cursor: default;
+}
+#app[data-layout="t15"] #offline-clear-textures:not(:disabled):hover {
+  border-color: rgba(144, 209, 240, .53);
+  background: rgba(63, 121, 156, .28);
+}

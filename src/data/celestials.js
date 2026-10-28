@@ -1,3 +1,5 @@
+import { getEducationalNumber, LEGACY_COMPARISON_FACTS } from './science/physicalCatalog.js';
+
 // Visual radii/distances and animation speeds are rescaled. Orbital eccentricities
 // and inclinations are approximate; this is an educational display, not ephemeris.
 // massKg is an approximate physical mass in kilograms (NASA/JPL/NSSDCA data);
@@ -7,63 +9,63 @@ export const CELESTIALS = [
     id: 'sun', name: '太阳', en: 'SUN', index: '00', type: 'G 型主序恒星', category: 'G-TYPE STAR',
     accent: '#ffbf72', secondary: '#ea672e', radius: 2.8, orbitRadius: 0,
     orbitSpeed: 0, rotationSpeed: 0.04, phase: 0, inclination: 0, eccentricity: 0,
-    distance: '0 AU', diameter: '139.2 万 km', massKg: 1.9891e30, day: '约 25 天', year: '—',
+    distance: '0 AU', diameter: '139.2 万 km', massKg: getEducationalNumber('sun', 'massKg'), day: '约 25.38 天（纬度 16°）', year: '—',
     short: '太阳系的中心', description: '一颗以核聚变照亮整个太阳系的恒星。太阳包含太阳系绝大部分质量，它的引力维系着八颗行星和无数小天体的轨道。'
   },
   {
     id: 'mercury', name: '水星', en: 'MERCURY', index: '01', type: '类地行星', category: 'TERRESTRIAL PLANET',
     accent: '#aeb4b4', secondary: '#777f85', radius: 0.36, orbitRadius: 6.4,
     orbitSpeed: 0.35, rotationSpeed: 0.012, phase: 2.3, inclination: 0.12, eccentricity: 0.2056,
-    distance: '0.39 AU', diameter: '4,879 km', massKg: 3.30103e23, day: '58.6 天', year: '88 天',
+    distance: '0.39 AU', diameter: '4,879 km', massKg: getEducationalNumber('mercury', 'massKg'), day: '58.6 天', year: '88 天',
     short: '最靠近太阳', description: '距离太阳最近，也是太阳系最小的行星。它的表面遍布陨石坑，白昼与黑夜之间存在巨大的温差。'
   },
   {
     id: 'venus', name: '金星', en: 'VENUS', index: '02', type: '类地行星', category: 'TERRESTRIAL PLANET',
     accent: '#e4bc84', secondary: '#aa7952', radius: 0.58, orbitRadius: 9.8,
     orbitSpeed: 0.26, rotationSpeed: -0.005, phase: 4.2, inclination: 0.059, eccentricity: 0.0068,
-    distance: '0.72 AU', diameter: '12,104 km', massKg: 4.86731e24, day: '243 天', year: '225 天',
+    distance: '0.72 AU', diameter: '12,104 km', massKg: getEducationalNumber('venus', 'massKg'), day: '243 天（逆行）', year: '225 天',
     short: '炽热的云层世界', description: '厚重的二氧化碳大气与硫酸云层包裹着金星，强烈的温室效应使它成为太阳系表面最热的行星。'
   },
   {
     id: 'earth', name: '地球', en: 'EARTH', index: '03', type: '类地行星', category: 'TERRESTRIAL PLANET',
     accent: '#57b9f3', secondary: '#276da9', radius: 0.63, orbitRadius: 14.1,
     orbitSpeed: 0.20, rotationSpeed: 0.25, phase: 0.8, inclination: 0.0, eccentricity: 0.0167,
-    distance: '1.00 AU', diameter: '12,742 km', massKg: 5.97217e24, day: '23.9 小时', year: '365.25 天',
+    distance: '1.00 AU', diameter: '12,742 km', massKg: getEducationalNumber('earth', 'massKg'), day: '23.9 小时', year: '365.25 天',
     short: '我们共同的家园', description: '已知唯一存在生命的行星。液态海洋、活跃的地质作用和保护性大气层，在宇宙中构成了独特而珍贵的蓝色世界。'
   },
   {
     id: 'mars', name: '火星', en: 'MARS', index: '04', type: '类地行星', category: 'TERRESTRIAL PLANET',
     accent: '#d98368', secondary: '#983e2d', radius: 0.45, orbitRadius: 19.1,
     orbitSpeed: 0.15, rotationSpeed: 0.24, phase: 3.4, inclination: 0.032, eccentricity: 0.0934,
-    distance: '1.52 AU', diameter: '6,779 km', massKg: 6.41691e23, day: '24.6 小时', year: '687 天',
+    distance: '1.52 AU', diameter: '6,779 km', massKg: getEducationalNumber('mars', 'massKg'), day: '24.6 小时', year: '687 天',
     short: '红色的探索目标', description: '氧化铁让火星呈现醒目的红色。这里有巨大的奥林帕斯山与古老河谷，是人类深空探索的重要目的地。'
   },
   {
     id: 'jupiter', name: '木星', en: 'JUPITER', index: '05', type: '气态巨行星', category: 'GAS GIANT',
     accent: '#e7c7a6', secondary: '#b98760', radius: 1.65, orbitRadius: 29.0,
     orbitSpeed: 0.085, rotationSpeed: 0.57, phase: 5.2, inclination: 0.023, eccentricity: 0.0489,
-    distance: '5.20 AU', diameter: '139,820 km', massKg: 1.898125e27, day: '9.9 小时', year: '11.86 年',
+    distance: '5.20 AU', diameter: '139,820 km', massKg: getEducationalNumber('jupiter', 'massKg'), day: '9.9 小时', year: '11.86 年',
     short: '行星中的巨人', description: '太阳系最大的行星，拥有壮观的云带和持续数百年的大红斑风暴。它强大的引力影响着周围许多小天体。'
   },
   {
     id: 'saturn', name: '土星', en: 'SATURN', index: '06', type: '气态巨行星', category: 'GAS GIANT',
     accent: '#ebd4a5', secondary: '#ad8f6c', radius: 1.38, orbitRadius: 39.0,
     orbitSpeed: 0.06, rotationSpeed: 0.52, phase: 1.8, inclination: 0.044, eccentricity: 0.0565,
-    distance: '9.58 AU', diameter: '116,460 km', massKg: 5.68317e26, day: '10.7 小时', year: '29.45 年',
+    distance: '9.58 AU', diameter: '116,460 km', massKg: getEducationalNumber('saturn', 'massKg'), day: '10.7 小时', year: '29.45 年',
     short: '环绕冰屑的巨星', description: '明亮而庞大的行星环由无数冰粒和岩屑构成。从近处观察，土星环是太阳系最令人惊叹的结构之一。'
   },
   {
     id: 'uranus', name: '天王星', en: 'URANUS', index: '07', type: '冰巨行星', category: 'ICE GIANT',
     accent: '#a8e5e5', secondary: '#579fae', radius: 1.04, orbitRadius: 48.0,
     orbitSpeed: 0.040, rotationSpeed: -0.35, phase: 4.6, inclination: 0.013, eccentricity: 0.0457,
-    distance: '19.2 AU', diameter: '50,724 km', massKg: 8.68099e25, day: '17.2 小时', year: '84.0 年',
+    distance: '19.2 AU', diameter: '50,724 km', massKg: getEducationalNumber('uranus', 'massKg'), day: '17.2 小时（逆行）', year: '84.0 年',
     short: '侧卧旋转的冰巨星', description: '由于自转轴严重倾斜，天王星仿佛侧躺着绕太阳公转。大气中的甲烷令它呈现柔和的青蓝色。'
   },
   {
     id: 'neptune', name: '海王星', en: 'NEPTUNE', index: '08', type: '冰巨行星', category: 'ICE GIANT',
     accent: '#5588f2', secondary: '#2745a6', radius: 1.02, orbitRadius: 57.5,
     orbitSpeed: 0.029, rotationSpeed: 0.38, phase: 0.3, inclination: 0.031, eccentricity: 0.0113,
-    distance: '30.1 AU', diameter: '49,244 km', massKg: 1.024092e26, day: '16.1 小时', year: '164.8 年',
+    distance: '30.1 AU', diameter: '49,244 km', massKg: getEducationalNumber('neptune', 'massKg'), day: '16.1 小时', year: '164.8 年',
     short: '遥远的蓝色风暴', description: '太阳系最外侧的行星。低温、深蓝色大气与高速风暴，构成了这个遥远冰巨星的独特面貌。'
   }
 ];
@@ -75,42 +77,42 @@ export const SATELLITES = [
     id: 'moon', parentId: 'earth', name: '月球', en: 'MOON', index: '09', type: '天然卫星', category: 'NATURAL SATELLITE',
     accent: '#c7c5bd', secondary: '#727d85', radius: .18, orbitRadius: 1.9, orbitSpeed: .52,
     rotationSpeed: .02, phase: 1.3, inclination: .09, eccentricity: .0549,
-    distance: '距地球约 38.4 万 km', diameter: '3,475 km', massKg: 7.35e22, day: '27.3 天', year: '27.3 天',
+    distance: '距地球约 38.4 万 km', diameter: '3,475 km', massKg: getEducationalNumber('moon', 'massKg'), day: '27.3 天', year: '27.3 天',
     short: '地球的天然卫星', description: '月球稳定了地球自转轴的倾角，也主导着潮汐节律。它的表面保存着太阳系古老的撞击历史。'
   },
   {
     id: 'io', parentId: 'jupiter', name: '木卫一', en: 'IO', index: '10', type: '天然卫星', category: 'GALILEAN MOON',
     accent: '#e6cf7c', secondary: '#a58d3d', radius: .18, orbitRadius: 2.55, orbitSpeed: 1.2,
     rotationSpeed: .04, phase: .4, inclination: .01, eccentricity: .0041,
-    distance: '距木星约 42.2 万 km', diameter: '3,643 km', massKg: 8.93e22, day: '1.77 天', year: '1.77 天',
+    distance: '距木星约 42.2 万 km', diameter: '3,643 km', massKg: getEducationalNumber('io', 'massKg'), day: '1.77 天', year: '1.77 天',
     short: '火山最活跃的世界', description: '木星潮汐引力持续拉扯木卫一，使其内部产生热量。这是太阳系火山活动最剧烈的天体之一。'
   },
   {
     id: 'europa', parentId: 'jupiter', name: '木卫二', en: 'EUROPA', index: '11', type: '天然卫星', category: 'GALILEAN MOON',
     accent: '#d5c7ae', secondary: '#877966', radius: .16, orbitRadius: 3.2, orbitSpeed: .83,
     rotationSpeed: .04, phase: 2.2, inclination: .04, eccentricity: .009,
-    distance: '距木星约 67.1 万 km', diameter: '3,122 km', massKg: 4.8e22, day: '3.55 天', year: '3.55 天',
+    distance: '距木星约 67.1 万 km', diameter: '3,122 km', massKg: getEducationalNumber('europa', 'massKg'), day: '3.55 天', year: '3.55 天',
     short: '冰层下的海洋', description: '木卫二被布满裂纹的冰壳覆盖。科学家认为冰层之下可能存在全球性的咸水海洋。'
   },
   {
     id: 'ganymede', parentId: 'jupiter', name: '木卫三', en: 'GANYMEDE', index: '12', type: '天然卫星', category: 'GALILEAN MOON',
     accent: '#b3a999', secondary: '#625d56', radius: .23, orbitRadius: 4.05, orbitSpeed: .59,
     rotationSpeed: .02, phase: 4.1, inclination: .03, eccentricity: .0013,
-    distance: '距木星约 107 万 km', diameter: '5,268 km', massKg: 1.482e23, day: '7.15 天', year: '7.15 天',
+    distance: '距木星约 107 万 km', diameter: '5,268 km', massKg: getEducationalNumber('ganymede', 'massKg'), day: '7.15 天', year: '7.15 天',
     short: '太阳系最大卫星', description: '木卫三比水星还大，拥有自己的磁场，冰层下可能存在深层海洋。'
   },
   {
     id: 'callisto', parentId: 'jupiter', name: '木卫四', en: 'CALLISTO', index: '13', type: '天然卫星', category: 'GALILEAN MOON',
     accent: '#a99789', secondary: '#51453d', radius: .22, orbitRadius: 5.0, orbitSpeed: .38,
     rotationSpeed: .025, phase: 5.2, inclination: .04, eccentricity: .0074,
-    distance: '距木星约 188 万 km', diameter: '4,821 km', massKg: 1.076e23, day: '16.69 天', year: '16.69 天',
+    distance: '距木星约 188 万 km', diameter: '4,821 km', massKg: getEducationalNumber('callisto', 'massKg'), day: '16.69 天', year: '16.69 天',
     short: '古老的撞击地貌', description: '木卫四表面布满撞击坑，是保存太阳系早期历史的重要天体。'
   },
   {
     id: 'titan', parentId: 'saturn', name: '土卫六', en: 'TITAN', index: '14', type: '天然卫星', category: 'SATURNIAN MOON',
     accent: '#dfb982', secondary: '#846342', radius: .24, orbitRadius: 6.25, orbitSpeed: .42,
     rotationSpeed: .03, phase: 2.0, inclination: .05, eccentricity: .0288,
-    distance: '距土星约 122 万 km', diameter: '5,150 km', massKg: 1.346e23, day: '15.95 天', year: '15.95 天',
+    distance: '距土星约 122 万 km', diameter: '5,150 km', massKg: getEducationalNumber('titan', 'massKg'), day: '15.95 天', year: '15.95 天',
     short: '拥有甲烷湖泊', description: '土卫六拥有浓厚的氮气大气，表面有由液态甲烷和乙烷组成的湖泊与海洋。'
   },
   // Display-only orbital spacing keeps these inner moons visible outside the
@@ -121,7 +123,7 @@ export const SATELLITES = [
     accent: '#c2c5c7', secondary: '#626e77', radius: .115, orbitRadius: 3.55, orbitSpeed: .95,
     rotationSpeed: .035, phase: .15, inclination: .027, eccentricity: .0196, node: .31,
     textureSource: 'procedural',
-    distance: '距土星约 18.6 万 km', diameter: '396 km', massKg: 3.75e19, day: '0.94 天', year: '0.94 天',
+    distance: '距土星约 18.6 万 km', diameter: '396 km', massKg: getEducationalNumber('mimas', 'massKg'), day: '0.94 天', year: '0.94 天',
     short: '赫歇尔巨型撞击坑', description: '土卫一是一颗遍布撞击坑的冰质小卫星，著名的赫歇尔撞击坑占据其直径很大一部分，让它具有鲜明的外观。'
   },
   {
@@ -129,7 +131,7 @@ export const SATELLITES = [
     accent: '#e1eff5', secondary: '#849ba8', radius: .14, orbitRadius: 3.95, orbitSpeed: .83,
     rotationSpeed: .034, phase: 1.17, inclination: .019, eccentricity: .0047, node: .53,
     textureSource: 'procedural',
-    distance: '距土星约 23.8 万 km', diameter: '504 km', massKg: 1.08e20, day: '1.37 天', year: '1.37 天',
+    distance: '距土星约 23.8 万 km', diameter: '504 km', massKg: getEducationalNumber('enceladus', 'massKg'), day: '1.37 天', year: '1.37 天',
     short: '冰羽喷流与地下海洋', description: '土卫二拥有明亮的冰质表面，南极地区的裂隙向太空喷出水冰颗粒和水汽。观测证据支持其冰壳下存在全球性液态海洋。'
   },
   {
@@ -137,7 +139,7 @@ export const SATELLITES = [
     accent: '#d7d2c9', secondary: '#858b8d', radius: .153, orbitRadius: 4.38, orbitSpeed: .70,
     rotationSpeed: .033, phase: 2.53, inclination: .021, eccentricity: .0001, node: 1.02,
     textureSource: 'procedural',
-    distance: '距土星约 29.5 万 km', diameter: '1,062 km', massKg: 6.17e20, day: '1.89 天', year: '1.89 天',
+    distance: '距土星约 29.5 万 km', diameter: '1,062 km', massKg: getEducationalNumber('tethys', 'massKg'), day: '1.89 天', year: '1.89 天',
     short: '奥德修斯撞击坑', description: '土卫三是一颗以水冰为主的卫星，其表面存在巨大的奥德修斯撞击坑与长距离峡谷，记录了早期强烈的地质活动。'
   },
   {
@@ -145,7 +147,7 @@ export const SATELLITES = [
     accent: '#c7cac9', secondary: '#697985', radius: .165, orbitRadius: 4.84, orbitSpeed: .59,
     rotationSpeed: .031, phase: 3.48, inclination: .035, eccentricity: .0022, node: .21,
     textureSource: 'procedural',
-    distance: '距土星约 37.7 万 km', diameter: '1,123 km', massKg: 1.10e21, day: '2.74 天', year: '2.74 天',
+    distance: '距土星约 37.7 万 km', diameter: '1,123 km', massKg: getEducationalNumber('dione', 'massKg'), day: '2.74 天', year: '2.74 天',
     short: '冰崖与断裂地形', description: '土卫四的表面既有密布的古老撞击坑，也有明亮的冰崖和构造断裂，呈现出不同年代的地质痕迹。'
   },
   {
@@ -153,7 +155,7 @@ export const SATELLITES = [
     accent: '#bebdbb', secondary: '#69727b', radius: .195, orbitRadius: 5.36, orbitSpeed: .49,
     rotationSpeed: .029, phase: 4.25, inclination: .026, eccentricity: .001, node: 1.31,
     textureSource: 'procedural',
-    distance: '距土星约 52.7 万 km', diameter: '1,528 km', massKg: 2.31e21, day: '4.52 天', year: '4.52 天',
+    distance: '距土星约 52.7 万 km', diameter: '1,528 km', massKg: getEducationalNumber('rhea', 'massKg'), day: '4.52 天', year: '4.52 天',
     short: '土星第二大卫星', description: '土卫五是土星第二大的卫星。它以水冰和岩石构成，表面有大量撞击坑及细长的明亮条纹。'
   },
   {
@@ -161,14 +163,14 @@ export const SATELLITES = [
     accent: '#d8cbb6', secondary: '#494642', radius: .18, orbitRadius: 7.95, orbitSpeed: .145,
     rotationSpeed: .018, phase: 5.4, inclination: .19, eccentricity: .0283, node: 2.09,
     textureSource: 'procedural',
-    distance: '距土星约 356 万 km', diameter: '1,469 km', massKg: 1.81e21, day: '79.32 天', year: '79.32 天',
+    distance: '距土星约 356 万 km', diameter: '1,469 km', massKg: getEducationalNumber('iapetus', 'massKg'), day: '79.32 天', year: '79.32 天',
     short: '明暗分明的双面卫星', description: '土卫八具有强烈的半球明暗差异：一面覆盖深色物质，另一面较明亮。其赤道附近还存在引人注目的山脊。'
   },
   {
     id: 'triton', parentId: 'neptune', name: '海卫一', en: 'TRITON', index: '15', type: '天然卫星', category: 'NEPTUNIAN MOON',
     accent: '#b9b6b0', secondary: '#636c79', radius: .17, orbitRadius: 2.3, orbitSpeed: -.55,
     rotationSpeed: -.025, phase: 3.5, inclination: .2, eccentricity: .00002,
-    distance: '距海王星约 35.5 万 km', diameter: '2,707 km', massKg: 2.15e22, day: '5.88 天', year: '5.88 天',
+    distance: '距海王星约 35.5 万 km', diameter: '2,707 km', massKg: getEducationalNumber('triton', 'massKg'), day: '5.88 天（逆行同步）', year: '5.88 天',
     short: '逆行的冰冻世界', description: '海卫一沿逆行轨道环绕海王星，拥有极低温表面以及氮冰喷泉活动的证据。'
   }
 ];
@@ -181,33 +183,7 @@ export const ALL_BY_ID = Object.fromEntries(ALL_BODIES.map(body => [body.id, bod
 // rescaled orbitRadius/orbitSpeed/radius used to draw the scene.
 // Distances are mean distances to the actual orbit centre (Sun or parent).
 // The displayed AU figures are converted with the IAU astronomical unit.
-const KM_PER_AU = 149597870.7;
-const HOURS_PER_DAY = 24;
-const DAYS_PER_YEAR = 365.25;
-export const COMPARISON_FACTS = Object.freeze({
-  sun:       { diameterKm: 1392000, rotationHours: 25 * HOURS_PER_DAY, orbitalPeriodDays: null, distanceKm: null },
-  mercury:   { diameterKm: 4879, rotationHours: 58.6 * HOURS_PER_DAY, orbitalPeriodDays: 88, distanceKm: .39 * KM_PER_AU },
-  venus:     { diameterKm: 12104, rotationHours: 243 * HOURS_PER_DAY, orbitalPeriodDays: 225, distanceKm: .72 * KM_PER_AU },
-  earth:     { diameterKm: 12742, rotationHours: 23.9, orbitalPeriodDays: 365.25, distanceKm: KM_PER_AU },
-  mars:      { diameterKm: 6779, rotationHours: 24.6, orbitalPeriodDays: 687, distanceKm: 1.52 * KM_PER_AU },
-  jupiter:   { diameterKm: 139820, rotationHours: 9.9, orbitalPeriodDays: 11.86 * DAYS_PER_YEAR, distanceKm: 5.20 * KM_PER_AU },
-  saturn:    { diameterKm: 116460, rotationHours: 10.7, orbitalPeriodDays: 29.45 * DAYS_PER_YEAR, distanceKm: 9.58 * KM_PER_AU },
-  uranus:    { diameterKm: 50724, rotationHours: 17.2, orbitalPeriodDays: 84 * DAYS_PER_YEAR, distanceKm: 19.2 * KM_PER_AU },
-  neptune:   { diameterKm: 49244, rotationHours: 16.1, orbitalPeriodDays: 164.8 * DAYS_PER_YEAR, distanceKm: 30.1 * KM_PER_AU },
-  moon:      { diameterKm: 3475, rotationHours: 27.3 * HOURS_PER_DAY, orbitalPeriodDays: 27.3, distanceKm: 384000 },
-  io:        { diameterKm: 3643, rotationHours: 1.77 * HOURS_PER_DAY, orbitalPeriodDays: 1.77, distanceKm: 422000 },
-  europa:    { diameterKm: 3122, rotationHours: 3.55 * HOURS_PER_DAY, orbitalPeriodDays: 3.55, distanceKm: 671000 },
-  ganymede:  { diameterKm: 5268, rotationHours: 7.15 * HOURS_PER_DAY, orbitalPeriodDays: 7.15, distanceKm: 1070000 },
-  callisto:   { diameterKm: 4821, rotationHours: 16.69 * HOURS_PER_DAY, orbitalPeriodDays: 16.69, distanceKm: 1880000 },
-  titan:     { diameterKm: 5150, rotationHours: 15.95 * HOURS_PER_DAY, orbitalPeriodDays: 15.95, distanceKm: 1220000 },
-  mimas:     { diameterKm: 396, rotationHours: .94 * HOURS_PER_DAY, orbitalPeriodDays: .94, distanceKm: 186000 },
-  enceladus: { diameterKm: 504, rotationHours: 1.37 * HOURS_PER_DAY, orbitalPeriodDays: 1.37, distanceKm: 238000 },
-  tethys:    { diameterKm: 1062, rotationHours: 1.89 * HOURS_PER_DAY, orbitalPeriodDays: 1.89, distanceKm: 295000 },
-  dione:     { diameterKm: 1123, rotationHours: 2.74 * HOURS_PER_DAY, orbitalPeriodDays: 2.74, distanceKm: 377000 },
-  rhea:      { diameterKm: 1528, rotationHours: 4.52 * HOURS_PER_DAY, orbitalPeriodDays: 4.52, distanceKm: 527000 },
-  iapetus:   { diameterKm: 1469, rotationHours: 79.32 * HOURS_PER_DAY, orbitalPeriodDays: 79.32, distanceKm: 3560000 },
-  triton:    { diameterKm: 2707, rotationHours: 5.88 * HOURS_PER_DAY, orbitalPeriodDays: 5.88, distanceKm: 355000 }
-});
+export const COMPARISON_FACTS = LEGACY_COMPARISON_FACTS;
 
 /** Sun has no orbit centre in the solar-system comparison. */
 export function getOrbitReferenceId(body) {

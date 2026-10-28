@@ -1,0 +1,79 @@
+{
+  "task": "T28",
+  "generatedAt": "2026-10-28T03:20:23.014Z",
+  "environment": "Node.js float64 math / bundled DE441 sample positions",
+  "limitations": [
+    "Simplified IAU pole and rotation coefficients.",
+    "Earth IERS orientation, lunar libration, local rise/set and eclipses excluded.",
+    "No real GPU, mobile device or scientific certification."
+  ],
+  "checks": [
+    {
+      "name": "ten modeled axes are normalized and finite",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Earth axis is about 23.44 degrees from ecliptic north",
+      "pass": true,
+      "detail": {
+        "obliquityDeg": 23.439291099999995
+      }
+    },
+    {
+      "name": "retrograde Venus and Uranus use negative spin rate",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "date orientation is repeatable and advances with UTC",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "unmodeled satellites and demo geometry do not claim date orientation",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "date observation returns valid lunar phase and solar declination",
+      "pass": true,
+      "detail": {
+        "phase": 0.9244273019323631,
+        "subsolarLatitudeDeg": -13.088811212716632
+      }
+    },
+    {
+      "name": "known March new moon has less illumination than April full moon",
+      "pass": true,
+      "detail": {
+        "newMoon": 0.00026095114901913963,
+        "fullMoon": 0.9993231720515076
+      }
+    },
+    {
+      "name": "opposite solstices put subsolar latitude in opposite hemispheres",
+      "pass": true,
+      "detail": {
+        "june": 23.435601965779238,
+        "december": -23.43342804385009
+      }
+    },
+    {
+      "name": "geometric moon illumination obeys phase-angle dot product",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "observation calculation leaves positions and radii unchanged",
+      "pass": true,
+      "detail": null
+    }
+  ],
+  "errors": [],
+  "summary": {
+    "passed": 10,
+    "failed": 0,
+    "errors": 0
+  }
+}

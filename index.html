@@ -6,12 +6,18 @@
     <meta name="theme-color" content="#050912" />
     <meta name="description" content="一座可交互的 3D 宇宙。穿越银河系，走进太阳系，探索每一颗行星。" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="manifest" href="./manifest.webmanifest" />
     <!-- Load layout styles with the document, independently of the 3D module graph. -->
     <link rel="stylesheet" href="/src/styles.css" />
     <link rel="stylesheet" href="/src/exploration.css" />
     <link rel="stylesheet" href="/src/layout.css" />
     <link rel="stylesheet" href="/src/showcase.css" />
     <link rel="stylesheet" href="/src/ui-polish.css" />
+    <link rel="stylesheet" href="/src/v3.css" />
+    <link rel="stylesheet" href="/src/dialog-theme.css" />
+    <link rel="stylesheet" href="/src/offline.css" />
+    <link rel="stylesheet" href="/src/workspace-v4.css" />
+    <link rel="stylesheet" href="/src/control-polish.css" />
     <!-- Web fonts are optional: never block the interface on an external request. -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" media="print" onload="this.media='all'" />
     <title>COSMOS ATLAS · 3D 宇宙图鉴</title>
@@ -48,6 +54,10 @@
         <symbol id="ic-navigation" viewBox="0 0 24 24"><path d="m20 4-5 16-3-7-8-3 16-6Z"/><path d="m12 13 8-9"/></symbol>
         <symbol id="ic-unlock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M9 10.5V7a4 4 0 0 1 7.5-2"/></symbol>
         <symbol id="ic-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></symbol>
+        <symbol id="ic-book" viewBox="0 0 24 24"><path d="M12 6c-3.6-2.2-6.8-2.3-9-1v14c3-1.3 6.2-1.2 9 1 2.8-2.2 6-2.3 9-1V5c-2.2-1.3-5.4-1.2-9 1Z"/><path d="M12 6v14"/></symbol>
+        <symbol id="ic-star" viewBox="0 0 24 24"><path d="m12 2.5 3.1 6.5 7.1 1-5.1 5 1.2 7-6.3-3.4L5.7 22l1.2-7-5.1-5 7.1-1L12 2.5Z"/></symbol>
+        <symbol id="ic-camera" viewBox="0 0 24 24"><path d="M3 7h4l2-2h6l2 2h4v12H3V7Z"/><circle cx="12" cy="13" r="4"/></symbol>
+        <symbol id="ic-share" viewBox="0 0 24 24"><path d="M9 12 18 7M9 12l9 5"/><circle cx="6" cy="12" r="3"/><circle cx="19" cy="6" r="3"/><circle cx="19" cy="18" r="3"/></symbol>
       </svg>
       <canvas id="universe-canvas" role="img" aria-label="3D 宇宙模拟画面"
         aria-describedby="canvas-accessible-description"></canvas>
@@ -93,6 +103,7 @@
           <button id="search-trigger" class="icon-button" aria-label="搜索天体" title="搜索天体 (/)">
             <svg class="ui-icon" aria-hidden="true"><use href="#ic-search"/></svg>
           </button>
+          <button id="atlas-trigger" class="icon-button" type="button" aria-label="主题导览与收藏" aria-controls="atlas-overlay" title="主题导览与收藏"><svg class="ui-icon" aria-hidden="true"><use href="#ic-book"/></svg></button>
           <button id="pure-mode-trigger" class="icon-button" type="button" aria-label="进入纯净观赏模式" aria-pressed="false" title="纯净观赏 (H)">
             <svg class="ui-icon" aria-hidden="true"><use href="#ic-eye"/></svg>
           </button>
@@ -109,13 +120,11 @@
             <button class="mobile-view-link" data-view="solar" type="button">太阳系</button>
             <button class="mobile-view-link" data-view="free" type="button">自由漫游</button>
           </div>
-          <label>渲染画质
-            <select id="mobile-quality-select" aria-label="手机端渲染画质">
-              <option value="auto">自动</option>
-              <option value="low">省电</option>
-              <option value="high">极致</option>
-            </select>
-          </label>
+          <div class="t31-mobile-menu-actions" aria-label="显示与设置">
+            <button id="mobile-settings-action" type="button">观测设置</button>
+            <button id="mobile-pure-action" type="button">纯净观赏</button>
+            <button id="mobile-fullscreen-action" type="button">全屏显示</button>
+          </div>
           <button id="mobile-help-trigger" type="button">操作帮助与项目说明 <svg class="ui-icon" aria-hidden="true"><use href="#ic-arrow-up-right"/></svg></button>
         </div>
       </header>
@@ -154,6 +163,11 @@
           <div id="detail-en" class="detail-en">EARTH</div>
           <div id="detail-scene-headline" class="detail-scene-headline" hidden></div>
           <p id="detail-description" class="detail-description"></p>
+          <div id="atlas-source-block" class="atlas-source-block">
+            <p id="atlas-source-intro">科学资料与模拟比例说明</p>
+            <a id="atlas-source-link" href="https://science.nasa.gov/solar-system/solar-system-facts/" target="_blank" rel="noopener noreferrer">NASA Science</a>
+            <small id="atlas-source-reviewed"></small>
+          </div>
           <p id="detail-scene-extra" class="detail-scene-extra" hidden></p>
           <div class="detail-rule"></div>
           <div class="detail-stats">
@@ -177,6 +191,23 @@
           </div>
           <button id="detail-parent" class="detail-parent" hidden><svg class="ui-icon" aria-hidden="true"><use href="#ic-arrow-left"/></svg><span id="detail-parent-label">返回母星</span></button>
           <button id="detail-compare-trigger" class="detail-compare-trigger" type="button"><svg class="ui-icon" aria-hidden="true"><use href="#ic-swap"/></svg><span>对比其他天体</span></button>
+          <div id="atlas-detail-actions" class="atlas-detail-actions">
+            <button id="atlas-favorite" type="button" aria-pressed="false">☆ 收藏天体</button>
+            <button id="atlas-orbit-toggle" type="button" aria-expanded="false" aria-controls="atlas-orbit-panel"><svg class="ui-icon" aria-hidden="true"><use href="#ic-orbit"/></svg> 轨道知识</button>
+            <button id="atlas-copy-link" type="button"><svg class="ui-icon" aria-hidden="true"><use href="#ic-share"/></svg> 复制链接</button>
+            <button id="atlas-snapshot" type="button"><svg class="ui-icon" aria-hidden="true"><use href="#ic-camera"/></svg> 保存画面</button>
+          </div>
+          <section id="atlas-orbit-panel" class="atlas-orbit-panel" aria-label="轨道科普图层" hidden>
+            <div class="atlas-orbit-sketch" aria-hidden="true"><span class="atlas-orbit-core"></span><span class="atlas-orbit-path"><i></i></span></div>
+            <strong id="atlas-orbit-diagram-label">太阳 → 地球</strong>
+            <dl>
+              <div><dt>参考中心</dt><dd id="atlas-orbit-reference"></dd></div>
+              <div><dt>平均轨道距离</dt><dd id="atlas-orbit-distance"></dd></div>
+              <div><dt>公转周期</dt><dd id="atlas-orbit-period"></dd></div>
+              <div><dt>轨道倾角</dt><dd id="atlas-orbit-inclination"></dd></div>
+            </dl>
+            <p>上方椭圆和倾角来自演示模型；距离与周期采用科普近似值。这里不提供真实日期星历。</p>
+          </section>
           <div class="detail-navigation">
             <button id="detail-back" class="detail-back"><svg class="ui-icon" aria-hidden="true"><use href="#ic-arrow-left"/></svg> 返回太阳系全景</button>
             <div class="detail-next-prev">
@@ -287,8 +318,20 @@
       <div id="scene-announcement" class="visually-hidden" role="status"
         aria-live="polite" aria-atomic="true"></div>
 
+      <section id="atlas-tour-panel" class="atlas-tour-panel" aria-label="主题导览步骤" hidden>
+        <small id="atlas-tour-progress"></small>
+        <h2 id="atlas-tour-title"></h2>
+        <p id="atlas-tour-text"></p>
+        <span id="atlas-tour-status" class="visually-hidden" role="status" aria-live="polite"></span>
+        <div class="atlas-tour-actions">
+          <button id="atlas-tour-prev" type="button">上一站</button>
+          <button id="atlas-tour-next" type="button">下一站</button>
+          <button id="atlas-tour-exit" type="button">结束导览</button>
+        </div>
+      </section>
+
       <div id="search-overlay" class="modal-overlay" aria-hidden="true">
-        <div class="search-modal" role="dialog" aria-modal="true" aria-labelledby="search-title"
+        <div class="search-modal cosmos-dialog" role="dialog" aria-modal="true" aria-labelledby="search-title"
           aria-describedby="search-footnote" tabindex="-1">
           <div class="modal-heading"><div><small>DISCOVER · CELESTIAL ATLAS</small><h2 id="search-title">寻找一颗星球</h2><p>从太阳与行星出发，探索它们的卫星</p></div><button id="search-close" class="modal-close" type="button" aria-label="关闭搜索"><svg class="ui-icon" aria-hidden="true"><use href="#ic-x"/></svg></button></div>
           <div class="search-field"><svg class="ui-icon" aria-hidden="true"><use href="#ic-search"/></svg><input id="search-input" type="search"
@@ -301,7 +344,7 @@
       </div>
 
       <div id="help-overlay" class="modal-overlay" aria-hidden="true">
-        <div class="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-title"
+        <div class="help-modal cosmos-dialog" role="dialog" aria-modal="true" aria-labelledby="help-title"
           aria-describedby="help-footnote" tabindex="-1">
           <div class="modal-heading"><div><small>FLIGHT MANUAL · FIELD GUIDE</small><h2 id="help-title">探索指南</h2><p>掌握视角、天体导航与自由航行</p></div><button id="help-close" class="modal-close" type="button" aria-label="关闭帮助"><svg class="ui-icon" aria-hidden="true"><use href="#ic-x"/></svg></button></div>
           <div class="help-body">
@@ -342,10 +385,10 @@
       </div>
 
       <div id="compare-overlay" class="modal-overlay" aria-hidden="true">
-        <div class="compare-modal" role="dialog" aria-modal="true" aria-labelledby="compare-title"
+        <div class="compare-modal cosmos-dialog" role="dialog" aria-modal="true" aria-labelledby="compare-title"
           aria-describedby="compare-reference-note" tabindex="-1">
           <div class="modal-heading">
-            <div><small>CELESTIAL COMPARISON</small><h2 id="compare-title">探索两颗天体</h2></div>
+            <div><small>CELESTIAL COMPARISON</small><h2 id="compare-title">探索两颗天体</h2><p>对照真实物理数据，看见天体间的差异</p></div>
             <button id="compare-close" class="modal-close" aria-label="关闭天体对比"><svg class="ui-icon" aria-hidden="true"><use href="#ic-x"/></svg></button>
           </div>
           <div class="compare-selects">
@@ -354,9 +397,55 @@
             <label>天体 B<select id="compare-right" aria-label="对比天体 B"></select></label>
           </div>
           <p id="compare-reference-note" class="compare-reference-note" aria-live="polite"></p>
+          <section id="atlas-scale-visual" class="atlas-scale-visual" aria-label="真实直径比例可视化"></section>
           <div id="compare-table" class="compare-table" role="table"
             aria-label="天体参数对比表"></div>
-          <p class="modal-footnote">直径和轨道距离统一按 km，自转周期按小时、公转周期按天展示；由原有近似数据换算。场景尺寸和运动速度另作展示缩放。</p>
+          <p class="modal-footnote"><svg class="ui-icon" aria-hidden="true"><use href="#ic-info"/></svg><span>直径和轨道距离统一按 km，自转周期按小时、公转周期按天展示；由原有近似数据换算。场景尺寸和运动速度另作展示缩放。</span></p>
+        </div>
+      </div>
+
+      <div id="atlas-overlay" class="modal-overlay" aria-hidden="true">
+        <div class="atlas-modal cosmos-dialog" role="dialog" aria-modal="true" aria-labelledby="atlas-title" tabindex="-1">
+          <div class="modal-heading">
+            <div><small>EXPLORE · LEARN · REMEMBER</small><h2 id="atlas-title">探索路线与收藏</h2><p>让每次星际旅行都留下知识与足迹</p></div>
+            <button id="atlas-close" class="modal-close" type="button" aria-label="关闭探索路线"><svg class="ui-icon" aria-hidden="true"><use href="#ic-x"/></svg></button>
+          </div>
+          <div class="atlas-tabs" role="tablist" aria-label="探索内容">
+            <button id="atlas-tab-routes" type="button" role="tab" aria-selected="true" aria-controls="atlas-panel-routes">主题导览</button>
+            <button id="atlas-tab-personal" type="button" role="tab" aria-selected="false" aria-controls="atlas-panel-personal">收藏与足迹</button>
+          </div>
+          <section id="atlas-panel-routes" role="tabpanel" aria-labelledby="atlas-tab-routes">
+            <div id="atlas-route-list" class="atlas-route-list"></div>
+          </section>
+          <section id="atlas-panel-personal" role="tabpanel" aria-labelledby="atlas-tab-personal" hidden>
+            <div class="atlas-list-heading"><h3>我的收藏</h3><button id="atlas-clear-favorites" type="button">清空</button></div>
+            <div id="atlas-favorites" class="atlas-personal-list"></div>
+            <div class="atlas-list-heading"><h3>最近浏览</h3><button id="atlas-clear-recents" type="button">清空</button></div>
+            <div id="atlas-recents" class="atlas-personal-list"></div>
+            <p id="atlas-local-note" class="atlas-local-note"></p>
+          </section>
+          <div class="atlas-modal-footer">
+            <button id="atlas-hub-copy" type="button"><svg class="ui-icon" aria-hidden="true"><use href="#ic-share"/></svg> 复制当前链接</button>
+            <button id="atlas-hub-snapshot" type="button"><svg class="ui-icon" aria-hidden="true"><use href="#ic-camera"/></svg> 保存当前画面</button>
+          </div>
+          <p class="modal-footnote"><svg class="ui-icon" aria-hidden="true"><use href="#ic-info"/></svg><span>轨道位置、天体大小与动画速度为教学演示缩放。数值及出处请查看各天体资料。</span></p>
+        </div>
+      </div>
+
+      <div id="copy-overlay" class="modal-overlay" aria-hidden="true">
+        <div class="copy-modal cosmos-dialog" role="dialog" aria-modal="true" aria-labelledby="copy-title" aria-describedby="copy-footnote" tabindex="-1">
+          <div class="modal-heading">
+            <div><small>SHARE · CELESTIAL ATLAS</small><h2 id="copy-title">复制探索链接</h2><p>把当前天体或场景分享给其他人</p></div>
+            <button id="copy-close" class="modal-close" type="button" aria-label="关闭链接弹窗"><svg class="ui-icon" aria-hidden="true"><use href="#ic-x"/></svg></button>
+          </div>
+          <label class="copy-link-field" for="copy-link-input">当前直达链接
+            <input id="copy-link-input" type="text" readonly spellcheck="false" />
+          </label>
+          <div class="copy-link-actions">
+            <button id="copy-link-select" type="button">选中并复制</button>
+            <button id="copy-link-done" class="copy-link-done" type="button">完成</button>
+          </div>
+          <p id="copy-footnote" class="modal-footnote"><svg class="ui-icon" aria-hidden="true"><use href="#ic-info"/></svg><span>若浏览器限制剪贴板权限，可选中链接后使用 Ctrl+C 复制。</span></p>
         </div>
       </div>
 
@@ -370,9 +459,12 @@
       <section id="webgl-context-recovery" class="context-recovery" role="alertdialog"
         aria-modal="true" aria-labelledby="webgl-recovery-title"
         aria-describedby="webgl-recovery-description" hidden>
-        <h2 id="webgl-recovery-title">3D 画面暂时中断</h2>
-        <p id="webgl-recovery-description">图形设备连接已中断，正在等待浏览器恢复。无法自动恢复时，可以重新加载场景。</p>
-        <button id="webgl-reload" type="button">重新加载场景</button>
+        <div class="context-recovery-card">
+          <small>SYSTEM · RENDER STATUS</small>
+          <h2 id="webgl-recovery-title">3D 画面暂时中断</h2>
+          <p id="webgl-recovery-description">图形设备连接已中断，正在等待浏览器恢复。无法自动恢复时，可以重新加载场景。</p>
+          <button id="webgl-reload" type="button">重新加载场景</button>
+        </div>
       </section>
     </div>
     <script type="module" src="/src/main.js"></script>
